@@ -19,6 +19,7 @@ const EMERALD_DEFAULT_TEAM = [
   'flygon',
   'salamence',
 ]
+const TEAM_SIZE = 6
 const MAX_SUGGESTIONS = 20
 
 type MatchCategory = 'Best' | 'Neutral' | 'Risky' | 'Avoid'
@@ -48,6 +49,14 @@ function readConfiguredTeam(): string[] {
   }
 }
 
+function toTeamSlots(values: string[]): string[] {
+  const slots = Array.from({ length: TEAM_SIZE }, () => '')
+  values.slice(0, TEAM_SIZE).forEach((name, index) => {
+    slots[index] = name
+  })
+  return slots
+}
+
 function modifierLabel(mod: number): Effectiveness {
   if (mod >= 2) return '2x'
   if (mod === 1) return '1x'
@@ -70,7 +79,10 @@ function categoryRank(category: MatchCategory): number {
 }
 
 export default function App() {
-  const [teamNames] = useState<string[]>(() => readConfiguredTeam())
+  const [mode, setMode] = useState<'configure' | 'matchups'>('configure')
+  const [teamDraft, setTeamDraft] = useState<string[]>(() => toTeamSlots(readConfiguredTeam()))
+  const [teamSlotErrors, setTeamSlotErrors] = useState<(string | null)[]>(() => Array.from({ length: TEAM_SIZE }, () => null))
+  const [teamNames, setTeamNames] = useState<string[]>(() => readConfiguredTeam())
   const [opponentInput, setOpponentInput] = useState('')
   const [opponent, setOpponent] = useState<Pokemon | null>(null)
   const [ranked, setRanked] = useState<RankedMatchup[]>([])
@@ -121,7 +133,63 @@ export default function App() {
     return [...prefixMatches, ...containsMatches].slice(0, MAX_SUGGESTIONS)
   }, [pokemonNameIndex, normalizedOpponent])
 
+  function updateTeamSlot(index: number, value: string): void {
+    setTeamDraft((current) => {
+      const next = [...current]
+      next[index] = value
+      return next
+    })
+
+    setTeamSlotErrors((current) => {
+      if (!current[index]) return current
+      const next = [...current]
+      next[index] = null
+      return next
+    })
+  }
+
+  function saveTeam(): void {
+    if (!nameIndexReady) {
+      setError('Pokemon index is still loading. Please wait a moment and try again.')
+      return
+    }
+
+    const normalized = teamDraft.map((slot) => slot.trim().toLowerCase())
+    const nextErrors = normalized.map((name) => {
+      if (!name) return null
+      if (!pokemonNameSet.has(name)) return 'Pokemon not found in index.'
+      return null
+    })
+
+    setTeamSlotErrors(nextErrors)
+
+    if (nextErrors.some(Boolean)) {
+      setError('Fix invalid team entries before continuing.')
+      return
+    }
+
+    const nextTeam = normalized.filter(Boolean)
+    if (!nextTeam.length) {
+      setError('Enter at least one valid Pokemon for your team.')
+      return
+    }
+
+    localStorage.setItem('pmh_team_v1', JSON.stringify(nextTeam))
+    setTeamNames(nextTeam)
+    setMode('matchups')
+    setError(null)
+    setExpandedCard(null)
+    setOpponentInput('')
+    setOpponent(null)
+    setRanked([])
+  }
+
   useEffect(() => {
+    if (mode !== 'matchups') {
+      setLoading(false)
+      return
+    }
+
     if (!normalizedOpponent) {
       setOpponent(null)
       setRanked([])
@@ -202,7 +270,7 @@ export default function App() {
     return () => {
       cancelled = true
     }
-  }, [exactMatchFound, nameIndexReady, normalizedOpponent, teamNames])
+  }, [exactMatchFound, mode, nameIndexReady, normalizedOpponent, teamNames])
 
   const grouped = useMemo(() => {
     const groups: Record<MatchCategory, RankedMatchup[]> = {
@@ -228,34 +296,54 @@ export default function App() {
         <h1>Pokémon Matchup Helper</h1>
       </header>
 
-      <section className={styles.selectorSection}>
-        <div className={styles.selectorLabel}>Opponent</div>
-        <label className={styles.selectorRow}>
-          <span className={styles.sprite} aria-hidden="true">
-            {opponent?.sprite ? (
-              <img src={opponent.sprite} alt="" />
-            ) : (
-              '🎯'
-            )}
-          </span>
-          <input
-            className={styles.selectorInput}
-            list="pokemon-name-index"
-            value={opponentInput}
-            onChange={(e) => {
-              setExpandedCard(null)
-              setOpponentInput(e.target.value)
-            }}
-            placeholder="Search opponent (e.g. salamence)"
-            aria-label="Opponent Pokemon"
-          />
-        </label>
-        <datalist id="pokemon-name-index">
-          {opponentSuggestions.map((name) => (
-            <option value={name} key={name} />
-          ))}
-        </datalist>
-      </section>
+      {mode === 'configure' ? (
+        <section className={styles.selectorSection}>
+          <div className={styles.selectorLabel}>Configure Team</div>
+          <p className={styles.configureHint}>Set 1–6 Pokémon for your saved team before checking opponent matchups.</p>
+        </section>
+      ) : (
+        <section className={styles.selectorSection}>
+          <div className={styles.selectorHeader}>
+            <div className={styles.selectorLabel}>Opponent</div>
+            <button
+              type="button"
+              className={styles.linkButton}
+              onClick={() => {
+                setMode('configure')
+                setError(null)
+                setExpandedCard(null)
+              }}
+            >
+              Edit Team
+            </button>
+          </div>
+          <label className={styles.selectorRow}>
+            <span className={styles.sprite} aria-hidden="true">
+              {opponent?.sprite ? (
+                <img src={opponent.sprite} alt="" />
+              ) : (
+                '🎯'
+              )}
+            </span>
+            <input
+              className={styles.selectorInput}
+              list="pokemon-name-index"
+              value={opponentInput}
+              onChange={(e) => {
+                setExpandedCard(null)
+                setOpponentInput(e.target.value)
+              }}
+              placeholder="Search opponent (e.g. salamence)"
+              aria-label="Opponent Pokemon"
+            />
+          </label>
+          <datalist id="pokemon-name-index">
+            {opponentSuggestions.map((name) => (
+              <option value={name} key={name} />
+            ))}
+          </datalist>
+        </section>
+      )}
 
       {error && (
         <div className={styles.banner} role="alert">
@@ -264,57 +352,91 @@ export default function App() {
       )}
 
       <main className={styles.resultsPane}>
-        {!teamNames.length && (
-          <p className={styles.empty}>Add Pokémon to your team to see results.</p>
-        )}
+        {mode === 'configure' ? (
+          <section className={styles.configurePanel}>
+            <div className={styles.configureGrid}>
+              {teamDraft.map((slot, index) => (
+                <div className={styles.teamSlot} key={`team-slot-${index}`}>
+                  <label htmlFor={`team-slot-${index}`}>Team Pokemon {index + 1}</label>
+                  <input
+                    id={`team-slot-${index}`}
+                    className={`${styles.teamInput} ${teamSlotErrors[index] ? styles.teamInputError : ''}`}
+                    value={slot}
+                    onChange={(e) => updateTeamSlot(index, e.target.value)}
+                    placeholder={`Pokemon ${index + 1}`}
+                    aria-label={`Team Pokemon ${index + 1}`}
+                  />
+                  {teamSlotErrors[index] && (
+                    <span className={styles.fieldError} role="alert">{teamSlotErrors[index]}</span>
+                  )}
+                </div>
+              ))}
+            </div>
 
-        {!!teamNames.length && !normalizedOpponent && (
-          <p className={styles.empty}>Select an opponent Pokémon to see matchups.</p>
-        )}
-
-        {!!teamNames.length && !!normalizedOpponent && loading && (
-          <p className={styles.empty}>Calculating matchups...</p>
-        )}
-
-        {!!teamNames.length && !!opponent && !loading && (
+            <button
+              type="button"
+              className={styles.primaryButton}
+              onClick={saveTeam}
+              disabled={!nameIndexReady}
+            >
+              Save Team
+            </button>
+          </section>
+        ) : (
           <>
-            {(['Best', 'Neutral', 'Risky', 'Avoid'] as MatchCategory[]).map((category) => {
-              const entries = grouped[category]
-              if (!entries.length) return null
-              return (
-                <section className={styles.group} key={category}>
-                  <h2 className={styles.groupTitle}>
-                    <span>{categoryIcon(category)}</span>
-                    <span>{category.toUpperCase()}</span>
-                  </h2>
-                  <div className={styles.cards}>
-                    {entries.map((entry) => {
-                      const isExpanded = expandedCard === entry.pokemon.name
-                      return (
-                        <button
-                          key={entry.pokemon.name}
-                          type="button"
-                          className={`${styles.card} ${styles[entry.category.toLowerCase()]}`}
-                          onClick={() => setExpandedCard(isExpanded ? null : entry.pokemon.name)}
-                          aria-expanded={isExpanded}
-                        >
-                          <div className={styles.cardRow1}>
-                            <span className={styles.cardIndicator}>{categoryIcon(entry.category)} {entry.category}</span>
-                            <span className={styles.cardName}>{entry.pokemon.name}</span>
-                          </div>
-                          <div className={styles.cardRow2}>{entry.pokemon.types.join(' / ')}</div>
-                          <div className={`${styles.cardDetails} ${isExpanded ? styles.cardDetailsOpen : ''}`}>
-                            <div>Attack effectiveness: <strong>{entry.attackLabel}</strong></div>
-                            <div>Defensive risk: <strong>{entry.defenseLabel}</strong></div>
-                            <div>Tip: prioritize fast, reliable STAB moves.</div>
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </section>
-              )
-            })}
+            {!teamNames.length && (
+              <p className={styles.empty}>Add Pokémon to your team to see results.</p>
+            )}
+
+            {!!teamNames.length && !normalizedOpponent && (
+              <p className={styles.empty}>Select an opponent Pokémon to see matchups.</p>
+            )}
+
+            {!!teamNames.length && !!normalizedOpponent && loading && (
+              <p className={styles.empty}>Calculating matchups...</p>
+            )}
+
+            {!!teamNames.length && !!opponent && !loading && (
+              <>
+                {(['Best', 'Neutral', 'Risky', 'Avoid'] as MatchCategory[]).map((category) => {
+                  const entries = grouped[category]
+                  if (!entries.length) return null
+                  return (
+                    <section className={styles.group} key={category}>
+                      <h2 className={styles.groupTitle}>
+                        <span>{categoryIcon(category)}</span>
+                        <span>{category.toUpperCase()}</span>
+                      </h2>
+                      <div className={styles.cards}>
+                        {entries.map((entry) => {
+                          const isExpanded = expandedCard === entry.pokemon.name
+                          return (
+                            <button
+                              key={entry.pokemon.name}
+                              type="button"
+                              className={`${styles.card} ${styles[entry.category.toLowerCase()]}`}
+                              onClick={() => setExpandedCard(isExpanded ? null : entry.pokemon.name)}
+                              aria-expanded={isExpanded}
+                            >
+                              <div className={styles.cardRow1}>
+                                <span className={styles.cardIndicator}>{categoryIcon(entry.category)} {entry.category}</span>
+                                <span className={styles.cardName}>{entry.pokemon.name}</span>
+                              </div>
+                              <div className={styles.cardRow2}>{entry.pokemon.types.join(' / ')}</div>
+                              <div className={`${styles.cardDetails} ${isExpanded ? styles.cardDetailsOpen : ''}`}>
+                                <div>Attack effectiveness: <strong>{entry.attackLabel}</strong></div>
+                                <div>Defensive risk: <strong>{entry.defenseLabel}</strong></div>
+                                <div>Tip: prioritize fast, reliable STAB moves.</div>
+                              </div>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </section>
+                  )
+                })}
+              </>
+            )}
           </>
         )}
       </main>

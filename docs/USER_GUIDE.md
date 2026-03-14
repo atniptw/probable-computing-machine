@@ -6,32 +6,32 @@ The Pokémon Matchup Advisor shows which of your Pokémon are strong or weak aga
 
 ## How to Use It
 
-### Step 1 — Enter Your Team
+### Step 1 — Configure Your Team
 
-Type each of your Pokémon's names into the "Your Team" slots. Names are not case-sensitive.
+Use the **Configure Team** step to save up to 6 Pokémon. Names are not case-sensitive.
 
 ```
 Examples: pikachu, charizard, blastoise, gengar, machamp, snorlax
 ```
 
-You can fill 1–6 slots. Empty slots are ignored.
+You can fill 1–6 slots. Empty slots are ignored. Click **Save Team** to continue.
 
-### Step 2 — Enter the Opponent's Team
+### Step 2 — Enter One Opponent
 
-Type the opponent's Pokémon names into the "Opponent Team" slots.
+Search for a single opponent in the **Opponent** field.
 
 Opponent search now uses a full cached Pokémon name index from PokéAPI.
 You can type partial text to narrow suggestions, then select or complete an exact name to trigger matchup calculation.
 
 ### Step 3 — Check Matchups
 
-Click the **Check Matchups** button. Results appear within 1–2 seconds.
+Matchups run automatically once your opponent input is an exact Pokémon name.
 
 ---
 
 ## Reading the Results
 
-Results display as a grid: your team along the rows, opponent's team along the columns.
+Results display as grouped matchup cards for your saved team against the selected opponent.
 
 ### Effectiveness Labels
 
@@ -42,9 +42,9 @@ Results display as a grid: your team along the rows, opponent's team along the c
 | **0.5×** | Not Very Effective — reduced damage |
 | **0×** | No Effect — your attack does nothing |
 
-Each cell shows two values:
-- **You → Them**: effectiveness of your Pokémon's type against theirs
-- **Them → You**: effectiveness of their type against yours
+Each card shows two values:
+- **Attack effectiveness**: your team member into the selected opponent
+- **Defensive risk**: selected opponent into your team member
 
 ### Summary Bar
 
@@ -54,17 +54,11 @@ Below the grid: a count of how many of your matchups are super effective, neutra
 
 ## Example
 
-You have Pikachu (Electric) and Charizard (Fire/Flying).
-Opponent has Blastoise (Water) and Venusaur (Grass/Poison).
+Saved team includes Pikachu (Electric) and Charizard (Fire/Flying).
+Selected opponent is Blastoise (Water).
 
-| | Blastoise (Water) | Venusaur (Grass/Poison) |
-|---|---|---|
-| **Pikachu (Electric)** | You: 2× / Them: 0.5× ✅ | You: 1× / Them: 0.5× |
-| **Charizard (Fire/Flying)** | You: 0.5× / Them: 2× ⚠️ | You: 2× / Them: 0.5× ✅ |
-
-Reading row 1, col 1: Pikachu is super effective against Blastoise, and Blastoise is not very effective against Pikachu. Strong matchup — favour this one.
-
-Reading row 2, col 1: Charizard is not very effective against Blastoise, and Blastoise hits Charizard for 2× damage. Avoid this matchup.
+- Pikachu might appear in **Best** (2× attack, low defensive risk).
+- Charizard might appear in **Risky** (0.5× attack, higher defensive risk).
 
 ---
 

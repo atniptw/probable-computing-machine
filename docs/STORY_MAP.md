@@ -10,17 +10,17 @@ Each column is a user activity. Stories are sequenced as step-by-step user flow.
 | Step | User Flow |
 |---|---|
 | 1 | Open App |
-| 2 | Enter Your Team |
-| 3 | Enter Opponent Team |
-| 4 | Run Matchup |
+| 2 | Configure Your Team |
+| 3 | Select Opponent |
+| 4 | Auto-Run Matchup |
 | 5 | Read Results |
-| 6 | Iterate: edit team and return to Step 2, or exit |
+| 6 | Iterate: edit team or change opponent |
 
 ---
 
 ## Story Map
 
-| Open App | Enter Your Team | Enter Opponent Team | Run Matchup | Read Results | Iterate |
+| Open App | Configure Your Team | Select Opponent | Auto-Run Matchup | Read Results | Iterate |
 |---|---|---|---|---|---|
 | Open app experience | Build your team | Build opponent team | Execute matchup check | Understand outcomes | Adjust and compare |
 | Loads with visible form | 6 slots and basic validation | Same input rules for opponent | Loading plus network and 429 handling | Grid plus summary labels | Re-submit replaces results |
@@ -35,7 +35,7 @@ Each column is a user activity. Stories are sequenced as step-by-step user flow.
 
 Focus: complete the essential end-to-end flow across all 6 activities.
 
-Acceptance: a player can open the app, type two teams, and see a complete type-effectiveness grid.
+Acceptance: a player can configure one saved team, choose one opponent, and see ranked matchup guidance.
 
 Stories:
 - App loads at GitHub Pages URL

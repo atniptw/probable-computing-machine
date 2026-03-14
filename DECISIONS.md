@@ -282,3 +282,32 @@ YYYY-MM-DD
 ### Owner
 
 - Frontend + Architect
+
+---
+
+## DEC-0010
+
+### Date
+
+2026-03-14
+
+### Context
+
+- Runtime UX ranked team members against one selected opponent, but team editing was implicit and not part of the active UI flow.
+- Product direction requires explicit team entry first, then opponent-based matchup guidance.
+
+### Decision
+
+- Introduce a two-mode app flow: `configure` (team setup) and `matchups` (opponent selection + ranked results).
+- Require team save with index-based validation before entering matchup mode.
+- Keep single-opponent grouped output categories (`Best`, `Neutral`, `Risky`, `Avoid`) and automatic recompute on exact opponent match.
+- Deprecate two-team flow in runtime documentation.
+
+### Consequences
+
+- Positive: clearer user journey aligned with product intent and reduced confusion from legacy two-team documentation.
+- Trade-offs: users must complete a setup step before seeing matchup output; legacy components remain in repository until a follow-up cleanup.
+
+### Owner
+
+- Product Owner + Frontend + Architect

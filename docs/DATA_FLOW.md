@@ -3,83 +3,49 @@
 ## Full User Flow
 
 ```
-1. User types Pokémon names into TeamInput slots
-2. User clicks "Check Matchups"
-3. App sets loading = true, clears previous errors
-4. For each unique Pokémon name entered:
-     a. Check localStorage for pkm_v1_{name}
-        → Hit + not expired → use cached types
-        → Miss or expired  → fetch GET /pokemon/{name}
-           → 200 → parse types, write to localStorage
-           → 404 → throw PokemonNotFoundError(name) → set slot error, abort
-5. Call getTypeMap()
-     → If TypeMap already in memory → use it
-     → Else fetch GET /type/{name} for all known types (parallel)
-        → Build TypeMap, store in module memory
-6. computeMatchups() — pure function, no async
-     → For each (yourPokemon × opponentPokemon) pair:
-          → calcEffectiveness(yourTypes, theirTypes, typeMap) → youVsThem
-          → calcEffectiveness(theirTypes, yourTypes, typeMap) → theyVsYou
-7. Set result = MatchupResult
-8. Set loading = false
-9. MatchupResults renders below TeamInput
+1. App mounts in Configure Team mode.
+2. App warms type cache (`getTypeMap`) and loads Pokémon name index (`getPokemonNameIndex`).
+3. User enters 1–6 Pokémon names and clicks "Save Team".
+4. App validates each non-empty slot against the loaded name index.
+   - Invalid entries show inline field errors.
+   - Valid team is normalized/lowercased and stored in localStorage (`pmh_team_v1`).
+5. App switches to Matchups mode.
+6. User types opponent name in the Opponent input.
+7. When opponent is an exact indexed match, app fetches:
+   - cached/in-flight-deduped `getPokemon(opponent)`
+   - cached/in-flight-deduped `getPokemon(teamMember)` for each saved team member
+   - cached `getTypeMap()`
+8. App computes per-member matchup labels and category buckets (`Best/Neutral/Risky/Avoid`).
+9. Grouped matchup cards render for the selected opponent.
 ```
 
-## Cache Check Detail
+## Request + Cache Behavior
 
 ```
+getPokemonNameIndex()
+  ├─ in-memory cache hit → return names
+  ├─ localStorage fresh cache (`pkm_names_v1`) → return names
+  └─ fetch sequence:
+      1) GET /pokemon?limit=1  (read total count)
+      2) GET /pokemon?limit={count}
+         → normalize names, cache for 7 days
+         → stale-cache fallback on fetch failure
+
 getPokemon(name)
-    │
-    ├─ read localStorage["pkm_v1_{name}"]
-    │     ├─ exists + (Date.now() - cachedAt) < 604800000 ms
-    │     │      → return { name, types }
-    │     └─ missing or expired
-    │            ↓
-    └─ fetch GET /api/v2/pokemon/{name}
-          ├─ 200 → extract types, write localStorage, return Pokemon
-          ├─ 404 → throw PokemonNotFoundError(name)
-          └─ 429 → wait 1000ms, retry once → throw RateLimitError
-```
-
-## Matchup Calculation Detail
-
-```
-calcEffectiveness(attackerTypes[], defenderTypes[], typeMap)
-    │
-    ├─ modifier = 1
-    │
-    ├─ for each attackerType:
-    │     for each defenderType:
-    │         if defenderType in typeMap[attackerType].doubleDamageTo  → modifier *= 2
-    │         if defenderType in typeMap[attackerType].halfDamageTo    → modifier *= 0.5
-    │         if defenderType in typeMap[attackerType].noDamageTo      → modifier *= 0
-    │
-    └─ return modifier mapped to label:
-          ≥ 2    → "2x"
-          1      → "1x"
-          < 1    → "0.5x"
-          0      → "0x"
-```
-
-## Error Propagation
-
-```
-PokemonNotFoundError(name)
-    → caught in App.handleSubmit
-    → sets slotErrors[index] = "Not found: {name}"
-    → PokemonSlot renders error below input
-
-RateLimitError | NetworkError
-    → caught in App.handleSubmit
-    → sets App.error = message string
-    → renders top-level ErrorBanner
+  ├─ localStorage fresh cache (`pkm_v1_{name}`) → return Pokemon
+  ├─ in-flight request for same key exists → await same Promise
+  └─ GET /pokemon/{name}
+      → cache for 7 days
+      → 404 => PokemonNotFoundError
+      → 429 retry once => RateLimitError
 ```
 
 ## Render State Machine
 
 ```
-App.result === null  AND  App.loading === false  → TeamInput only, submit enabled
-App.loading === true                             → TeamInput visible, spinner on button
-App.error !== null                              → ErrorBanner at top
-App.result !== null                             → TeamInput + MatchupResults both visible
+mode = configure → team editor + Save Team
+mode = matchups, no opponent → empty hint
+mode = matchups, exact opponent + loading → calculating hint
+mode = matchups, exact opponent + loaded → grouped matchup cards
+error != null → banner visible in both modes
 ```

@@ -1,7 +1,21 @@
 import { expect, test } from '@playwright/test'
 
 test('user selects opponent and sees ranked matchup cards', async ({ page }) => {
-  await page.route('**/api/v2/pokemon?limit=100000', async (route) => {
+  await page.route('**/api/v2/pokemon?limit=1', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        count: 2,
+        results: [
+          { name: 'salamence', url: 'https://pokeapi.co/api/v2/pokemon/373/' },
+          { name: 'swampert', url: 'https://pokeapi.co/api/v2/pokemon/260/' },
+        ],
+      }),
+    })
+  })
+
+  await page.route('**/api/v2/pokemon?limit=2', async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -80,6 +94,16 @@ test('user selects opponent and sees ranked matchup cards', async ({ page }) => 
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
+
+  await expect(page.getByRole('button', { name: 'Save Team' })).toBeEnabled()
+  await page.getByLabel('Team Pokemon 1').fill('swampert')
+  await page.getByLabel('Team Pokemon 2').fill('')
+  await page.getByLabel('Team Pokemon 3').fill('')
+  await page.getByLabel('Team Pokemon 4').fill('')
+  await page.getByLabel('Team Pokemon 5').fill('')
+  await page.getByLabel('Team Pokemon 6').fill('')
+  await page.getByRole('button', { name: 'Save Team' }).click()
+  await expect(page.getByLabel('Opponent Pokemon')).toBeVisible()
 
   await page.getByLabel('Opponent Pokemon').fill('sala')
   await expect(page.getByRole('heading', { name: 'BEST' })).toHaveCount(0)

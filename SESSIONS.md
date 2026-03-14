@@ -264,3 +264,34 @@ YYYY-MM-DD
 ### Next Actions
 
 - Optionally run full suite (`npm run test`) to confirm no unrelated regressions.
+
+---
+
+## 2026-03-14 - Implement Team-First Matchup Flow
+
+### Objective
+
+- Implement a dedicated Configure Team step before opponent selection and preserve single-opponent ranked matchup output.
+
+### Decisions Made
+
+- Add explicit runtime mode switch (`configure` → `matchups`) in `App`.
+- Validate saved team slots against the global Pokémon name index before allowing progression.
+- Keep automatic matchup recomputation for exact opponent name matches.
+
+### Completed
+
+- Refactored `src/App.tsx` to support team configuration, save action, and edit-team return path.
+- Added team-entry UI and validation styles in `src/App.module.css`.
+- Updated smoke e2e flow in `e2e/matchup-smoke.spec.ts` for configure-team-first interaction and two-step name index API mocking.
+- Updated product docs: `docs/USER_GUIDE.md`, `docs/DATA_FLOW.md`, `docs/COMPONENT_DESIGN.md`, and `docs/STORY_MAP.md`.
+- Validation run: `npm run tsc` and `npm run test` passed.
+
+### Blockers
+
+- Local Playwright browser binary is not installed in this container, so `npm run e2e -- e2e/matchup-smoke.spec.ts` cannot execute until `npx playwright install` is run.
+
+### Next Actions
+
+- Install Playwright browser binaries and rerun smoke e2e.
+- Remove or archive legacy two-team components once final UX is confirmed stable.
