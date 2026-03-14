@@ -208,3 +208,59 @@ YYYY-MM-DD
 
 - Run and verify `npm run tsc`, `npm run test`, and `npm run e2e` in CI-safe environment.
 - Update user-facing guide copy for single-opponent search flow alignment.
+
+---
+
+## 2026-03-14 - Fix Devcontainer Build Failure on Trixie
+
+### Objective
+
+- Restore successful devcontainer startup after feature installation failure.
+
+### Decisions Made
+
+- Move from `mcr.microsoft.com/devcontainers/base:trixie` plus Node feature install to `mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm`.
+- Remove `ghcr.io/devcontainers/features/node:1` to avoid the failing apt/signature install path.
+
+### Completed
+
+- Analyzed Remote Containers log and identified `OpenPGP signature verification failed` with `Not live until` timestamps during Node feature install.
+- Updated `.devcontainer/devcontainer.json` image and features accordingly.
+- Preserved existing Copilot CLI and GitHub CLI features.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Rebuild and reopen the container in VS Code to validate end-to-end startup.
+
+---
+
+## 2026-03-14 - Optimize PokéAPI Call Efficiency
+
+### Objective
+
+- Reduce redundant and oversized PokéAPI requests while preserving existing UX behavior.
+
+### Decisions Made
+
+- Add in-flight de-duplication for repeated concurrent `getPokemon(name)` requests.
+- Fetch Pokémon name index in two steps (`limit=1` for count, then `limit={count}`) instead of fixed oversized `limit=100000`.
+
+### Completed
+
+- Updated `src/services/pokeapi.ts` with request de-duplication maps for Pokémon details and name index fetches.
+- Added unit test coverage for concurrent request de-duplication in `src/tests/getPokemon.test.ts`.
+- Updated `src/tests/getPokemonNameIndex.test.ts` for the count+exact-limit strategy and concurrent index fetch de-duplication.
+- Updated `docs/API_SPEC.md` to reflect the new endpoint flow.
+- Verified with targeted tests: `npm run test -- src/tests/getPokemonNameIndex.test.ts src/tests/getPokemon.test.ts`.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Optionally run full suite (`npm run test`) to confirm no unrelated regressions.

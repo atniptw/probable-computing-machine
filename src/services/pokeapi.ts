@@ -82,6 +82,8 @@ const NAME_INDEX_CACHE_KEY = 'pkm_names_v1'
 const NAME_INDEX_LIMIT = 100000
 
 let pokemonNameIndexCache: string[] | null = null
+let pokemonNameIndexPromise: Promise<string[]> | null = null
+const pokemonRequestCache = new Map<string, Promise<Pokemon>>()
 
 // --- Error types ---
 
@@ -134,7 +136,8 @@ async function fetchWithRetry(url: string): Promise<Response> {
 // --- getPokemon ---
 
 export async function getPokemon(name: string): Promise<Pokemon> {
-  const key = CACHE_PREFIX + name.toLowerCase().trim()
+  const normalizedName = name.toLowerCase().trim()
+  const key = CACHE_PREFIX + normalizedName
 
   const cached = localStorage.getItem(key)
   if (cached) {
@@ -143,28 +146,55 @@ export async function getPokemon(name: string): Promise<Pokemon> {
     localStorage.removeItem(key)
   }
 
-  const res = await fetchWithRetry(
-    `${BASE_URL}/pokemon/${encodeURIComponent(name.toLowerCase().trim())}`,
-  )
+  const inFlight = pokemonRequestCache.get(key)
+  if (inFlight) return inFlight
 
-  if (res.status === 404) throw new PokemonNotFoundError(name)
-  if (!res.ok) throw new NetworkError()
+  const request = (async () => {
+    const res = await fetchWithRetry(
+      `${BASE_URL}/pokemon/${encodeURIComponent(normalizedName)}`,
+    )
 
-  const json = (await res.json()) as PokeApiPokemonResponse
-  const data: Pokemon = {
-    name: json.name,
-    types: json.types.map((t) => t.type.name),
-    sprite: json.sprites.front_default,
+    if (res.status === 404) throw new PokemonNotFoundError(name)
+    if (!res.ok) throw new NetworkError()
+
+    const json = (await res.json()) as PokeApiPokemonResponse
+    const data: Pokemon = {
+      name: json.name,
+      types: json.types.map((t) => t.type.name),
+      sprite: json.sprites.front_default,
+    }
+
+    localStorage.setItem(key, JSON.stringify({ data, expires: Date.now() + CACHE_TTL_MS }))
+    return data
+  })()
+
+  pokemonRequestCache.set(key, request)
+  try {
+    return await request
+  } finally {
+    pokemonRequestCache.delete(key)
   }
-
-  localStorage.setItem(key, JSON.stringify({ data, expires: Date.now() + CACHE_TTL_MS }))
-  return data
 }
 
 // --- getPokemonNameIndex ---
 
+async function fetchPokemonNameIndexFromApi(): Promise<string[]> {
+  const countRes = await fetchWithRetry(`${BASE_URL}/pokemon?limit=1`)
+  if (!countRes.ok) throw new NetworkError()
+  const countJson = (await countRes.json()) as PokeApiPokemonListResponse
+
+  const safeLimit = Math.max(1, Math.min(countJson.count || 1, NAME_INDEX_LIMIT))
+
+  const listRes = await fetchWithRetry(`${BASE_URL}/pokemon?limit=${safeLimit}`)
+  if (!listRes.ok) throw new NetworkError()
+
+  const listJson = (await listRes.json()) as PokeApiPokemonListResponse
+  return listJson.results.map((entry) => entry.name.toLowerCase()).filter(Boolean)
+}
+
 export async function getPokemonNameIndex(): Promise<string[]> {
   if (pokemonNameIndexCache) return pokemonNameIndexCache
+  if (pokemonNameIndexPromise) return pokemonNameIndexPromise
 
   const cachedRaw = localStorage.getItem(NAME_INDEX_CACHE_KEY)
   let cached: CachedPokemonNameIndex | null = null
@@ -188,28 +218,30 @@ export async function getPokemonNameIndex(): Promise<string[]> {
     return cached.names
   }
 
-  try {
-    const listRes = await fetchWithRetry(`${BASE_URL}/pokemon?limit=${NAME_INDEX_LIMIT}`)
-    if (!listRes.ok) throw new NetworkError()
+  pokemonNameIndexPromise = (async () => {
+    try {
+      const names = await fetchPokemonNameIndexFromApi()
 
-    const listJson = (await listRes.json()) as PokeApiPokemonListResponse
-    const names = listJson.results.map((entry) => entry.name.toLowerCase()).filter(Boolean)
+      const payload: CachedPokemonNameIndex = {
+        names,
+        expires: Date.now() + CACHE_TTL_MS,
+      }
 
-    const payload: CachedPokemonNameIndex = {
-      names,
-      expires: Date.now() + CACHE_TTL_MS,
+      localStorage.setItem(NAME_INDEX_CACHE_KEY, JSON.stringify(payload))
+      pokemonNameIndexCache = names
+      return names
+    } catch (error) {
+      if (cached && cached.names.length > 0) {
+        pokemonNameIndexCache = cached.names
+        return cached.names
+      }
+      throw error
+    } finally {
+      pokemonNameIndexPromise = null
     }
+  })()
 
-    localStorage.setItem(NAME_INDEX_CACHE_KEY, JSON.stringify(payload))
-    pokemonNameIndexCache = names
-    return names
-  } catch (error) {
-    if (cached && cached.names.length > 0) {
-      pokemonNameIndexCache = cached.names
-      return cached.names
-    }
-    throw error
-  }
+  return pokemonNameIndexPromise
 }
 
 // --- getTypeMap ---

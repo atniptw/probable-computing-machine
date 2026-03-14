@@ -29,9 +29,21 @@ Fetch a Pokémon's type assignments by name.
 
 ---
 
-### GET /pokemon?limit=100000
+### GET /pokemon?limit=1
 
-Fetch the full Pokemon name index for client-side partial search.
+Fetch total Pokemon count to determine the exact index size.
+
+| | |
+|---|---|
+| Auth | None |
+| Cache | None |
+| Purpose | Derive exact `count` before loading names |
+
+---
+
+### GET /pokemon?limit={count}
+
+Fetch the full Pokemon name index for client-side partial search using the exact count from the previous call.
 
 | | |
 |---|---|

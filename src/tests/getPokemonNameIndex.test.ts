@@ -48,7 +48,9 @@ describe('getPokemonNameIndex', () => {
     const names = await getPokemonNameIndex()
 
     expect(names).toEqual(['pikachu', 'eevee'])
-    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenNthCalledWith(1, 'https://pokeapi.co/api/v2/pokemon?limit=1')
+    expect(fetchMock).toHaveBeenNthCalledWith(2, 'https://pokeapi.co/api/v2/pokemon?limit=2')
     expect(storage.getItem('pkm_names_v1')).toBeTruthy()
   })
 
@@ -84,5 +86,38 @@ describe('getPokemonNameIndex', () => {
 
     expect(names).toEqual(['chikorita'])
     expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('deduplicates concurrent index requests', async () => {
+    const storage = new MockStorage()
+    vi.stubGlobal('localStorage', storage)
+
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url.endsWith('limit=1')) {
+        return new Response(
+          JSON.stringify({ count: 2, results: [] }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } },
+        )
+      }
+
+      return new Response(
+        JSON.stringify({
+          count: 2,
+          results: [
+            { name: 'Pikachu', url: 'https://pokeapi.co/api/v2/pokemon/25/' },
+            { name: 'Eevee', url: 'https://pokeapi.co/api/v2/pokemon/133/' },
+          ],
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      )
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const { getPokemonNameIndex } = await import('../services/pokeapi')
+    const [first, second] = await Promise.all([getPokemonNameIndex(), getPokemonNameIndex()])
+
+    expect(first).toEqual(['pikachu', 'eevee'])
+    expect(second).toEqual(['pikachu', 'eevee'])
+    expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 })

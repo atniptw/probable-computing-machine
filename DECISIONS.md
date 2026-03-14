@@ -228,3 +228,57 @@ YYYY-MM-DD
 ### Owner
 
 - Frontend + Architect
+
+---
+
+## DEC-0008
+
+### Date
+
+2026-03-14
+
+### Context
+
+- Devcontainer startup failed while installing `ghcr.io/devcontainers/features/node:1` on Debian `trixie` base.
+- Logs showed apt signature errors with `Not live until` timestamps, causing feature install exit code 100.
+
+### Decision
+
+- Switch devcontainer base image to `mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm`.
+- Remove the separate Node feature and keep only Copilot CLI and GitHub CLI features.
+
+### Consequences
+
+- Positive: more reliable container bootstrap with Node preinstalled and fewer build-time apt operations.
+- Trade-offs: base image moves from `trixie` to `bookworm`, so package versions may be slightly older.
+
+### Owner
+
+- DevOps + Architect
+
+---
+
+## DEC-0009
+
+### Date
+
+2026-03-14
+
+### Context
+
+- Name index retrieval used a fixed `GET /pokemon?limit=100000` request, larger than current dataset size.
+- Rapid state transitions could trigger overlapping requests for the same Pokémon or name index.
+
+### Decision
+
+- Switch name index retrieval to a two-step flow: `GET /pokemon?limit=1` to read `count`, then `GET /pokemon?limit={count}`.
+- Add in-flight request de-duplication for `getPokemon(name)` and `getPokemonNameIndex()` so concurrent identical requests share one network call.
+
+### Consequences
+
+- Positive: fewer duplicate network calls, smaller index payload request size, and better client responsiveness under rapid input changes.
+- Trade-offs: name index fetch requires one additional lightweight request (`limit=1`) before full index retrieval.
+
+### Owner
+
+- Frontend + Architect
