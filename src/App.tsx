@@ -113,25 +113,32 @@ export default function App() {
   const pokemonNameSet = useMemo(() => new Set(pokemonNameIndex), [pokemonNameIndex])
   const exactMatchFound = pokemonNameSet.has(normalizedOpponent)
 
-  const opponentSuggestions = useMemo(() => {
+  const defaultSuggestions = useMemo(
+    () => pokemonNameIndex.slice(0, MAX_SUGGESTIONS),
+    [pokemonNameIndex],
+  )
+
+  function getSuggestions(query: string): string[] {
     if (!pokemonNameIndex.length) return []
 
-    const query = normalizedOpponent
-    if (!query) return pokemonNameIndex.slice(0, MAX_SUGGESTIONS)
+    const normalizedQuery = query.trim().toLowerCase()
+    if (!normalizedQuery) return defaultSuggestions
 
     const prefixMatches: string[] = []
     const containsMatches: string[] = []
 
     for (const name of pokemonNameIndex) {
-      if (name.startsWith(query)) {
+      if (name.startsWith(normalizedQuery)) {
         prefixMatches.push(name)
         continue
       }
-      if (name.includes(query)) containsMatches.push(name)
+      if (name.includes(normalizedQuery)) containsMatches.push(name)
     }
 
     return [...prefixMatches, ...containsMatches].slice(0, MAX_SUGGESTIONS)
-  }, [pokemonNameIndex, normalizedOpponent])
+  }
+
+  const opponentSuggestions = getSuggestions(normalizedOpponent)
 
   function updateTeamSlot(index: number, value: string): void {
     setTeamDraft((current) => {
@@ -363,9 +370,15 @@ export default function App() {
                     className={`${styles.teamInput} ${teamSlotErrors[index] ? styles.teamInputError : ''}`}
                     value={slot}
                     onChange={(e) => updateTeamSlot(index, e.target.value)}
+                    list={`team-name-index-${index}`}
                     placeholder={`Pokemon ${index + 1}`}
                     aria-label={`Team Pokemon ${index + 1}`}
                   />
+                  <datalist id={`team-name-index-${index}`}>
+                    {getSuggestions(slot).map((name) => (
+                      <option value={name} key={name} />
+                    ))}
+                  </datalist>
                   {teamSlotErrors[index] && (
                     <span className={styles.fieldError} role="alert">{teamSlotErrors[index]}</span>
                   )}

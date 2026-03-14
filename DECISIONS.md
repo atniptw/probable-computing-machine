@@ -311,3 +311,30 @@ YYYY-MM-DD
 ### Owner
 
 - Product Owner + Frontend + Architect
+
+---
+
+## DEC-0011
+
+### Date
+
+2026-03-14
+
+### Context
+
+- Team configuration inputs lacked autocomplete while opponent search already used the cached global Pokémon index.
+- Product requested search/autocomplete directly in team entry boxes.
+
+### Decision
+
+- Reuse the existing in-memory name index and prefix-first suggestion logic for team slots.
+- Implement team autocomplete with native HTML `datalist` per slot rather than introducing a custom combobox component.
+
+### Consequences
+
+- Positive: minimal implementation complexity, consistent suggestion behavior with opponent search, and no new dependency surface.
+- Trade-offs: native datalist behavior is browser-defined and offers less control than a custom accessible combobox.
+
+### Owner
+
+- Frontend + Architect

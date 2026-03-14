@@ -295,3 +295,30 @@ YYYY-MM-DD
 
 - Install Playwright browser binaries and rerun smoke e2e.
 - Remove or archive legacy two-team components once final UX is confirmed stable.
+
+---
+
+## 2026-03-14 - Add Team Slot Autocomplete
+
+### Objective
+
+- Add autocomplete/search suggestions to team configuration input boxes.
+
+### Decisions Made
+
+- Reuse the existing global Pokémon name index and prefix-first filtering for team-slot suggestions.
+- Attach a per-slot datalist so each input suggests based on its current typed value.
+
+### Completed
+
+- Updated `src/App.tsx` to provide `getSuggestions(query)` for both opponent and team-slot inputs.
+- Added `list` + `datalist` wiring for all six team inputs in configure mode.
+- Validation run: `npm run tsc` and `npm run test` passed.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Optional: add an e2e assertion specifically for team-slot autocomplete suggestions.
