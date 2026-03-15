@@ -5,14 +5,17 @@
 ```
 App
 ├── Header
-├── ConfigureTeamSection (mode = "configure")
-│   ├── Team slot input × 6
-│   └── Save Team button
-└── MatchupsSection (mode = "matchups")
-    ├── Opponent input + datalist suggestions
-    ├── Edit Team action
-    └── Ranked matchup groups
-        └── Expandable matchup cards
+│   └── EditTeamButton (battle screen only)
+├── OpponentAutocompleteInput (battle screen)
+├── PrimaryRecommendationCard (battle screen)
+├── ExpandableMatchupList (battle screen)
+│   ├── Also Good
+│   ├── Neutral
+│   └── Risky
+├── TeamPreviewBar (battle screen)
+└── Team Configuration Screen
+    ├── TeamSlotInput × 6
+    └── SaveTeamButton
 ```
 
 ## App Contract
@@ -21,14 +24,21 @@ App
 
 ```ts
 state: {
-  mode: 'configure' | 'matchups',
+  screen: 'battle' | 'team',
   teamDraft: string[6],
   teamSlotErrors: (string | null)[6],
   teamNames: string[],
+  teamPreview: Pokemon[],
+  activeTeamSlot: number | null,
   opponentInput: string,
   opponent: Pokemon | null,
-  ranked: RankedMatchup[],
-  expandedCard: string | null,
+  rankedBuckets: {
+    best: RankedTeamEntry[],
+    good: RankedTeamEntry[],
+    neutral: RankedTeamEntry[],
+    risky: RankedTeamEntry[]
+  },
+  showOtherOptions: boolean,
   pokemonNameIndex: string[],
   nameIndexReady: boolean,
   loading: boolean,
@@ -38,10 +48,11 @@ state: {
 
 ## Primary Behaviors
 
-- Configure mode validates and saves team names to `localStorage` (`pmh_team_v1`).
-- Matchups mode auto-computes only when opponent input is an exact indexed name.
-- Output remains grouped cards: `Best`, `Neutral`, `Risky`, `Avoid`.
-- `Edit Team` returns to configure mode without resetting saved team.
+- App opens directly on the battle screen for in-fight speed.
+- Opponent input uses local typeahead suggestions (button list), not datalist dropdown.
+- Ranking is bucketed as `best`, `good`, `neutral`, `risky`; `best` always contains one primary recommendation.
+- Secondary recommendations are collapsed by default behind “Show other options (X)”.
+- Team editor validates each non-empty slot against the cached name index and allows duplicates or fewer than 6 entries.
 
 ## Legacy Note
 

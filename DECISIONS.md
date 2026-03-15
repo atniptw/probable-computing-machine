@@ -258,6 +258,36 @@ YYYY-MM-DD
 
 ---
 
+## DEC-0012
+
+### Date
+
+2026-03-14
+
+### Context
+
+- UX v2 requires one clear recommendation for in-battle speed on mobile.
+- Existing UI emphasized grouped expandable cards and required manual comparison.
+- MVP ranking scope is constrained to type effectiveness only.
+
+### Decision
+
+- Shift to a battle-first default screen with a single `PrimaryRecommendationCard` shown above secondary data.
+- Implement `rankTeamAgainstOpponent(team, opponent)` returning `best`, `good`, `neutral`, `risky` buckets, with exactly one entry in `best`.
+- Keep secondary options collapsed by default behind `Show other options (X)`.
+- Keep team configuration as a separate secondary screen, reachable via `Edit Team` and team preview bar.
+
+### Consequences
+
+- Positive: lower cognitive load and faster switch decisions during gameplay.
+- Trade-offs: less simultaneous detail on screen and additional tap needed to inspect alternatives.
+
+### Owner
+
+- Frontend + Architect
+
+---
+
 ## DEC-0009
 
 ### Date

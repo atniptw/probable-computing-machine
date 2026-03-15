@@ -11,34 +11,40 @@
 }
 
 .header {
-  min-height: 48px;
+  min-height: 54px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 12px;
+  justify-content: space-between;
+  padding: 0 14px;
   background: #f6f6f6;
+  border-bottom: 1px solid #d7dce0;
 }
 
 .header h1 {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
+}
+
+.editTeamButton {
+  border: none;
+  background: transparent;
+  color: #1f2933;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .selectorSection {
-  position: sticky;
-  top: 0;
-  z-index: 2;
   background: #f6f6f6;
-  padding: 8px 12px 10px;
-  border-bottom: 1px solid #d7dce0;
+  padding: 10px 12px;
 }
 
 .selectorLabel {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   color: #5f6b77;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .selectorHeader {
@@ -64,32 +70,14 @@
 }
 
 .selectorRow {
-  height: 52px;
+  min-height: 52px;
   width: 100%;
   border-radius: 12px;
   border: 1px solid #d7dce0;
   background: #ffffff;
   display: flex;
   align-items: center;
-  gap: 8px;
   padding: 0 10px;
-}
-
-.sprite {
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  background: #f2f4f6;
-  display: grid;
-  place-items: center;
-  font-size: 1rem;
-  flex: 0 0 36px;
-}
-
-.sprite img {
-  width: 32px;
-  height: 32px;
-  image-rendering: pixelated;
 }
 
 .selectorInput {
@@ -99,6 +87,32 @@
   font-size: 1rem;
   background: transparent;
   text-transform: capitalize;
+}
+
+.suggestionList {
+  margin-top: 8px;
+  border: 1px solid #d7dce0;
+  border-radius: 12px;
+  background: #ffffff;
+  max-height: 208px;
+  overflow-y: auto;
+}
+
+.suggestionItem {
+  width: 100%;
+  min-height: 44px;
+  border: none;
+  border-bottom: 1px solid #eef1f3;
+  background: transparent;
+  text-align: left;
+  padding: 0 12px;
+  font-size: 0.94rem;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.suggestionItem:last-child {
+  border-bottom: none;
 }
 
 .banner {
@@ -114,7 +128,7 @@
 .resultsPane {
   flex: 1;
   overflow-y: auto;
-  padding: 10px 12px 14px;
+  padding: 6px 12px 14px;
 }
 
 .configurePanel {
@@ -127,7 +141,7 @@
 .configureGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 .teamSlot {
@@ -195,77 +209,124 @@
 }
 
 .group {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .groupTitle {
-  margin: 0 0 6px;
-  font-size: 0.84rem;
-  letter-spacing: 0.03em;
+  margin: 0 0 7px;
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
   color: #4a5562;
-  display: flex;
-  align-items: center;
-  gap: 5px;
 }
 
 .cards {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
-.card {
-  width: 100%;
-  min-height: 64px;
-  border: 1px solid transparent;
-  border-radius: 12px;
+.primaryRecommendationCard {
+  border: 1px solid #2ecc71;
   background: #ffffff;
-  padding: 12px;
-  text-align: left;
-  cursor: pointer;
-  touch-action: manipulation;
+  border-radius: 14px;
+  padding: 14px 12px;
 }
 
-.cardRow1 {
+.primaryLabel {
+  margin: 0;
+  color: #1f2933;
+  font-size: 0.79rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.primaryName {
+  margin: 6px 0 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.typeBadgeRow {
+  margin-top: 8px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.cardIndicator {
-  font-size: 0.8rem;
+.typeBadge {
+  border-radius: 999px;
+  border: 1px solid #d7dce0;
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  font-size: 0.77rem;
   font-weight: 600;
 }
 
-.cardName {
-  font-size: 1rem;
+.reasonText {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  color: #344150;
+}
+
+.effectivenessNote {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  color: #5f6b77;
+}
+
+.expandableList {
+  margin-top: 10px;
+}
+
+.expandButton {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid #d7dce0;
+  background: #ffffff;
+  text-align: left;
+  padding: 0 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1f2933;
+  cursor: pointer;
+}
+
+.otherResults {
+  margin-top: 10px;
+}
+
+.matchupCard {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 10px 11px;
+}
+
+.matchupCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.toneLabel {
+  font-size: 0.77rem;
+  font-weight: 600;
+  color: #4d5a67;
+}
+
+.pokemonName {
+  font-size: 0.97rem;
   font-weight: 700;
   text-transform: capitalize;
 }
 
-.cardRow2 {
-  margin-top: 4px;
-  font-size: 0.84rem;
-  color: #4d5a67;
-  text-transform: capitalize;
-}
-
-.cardDetails {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 180ms ease;
-  color: #4d5a67;
-  font-size: 0.82rem;
-  line-height: 1.35;
-}
-
-.cardDetailsOpen {
-  max-height: 120px;
-  margin-top: 8px;
-}
-
-.best {
+.good {
   border-color: #2ecc71;
 }
 
@@ -277,6 +338,42 @@
   border-color: #e74c3c;
 }
 
-.avoid {
-  border-color: #7f8c8d;
+.teamPreviewBar {
+  margin-top: 12px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #d7dce0;
+  background: #ffffff;
+  padding: 8px 10px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.teamPreviewLabel {
+  color: #5f6b77;
+  font-size: 0.75rem;
+  margin-bottom: 6px;
+}
+
+.teamPreviewTrack {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.teamPreviewChip {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid #d7dce0;
+  background: #f7f9fa;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.teamPreviewChip img {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
 }

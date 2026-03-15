@@ -2,36 +2,50 @@
 
 ## What This Does
 
-The Pokémon Matchup Advisor shows which of your Pokémon are strong or weak against an opponent's team based on type effectiveness. Useful when playing a newer generation you haven't memorised the type chart for yet.
+The Pokémon Matchup Advisor gives one clear recommendation for which Pokémon to send out against a selected opponent, using type effectiveness only.
 
 ## How to Use It
 
-### Step 1 — Configure Your Team
+### Step 1 — Select Opponent on Main Battle Screen
 
-Use the **Configure Team** step to save up to 6 Pokémon. Names are not case-sensitive.
+The app opens to the battle screen by default.
+
+Type 2–3 letters in the **Opponent** input and tap one of the instant suggestions.
+
+### Step 2 — Read the Primary Recommendation
+
+As soon as an exact opponent match is selected, the app shows a large **Best Choice** card with:
+
+- Pokémon name
+- Type badges
+- Reason text (for example: “Immune to Electric ⚡”)
+- “Based on type effectiveness” label
+
+### Step 3 — Expand Optional Secondary Options
+
+Tap **Show other options (X)** to open grouped alternatives:
+
+- Also Good
+- Neutral
+- Risky
+
+### Step 4 — Edit Team (When Needed)
+
+Use **Edit Team** (top-right or team preview bar) to open team configuration.
+
+Use up to 6 slots. Duplicates are allowed. Fewer than 6 entries is valid.
 
 ```
 Examples: pikachu, charizard, blastoise, gengar, machamp, snorlax
 ```
 
-You can fill 1–6 slots. Empty slots are ignored. Click **Save Team** to continue.
-
-### Step 2 — Enter One Opponent
-
-Search for a single opponent in the **Opponent** field.
-
-Opponent search now uses a full cached Pokémon name index from PokéAPI.
-You can type partial text to narrow suggestions, then select or complete an exact name to trigger matchup calculation.
-
-### Step 3 — Check Matchups
-
-Matchups run automatically once your opponent input is an exact Pokémon name.
+Tap **Save Team** to persist locally and return to the battle screen.
 
 ---
 
 ## Reading the Results
 
-Results display as grouped matchup cards for your saved team against the selected opponent.
+Results prioritize one primary recommendation first, then optional secondary groups.
 
 ### Effectiveness Labels
 
@@ -43,30 +57,28 @@ Results display as grouped matchup cards for your saved team against the selecte
 | **0×** | No Effect — your attack does nothing |
 
 Each card shows two values:
-- **Attack effectiveness**: your team member into the selected opponent
-- **Defensive risk**: selected opponent into your team member
+- Defensive type result reason text (immune/resists/neutral/weak)
+- Type badges for quick scanning
 
-### Summary Bar
-
-Below the grid: a count of how many of your matchups are super effective, neutral, or not very effective.
+Team preview appears as a horizontal bar of small team icons and opens the editor on tap.
 
 ---
 
 ## Example
 
-Saved team includes Pikachu (Electric) and Charizard (Fire/Flying).
-Selected opponent is Blastoise (Water).
+Saved team includes Swampert, Manectric, and Breloom.
+Selected opponent is Pikachu.
 
-- Pikachu might appear in **Best** (2× attack, low defensive risk).
-- Charizard might appear in **Risky** (0.5× attack, higher defensive risk).
+- Swampert appears as **Best Choice** because it is immune to Electric.
+- Other team members appear under **Also Good**, **Neutral**, or **Risky**.
 
 ---
 
 ## Tips
 
-- A **0×** matchup means complete immunity — switch out immediately, your attack does nothing.
+- A **0×** incoming matchup means complete immunity to that opponent type.
 - Dual-type Pokémon stack modifiers — a 2× against both types means 4× total damage.
-- Use the summary bar to quickly identify your strongest team member against the opponent.
+- Keep secondary options collapsed unless you need alternatives quickly.
 
 ---
 

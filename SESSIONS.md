@@ -238,6 +238,39 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-14 - Implement Battle-First Mobile UX v2
+
+### Objective
+
+- Implement the v2 UX spec with a single clear primary recommendation and low-cognitive-load battle flow.
+
+### Decisions Made
+
+- Open app on battle screen by default and keep team editing as secondary screen.
+- Use local custom typeahead suggestion lists for opponent and team slots instead of native datalist dropdowns.
+- Enforce one primary recommendation and collapse all secondary options by default.
+
+### Completed
+
+- Added ranking contract and reason generator in `src/services/ranking.ts` with buckets: `best`, `good`, `neutral`, `risky`.
+- Refactored `src/App.tsx` into battle-first flow with `PrimaryRecommendationCard`, `ExpandableMatchupList`, `TeamPreviewBar`, and team configuration screen.
+- Updated styling in `src/App.module.css` for mobile-first hierarchy and larger tap targets.
+- Added unit tests in `src/tests/ranking.test.ts`.
+- Updated Playwright smoke test in `e2e/matchup-smoke.spec.ts` to validate new typeahead + primary recommendation flow.
+- Verified `npm run tsc`, `npm run test`, and `npm run e2e -- e2e/matchup-smoke.spec.ts --project=chromium`.
+- Updated docs in `README.md`, `docs/COMPONENT_DESIGN.md`, `docs/USER_GUIDE.md`, and `docs/DATA_FLOW.md`.
+
+### Blockers
+
+- None after installing Playwright Chromium runtime locally.
+
+### Next Actions
+
+- Add regression coverage for team editor validation edge cases (invalid slot values and mixed empty/filled states).
+- Review mobile ergonomics on small-height devices for above-the-fold best-choice visibility.
+
+---
+
 ## 2026-03-14 - Optimize PokéAPI Call Efficiency
 
 ### Objective

@@ -4,7 +4,7 @@ Foundational project workspace for a new web app.
 
 ## Current Status
 
-- Stage: design documentation in progress
+- Stage: MVP battle UX implemented (mobile-first)
 - Product: Pokémon type matchup advisor (static web app)
 - Stack: React 18 + Vite, hosted on GitHub Pages
 - Collaboration cadence: continuous flow with explicit role handoffs
@@ -33,6 +33,6 @@ Foundational project workspace for a new web app.
 
 ## Next Immediate Actions
 
-1. Complete design documentation stubs in `docs/`.
-2. Scaffold the React + Vite project.
-3. Create GitHub issues for each MVP story.
+1. Validate mobile ergonomics on additional device sizes.
+2. Add acceptance scenarios for team editing edge cases.
+3. Plan vNext ranking inputs (moves, abilities, stats).

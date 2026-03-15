@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  calcEffectiveness,
   getPokemonNameIndex,
   getPokemon,
   getTypeMap,
   PokemonNotFoundError,
   RateLimitError,
-  type Effectiveness,
   type Pokemon,
 } from './services/pokeapi'
+import { rankTeamAgainstOpponent, type RankedTeamBuckets, type RankedTeamEntry } from './services/ranking'
 import styles from './App.module.css'
 
 const EMERALD_DEFAULT_TEAM = [
@@ -21,18 +20,6 @@ const EMERALD_DEFAULT_TEAM = [
 ]
 const TEAM_SIZE = 6
 const MAX_SUGGESTIONS = 20
-
-type MatchCategory = 'Best' | 'Neutral' | 'Risky' | 'Avoid'
-
-interface RankedMatchup {
-  pokemon: Pokemon
-  attackMod: number
-  defenseMod: number
-  attackLabel: Effectiveness
-  defenseLabel: Effectiveness
-  category: MatchCategory
-  score: number
-}
 
 function readConfiguredTeam(): string[] {
   const raw = localStorage.getItem('pmh_team_v1')
@@ -57,36 +44,23 @@ function toTeamSlots(values: string[]): string[] {
   return slots
 }
 
-function modifierLabel(mod: number): Effectiveness {
-  if (mod >= 2) return '2x'
-  if (mod === 1) return '1x'
-  if (mod > 0) return '0.5x'
-  return '0x'
-}
+type Screen = 'battle' | 'team'
 
-function categorize(attackMod: number, defenseMod: number): MatchCategory {
-  if (attackMod === 0 || defenseMod >= 4) return 'Avoid'
-  if (attackMod >= 2 && defenseMod <= 1) return 'Best'
-  if (attackMod < 1 || defenseMod > 1) return 'Risky'
-  return 'Neutral'
-}
-
-function categoryRank(category: MatchCategory): number {
-  if (category === 'Best') return 3
-  if (category === 'Neutral') return 2
-  if (category === 'Risky') return 1
-  return 0
+function toTitleCase(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
 export default function App() {
-  const [mode, setMode] = useState<'configure' | 'matchups'>('configure')
+  const [screen, setScreen] = useState<Screen>('battle')
   const [teamDraft, setTeamDraft] = useState<string[]>(() => toTeamSlots(readConfiguredTeam()))
   const [teamSlotErrors, setTeamSlotErrors] = useState<(string | null)[]>(() => Array.from({ length: TEAM_SIZE }, () => null))
   const [teamNames, setTeamNames] = useState<string[]>(() => readConfiguredTeam())
+  const [teamPreview, setTeamPreview] = useState<Pokemon[]>([])
+  const [activeTeamSlot, setActiveTeamSlot] = useState<number | null>(null)
   const [opponentInput, setOpponentInput] = useState('')
   const [opponent, setOpponent] = useState<Pokemon | null>(null)
-  const [ranked, setRanked] = useState<RankedMatchup[]>([])
-  const [expandedCard, setExpandedCard] = useState<string | null>(null)
+  const [rankedBuckets, setRankedBuckets] = useState<RankedTeamBuckets>({ best: [], good: [], neutral: [], risky: [] })
+  const [showOtherOptions, setShowOtherOptions] = useState(false)
   const [pokemonNameIndex, setPokemonNameIndex] = useState<string[]>([])
   const [nameIndexReady, setNameIndexReady] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -118,6 +92,9 @@ export default function App() {
     [pokemonNameIndex],
   )
 
+  const otherOptionCount = rankedBuckets.good.length + rankedBuckets.neutral.length + rankedBuckets.risky.length
+  const primaryRecommendation = rankedBuckets.best[0] ?? null
+
   function getSuggestions(query: string): string[] {
     if (!pokemonNameIndex.length) return []
 
@@ -139,6 +116,32 @@ export default function App() {
   }
 
   const opponentSuggestions = getSuggestions(normalizedOpponent)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadTeamPreview(): Promise<void> {
+      if (!teamNames.length) {
+        setTeamPreview([])
+        return
+      }
+
+      const results = await Promise.allSettled(teamNames.map((name) => getPokemon(name)))
+      if (cancelled) return
+
+      const nextPreview = results
+        .filter((result): result is PromiseFulfilledResult<Pokemon> => result.status === 'fulfilled')
+        .map((result) => result.value)
+
+      setTeamPreview(nextPreview)
+    }
+
+    void loadTeamPreview()
+
+    return () => {
+      cancelled = true
+    }
+  }, [teamNames])
 
   function updateTeamSlot(index: number, value: string): void {
     setTeamDraft((current) => {
@@ -183,23 +186,20 @@ export default function App() {
 
     localStorage.setItem('pmh_team_v1', JSON.stringify(nextTeam))
     setTeamNames(nextTeam)
-    setMode('matchups')
+    setScreen('battle')
     setError(null)
-    setExpandedCard(null)
-    setOpponentInput('')
-    setOpponent(null)
-    setRanked([])
+    setActiveTeamSlot(null)
   }
 
   useEffect(() => {
-    if (mode !== 'matchups') {
+    if (screen !== 'battle') {
       setLoading(false)
       return
     }
 
     if (!normalizedOpponent) {
       setOpponent(null)
-      setRanked([])
+      setRankedBuckets({ best: [], good: [], neutral: [], risky: [] })
       setError(null)
       return
     }
@@ -208,14 +208,14 @@ export default function App() {
 
     if (!exactMatchFound) {
       setOpponent(null)
-      setRanked([])
+      setRankedBuckets({ best: [], good: [], neutral: [], risky: [] })
       setError(null)
       return
     }
 
     if (!teamNames.length) {
       setOpponent(null)
-      setRanked([])
+      setRankedBuckets({ best: [], good: [], neutral: [], risky: [] })
       setError(null)
       return
     }
@@ -234,30 +234,11 @@ export default function App() {
 
         if (cancelled) return
 
-        const rankedEntries = teamPokemon
-          .map((member): RankedMatchup => {
-            const attackMod = calcEffectiveness(member.types, opponentPokemon.types, typeMap)
-            const defenseMod = calcEffectiveness(opponentPokemon.types, member.types, typeMap)
-            const category = categorize(attackMod, defenseMod)
-            const score = attackMod / Math.max(defenseMod, 0.25)
-            return {
-              pokemon: member,
-              attackMod,
-              defenseMod,
-              attackLabel: modifierLabel(attackMod),
-              defenseLabel: modifierLabel(defenseMod),
-              category,
-              score,
-            }
-          })
-          .sort((a, b) => {
-            const catDelta = categoryRank(b.category) - categoryRank(a.category)
-            if (catDelta !== 0) return catDelta
-            return b.score - a.score
-          })
+        const nextRanked = rankTeamAgainstOpponent(teamPokemon, opponentPokemon, typeMap)
 
         setOpponent(opponentPokemon)
-        setRanked(rankedEntries)
+        setRankedBuckets(nextRanked)
+        setShowOtherOptions(false)
       } catch (err) {
         if (cancelled) return
         if (err instanceof PokemonNotFoundError) {
@@ -277,78 +258,106 @@ export default function App() {
     return () => {
       cancelled = true
     }
-  }, [exactMatchFound, mode, nameIndexReady, normalizedOpponent, teamNames])
+  }, [exactMatchFound, nameIndexReady, normalizedOpponent, screen, teamNames])
 
-  const grouped = useMemo(() => {
-    const groups: Record<MatchCategory, RankedMatchup[]> = {
-      Best: [],
-      Neutral: [],
-      Risky: [],
-      Avoid: [],
-    }
-    for (const item of ranked) groups[item.category].push(item)
-    return groups
-  }, [ranked])
+  function renderTypeBadges(types: string[]): JSX.Element {
+    return (
+      <div className={styles.typeBadgeRow}>
+        {types.map((typeName) => (
+          <span className={styles.typeBadge} key={typeName}>
+            {toTitleCase(typeName)}
+          </span>
+        ))}
+      </div>
+    )
+  }
 
-  function categoryIcon(category: MatchCategory): string {
-    if (category === 'Best') return '🟢'
-    if (category === 'Neutral') return '🟡'
-    if (category === 'Risky') return '🔴'
-    return '⚫'
+  function toneIcon(tone: 'good' | 'neutral' | 'risky'): string {
+    if (tone === 'good') return '🟢'
+    if (tone === 'neutral') return '🟡'
+    return '🔴'
+  }
+
+  function renderMatchupCard(entry: RankedTeamEntry, tone: 'good' | 'neutral' | 'risky'): JSX.Element {
+    return (
+      <article className={`${styles.matchupCard} ${styles[tone]}`} key={entry.pokemon.name}>
+        <div className={styles.matchupCardHeader}>
+          <span className={styles.toneLabel}>{toneIcon(tone)} {tone === 'good' ? 'Also Good' : toTitleCase(tone)}</span>
+          <strong className={styles.pokemonName}>{toTitleCase(entry.pokemon.name)}</strong>
+        </div>
+        {renderTypeBadges(entry.pokemon.types)}
+        <p className={styles.reasonText}>{entry.reason}</p>
+      </article>
+    )
   }
 
   return (
     <div className={styles.app}>
       <header className={styles.header}>
         <h1>Pokémon Matchup Helper</h1>
+        {screen === 'battle' && (
+          <button
+            type="button"
+            className={styles.editTeamButton}
+            onClick={() => {
+              setTeamDraft(toTeamSlots(teamNames))
+              setTeamSlotErrors(Array.from({ length: TEAM_SIZE }, () => null))
+              setError(null)
+              setScreen('team')
+            }}
+          >
+            Edit Team
+          </button>
+        )}
       </header>
 
-      {mode === 'configure' ? (
+      {screen === 'battle' ? (
         <section className={styles.selectorSection}>
-          <div className={styles.selectorLabel}>Configure Team</div>
-          <p className={styles.configureHint}>Set 1–6 Pokémon for your saved team before checking opponent matchups.</p>
+          <div className={styles.selectorLabel}>Opponent</div>
+          <label className={styles.selectorRow} htmlFor="opponent-input">
+            <input
+              id="opponent-input"
+              className={styles.selectorInput}
+              value={opponentInput}
+              onChange={(e) => {
+                setOpponentInput(e.target.value)
+                setShowOtherOptions(false)
+              }}
+              placeholder="Type 2–3 letters (e.g. pik)"
+              aria-label="Opponent Pokemon"
+            />
+          </label>
+          {!!normalizedOpponent && !exactMatchFound && opponentSuggestions.length > 0 && (
+            <div className={styles.suggestionList} role="listbox" aria-label="Opponent suggestions">
+              {opponentSuggestions.map((name) => (
+                <button
+                  key={name}
+                  type="button"
+                  className={styles.suggestionItem}
+                  onClick={() => setOpponentInput(name)}
+                >
+                  {toTitleCase(name)}
+                </button>
+              ))}
+            </div>
+          )}
         </section>
       ) : (
         <section className={styles.selectorSection}>
           <div className={styles.selectorHeader}>
-            <div className={styles.selectorLabel}>Opponent</div>
+            <div className={styles.selectorLabel}>Team Configuration</div>
             <button
               type="button"
               className={styles.linkButton}
               onClick={() => {
-                setMode('configure')
+                setScreen('battle')
                 setError(null)
-                setExpandedCard(null)
               }}
             >
-              Edit Team
+              Back
             </button>
           </div>
-          <label className={styles.selectorRow}>
-            <span className={styles.sprite} aria-hidden="true">
-              {opponent?.sprite ? (
-                <img src={opponent.sprite} alt="" />
-              ) : (
-                '🎯'
-              )}
-            </span>
-            <input
-              className={styles.selectorInput}
-              list="pokemon-name-index"
-              value={opponentInput}
-              onChange={(e) => {
-                setExpandedCard(null)
-                setOpponentInput(e.target.value)
-              }}
-              placeholder="Search opponent (e.g. salamence)"
-              aria-label="Opponent Pokemon"
-            />
-          </label>
-          <datalist id="pokemon-name-index">
-            {opponentSuggestions.map((name) => (
-              <option value={name} key={name} />
-            ))}
-          </datalist>
+          <p className={styles.configureHint}>Save 1–6 valid Pokémon for quick matchup recommendations.</p>
         </section>
       )}
 
@@ -359,26 +368,43 @@ export default function App() {
       )}
 
       <main className={styles.resultsPane}>
-        {mode === 'configure' ? (
+        {screen === 'team' ? (
           <section className={styles.configurePanel}>
             <div className={styles.configureGrid}>
               {teamDraft.map((slot, index) => (
                 <div className={styles.teamSlot} key={`team-slot-${index}`}>
-                  <label htmlFor={`team-slot-${index}`}>Team Pokemon {index + 1}</label>
+                  <label htmlFor={`team-slot-${index}`}>Team Slot {index + 1}</label>
                   <input
                     id={`team-slot-${index}`}
                     className={`${styles.teamInput} ${teamSlotErrors[index] ? styles.teamInputError : ''}`}
                     value={slot}
                     onChange={(e) => updateTeamSlot(index, e.target.value)}
-                    list={`team-name-index-${index}`}
+                    onFocus={() => setActiveTeamSlot(index)}
+                    onBlur={() => {
+                      window.setTimeout(() => {
+                        setActiveTeamSlot((current) => (current === index ? null : current))
+                      }, 120)
+                    }}
                     placeholder={`Pokemon ${index + 1}`}
-                    aria-label={`Team Pokemon ${index + 1}`}
+                    aria-label={`Team Slot ${index + 1}`}
                   />
-                  <datalist id={`team-name-index-${index}`}>
-                    {getSuggestions(slot).map((name) => (
-                      <option value={name} key={name} />
-                    ))}
-                  </datalist>
+                  {activeTeamSlot === index && !!slot.trim() && getSuggestions(slot).length > 0 && (
+                    <div className={styles.suggestionList} role="listbox" aria-label={`Suggestions for team slot ${index + 1}`}>
+                      {getSuggestions(slot).map((name) => (
+                        <button
+                          type="button"
+                          key={`${name}-${index}`}
+                          className={styles.suggestionItem}
+                          onClick={() => {
+                            updateTeamSlot(index, name)
+                            setActiveTeamSlot(null)
+                          }}
+                        >
+                          {toTitleCase(name)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   {teamSlotErrors[index] && (
                     <span className={styles.fieldError} role="alert">{teamSlotErrors[index]}</span>
                   )}
@@ -398,57 +424,85 @@ export default function App() {
         ) : (
           <>
             {!teamNames.length && (
-              <p className={styles.empty}>Add Pokémon to your team to see results.</p>
+              <p className={styles.empty}>Tap Edit Team to add Pokémon before checking matchups.</p>
             )}
 
             {!!teamNames.length && !normalizedOpponent && (
-              <p className={styles.empty}>Select an opponent Pokémon to see matchups.</p>
+              <p className={styles.empty}>Select an opponent to see your best choice instantly.</p>
             )}
 
             {!!teamNames.length && !!normalizedOpponent && loading && (
               <p className={styles.empty}>Calculating matchups...</p>
             )}
 
-            {!!teamNames.length && !!opponent && !loading && (
+            {!!teamNames.length && !!opponent && !loading && !!primaryRecommendation && (
               <>
-                {(['Best', 'Neutral', 'Risky', 'Avoid'] as MatchCategory[]).map((category) => {
-                  const entries = grouped[category]
-                  if (!entries.length) return null
-                  return (
-                    <section className={styles.group} key={category}>
-                      <h2 className={styles.groupTitle}>
-                        <span>{categoryIcon(category)}</span>
-                        <span>{category.toUpperCase()}</span>
-                      </h2>
-                      <div className={styles.cards}>
-                        {entries.map((entry) => {
-                          const isExpanded = expandedCard === entry.pokemon.name
-                          return (
-                            <button
-                              key={entry.pokemon.name}
-                              type="button"
-                              className={`${styles.card} ${styles[entry.category.toLowerCase()]}`}
-                              onClick={() => setExpandedCard(isExpanded ? null : entry.pokemon.name)}
-                              aria-expanded={isExpanded}
-                            >
-                              <div className={styles.cardRow1}>
-                                <span className={styles.cardIndicator}>{categoryIcon(entry.category)} {entry.category}</span>
-                                <span className={styles.cardName}>{entry.pokemon.name}</span>
-                              </div>
-                              <div className={styles.cardRow2}>{entry.pokemon.types.join(' / ')}</div>
-                              <div className={`${styles.cardDetails} ${isExpanded ? styles.cardDetailsOpen : ''}`}>
-                                <div>Attack effectiveness: <strong>{entry.attackLabel}</strong></div>
-                                <div>Defensive risk: <strong>{entry.defenseLabel}</strong></div>
-                                <div>Tip: prioritize fast, reliable STAB moves.</div>
-                              </div>
-                            </button>
-                          )
-                        })}
+                <article className={styles.primaryRecommendationCard}>
+                  <div className={styles.primaryLabel}>🟢 Best Choice</div>
+                  <h2 className={styles.primaryName}>{toTitleCase(primaryRecommendation.pokemon.name)}</h2>
+                  {renderTypeBadges(primaryRecommendation.pokemon.types)}
+                  <p className={styles.reasonText}>{primaryRecommendation.reason}</p>
+                  <p className={styles.effectivenessNote}>Based on type effectiveness</p>
+                </article>
+
+                {otherOptionCount > 0 && (
+                  <section className={styles.expandableList}>
+                    <button
+                      type="button"
+                      className={styles.expandButton}
+                      onClick={() => setShowOtherOptions((current) => !current)}
+                      aria-expanded={showOtherOptions}
+                    >
+                      Show other options ({otherOptionCount}) {showOtherOptions ? '▴' : '▾'}
+                    </button>
+
+                    {showOtherOptions && (
+                      <div className={styles.otherResults}>
+                        {!!rankedBuckets.good.length && (
+                          <section className={styles.group}>
+                            <h3 className={styles.groupTitle}>Also Good</h3>
+                            <div className={styles.cards}>{rankedBuckets.good.map((entry) => renderMatchupCard(entry, 'good'))}</div>
+                          </section>
+                        )}
+
+                        {!!rankedBuckets.neutral.length && (
+                          <section className={styles.group}>
+                            <h3 className={styles.groupTitle}>Neutral</h3>
+                            <div className={styles.cards}>{rankedBuckets.neutral.map((entry) => renderMatchupCard(entry, 'neutral'))}</div>
+                          </section>
+                        )}
+
+                        {!!rankedBuckets.risky.length && (
+                          <section className={styles.group}>
+                            <h3 className={styles.groupTitle}>Risky</h3>
+                            <div className={styles.cards}>{rankedBuckets.risky.map((entry) => renderMatchupCard(entry, 'risky'))}</div>
+                          </section>
+                        )}
                       </div>
-                    </section>
-                  )
-                })}
+                    )}
+                  </section>
+                )}
               </>
+            )}
+
+            {!!teamNames.length && (
+              <button
+                type="button"
+                className={styles.teamPreviewBar}
+                onClick={() => {
+                  setTeamDraft(toTeamSlots(teamNames))
+                  setScreen('team')
+                }}
+              >
+                <div className={styles.teamPreviewLabel}>Team</div>
+                <div className={styles.teamPreviewTrack}>
+                  {teamPreview.map((pokemon) => (
+                    <span className={styles.teamPreviewChip} key={`preview-${pokemon.name}`}>
+                      {pokemon.sprite ? <img src={pokemon.sprite} alt="" /> : <span>{toTitleCase(pokemon.name).charAt(0)}</span>}
+                    </span>
+                  ))}
+                </div>
+              </button>
             )}
           </>
         )}

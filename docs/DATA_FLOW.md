@@ -3,20 +3,21 @@
 ## Full User Flow
 
 ```
-1. App mounts in Configure Team mode.
+1. App mounts in Battle screen mode.
 2. App warms type cache (`getTypeMap`) and loads Pokémon name index (`getPokemonNameIndex`).
-3. User enters 1–6 Pokémon names and clicks "Save Team".
-4. App validates each non-empty slot against the loaded name index.
-   - Invalid entries show inline field errors.
-   - Valid team is normalized/lowercased and stored in localStorage (`pmh_team_v1`).
-5. App switches to Matchups mode.
-6. User types opponent name in the Opponent input.
-7. When opponent is an exact indexed match, app fetches:
+3. App loads team preview details for saved names (`pmh_team_v1`) in parallel.
+4. User types opponent name in the Opponent input and taps a typeahead suggestion.
+5. When opponent is an exact indexed match, app fetches:
    - cached/in-flight-deduped `getPokemon(opponent)`
    - cached/in-flight-deduped `getPokemon(teamMember)` for each saved team member
    - cached `getTypeMap()`
-8. App computes per-member matchup labels and category buckets (`Best/Neutral/Risky/Avoid`).
-9. Grouped matchup cards render for the selected opponent.
+6. App computes recommendation buckets via `rankTeamAgainstOpponent(team, opponent)`:
+   - `best` (single primary recommendation)
+   - `good`
+   - `neutral`
+   - `risky`
+7. App renders `PrimaryRecommendationCard` above the fold; secondary groups stay collapsed until user expands.
+8. If user taps `Edit Team`, app enters Team Configuration screen, validates slots, saves locally, then returns to battle screen.
 ```
 
 ## Request + Cache Behavior
@@ -43,9 +44,9 @@ getPokemon(name)
 ## Render State Machine
 
 ```
-mode = configure → team editor + Save Team
-mode = matchups, no opponent → empty hint
-mode = matchups, exact opponent + loading → calculating hint
-mode = matchups, exact opponent + loaded → grouped matchup cards
-error != null → banner visible in both modes
+screen = battle, no opponent → empty hint
+screen = battle, exact opponent + loading → calculating hint
+screen = battle, exact opponent + loaded → primary recommendation + collapsed secondary options
+screen = team → slot editor + inline validation + Save Team
+error != null → banner visible in both screens
 ```
