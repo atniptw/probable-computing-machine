@@ -231,6 +231,40 @@ YYYY-MM-DD
 
 ---
 
+## DEC-0013
+
+### Date
+
+2026-03-14
+
+### Context
+
+- Users need recommendations tied to a specific game, not global latest-generation data.
+- Existing flow used all Pokémon names and current type/chart assumptions, which can be incorrect for older games.
+- Scope required strict game Pokédex membership and generation-specific type-rule handling.
+
+### Decision
+
+- Add a user-selectable game version in the UI and persist it locally (`pmh_game_v1`).
+- Build Pokémon autocomplete/validation from selected game Pokédex using PokéAPI chain:
+	- `/version/{version}`
+	- `/version-group/{version_group}`
+	- `/pokedex/{pokedex}`
+- Apply generation-aware rule handling in services:
+	- use `past_types` when resolving Pokémon typing for older generations,
+	- apply key generation type-chart overrides (Fairy removal pre-Gen 6, Dark/Steel removal pre-Gen 2, key historical relation adjustments).
+
+### Consequences
+
+- Positive: recommendations are aligned with selected game roster and historical typing/rule context.
+- Trade-offs: additional API calls for game Pokédex metadata and increased service complexity.
+
+### Owner
+
+- Frontend + Architect
+
+---
+
 ## DEC-0008
 
 ### Date

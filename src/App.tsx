@@ -8,6 +8,7 @@ import {
   type Pokemon,
 } from './services/pokeapi'
 import { rankTeamAgainstOpponent, type RankedTeamBuckets, type RankedTeamEntry } from './services/ranking'
+import { DEFAULT_GAME_VERSION, SUPPORTED_GAMES, getGameDefinition } from './data/games'
 import styles from './App.module.css'
 
 const EMERALD_DEFAULT_TEAM = [
@@ -21,6 +22,8 @@ const EMERALD_DEFAULT_TEAM = [
 const TEAM_SIZE = 6
 const MAX_SUGGESTIONS = 20
 
+type Screen = 'battle' | 'team'
+
 function readConfiguredTeam(): string[] {
   const raw = localStorage.getItem('pmh_team_v1')
   if (!raw) return [...EMERALD_DEFAULT_TEAM]
@@ -30,10 +33,16 @@ function readConfiguredTeam(): string[] {
     return parsed
       .map((n) => n.trim().toLowerCase())
       .filter(Boolean)
-      .slice(0, 6)
+      .slice(0, TEAM_SIZE)
   } catch {
     return [...EMERALD_DEFAULT_TEAM]
   }
+}
+
+function readSelectedGame(): string {
+  const raw = localStorage.getItem('pmh_game_v1')?.trim().toLowerCase()
+  if (!raw) return DEFAULT_GAME_VERSION
+  return getGameDefinition(raw) ? raw : DEFAULT_GAME_VERSION
 }
 
 function toTeamSlots(values: string[]): string[] {
@@ -44,13 +53,12 @@ function toTeamSlots(values: string[]): string[] {
   return slots
 }
 
-type Screen = 'battle' | 'team'
-
 function toTitleCase(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
 export default function App() {
+  const [selectedGameVersion, setSelectedGameVersion] = useState<string>(() => readSelectedGame())
   const [screen, setScreen] = useState<Screen>('battle')
   const [teamDraft, setTeamDraft] = useState<string[]>(() => toTeamSlots(readConfiguredTeam()))
   const [teamSlotErrors, setTeamSlotErrors] = useState<(string | null)[]>(() => Array.from({ length: TEAM_SIZE }, () => null))
@@ -66,22 +74,33 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const selectedGame = useMemo(() => {
+    return getGameDefinition(selectedGameVersion) ?? getGameDefinition(DEFAULT_GAME_VERSION)!
+  }, [selectedGameVersion])
+
   useEffect(() => {
-    void getTypeMap().catch(() => {
-      // Warm cache to keep opponent-switch updates snappy.
+    setNameIndexReady(false)
+    setPokemonNameIndex([])
+
+    void getTypeMap({ generation: selectedGame.generation }).catch(() => {
+      // Warm generation-specific cache to keep matchup updates snappy.
     })
 
-    void getPokemonNameIndex()
+    void getPokemonNameIndex(selectedGame.version)
       .then((names) => {
         setPokemonNameIndex(names)
       })
       .catch(() => {
-        setError('Unable to load Pokemon search index. Please try again.')
+        setError(`Unable to load ${selectedGame.label} Pokédex index. Please try again.`)
       })
       .finally(() => {
         setNameIndexReady(true)
       })
-  }, [])
+  }, [selectedGame.generation, selectedGame.label, selectedGame.version])
+
+  useEffect(() => {
+    localStorage.setItem('pmh_game_v1', selectedGame.version)
+  }, [selectedGame.version])
 
   const normalizedOpponent = opponentInput.trim().toLowerCase()
   const pokemonNameSet = useMemo(() => new Set(pokemonNameIndex), [pokemonNameIndex])
@@ -126,7 +145,9 @@ export default function App() {
         return
       }
 
-      const results = await Promise.allSettled(teamNames.map((name) => getPokemon(name)))
+      const results = await Promise.allSettled(
+        teamNames.map((name) => getPokemon(name, { generation: selectedGame.generation })),
+      )
       if (cancelled) return
 
       const nextPreview = results
@@ -141,7 +162,18 @@ export default function App() {
     return () => {
       cancelled = true
     }
-  }, [teamNames])
+  }, [selectedGame.generation, teamNames])
+
+  useEffect(() => {
+    if (!pokemonNameIndex.length) return
+
+    const teamStillValid = teamNames.every((name) => pokemonNameSet.has(name))
+    if (!teamStillValid) {
+      setOpponent(null)
+      setRankedBuckets({ best: [], good: [], neutral: [], risky: [] })
+      setError(`Your saved team has Pokémon outside the ${selectedGame.label} Pokédex. Tap Edit Team to fix it.`)
+    }
+  }, [pokemonNameIndex.length, pokemonNameSet, selectedGame.label, teamNames])
 
   function updateTeamSlot(index: number, value: string): void {
     setTeamDraft((current) => {
@@ -160,14 +192,14 @@ export default function App() {
 
   function saveTeam(): void {
     if (!nameIndexReady) {
-      setError('Pokemon index is still loading. Please wait a moment and try again.')
+      setError('Pokédex index is still loading. Please wait a moment and try again.')
       return
     }
 
     const normalized = teamDraft.map((slot) => slot.trim().toLowerCase())
     const nextErrors = normalized.map((name) => {
       if (!name) return null
-      if (!pokemonNameSet.has(name)) return 'Pokemon not found in index.'
+      if (!pokemonNameSet.has(name)) return `Not available in ${selectedGame.label}.`
       return null
     })
 
@@ -180,7 +212,7 @@ export default function App() {
 
     const nextTeam = normalized.filter(Boolean)
     if (!nextTeam.length) {
-      setError('Enter at least one valid Pokemon for your team.')
+      setError('Enter at least one valid Pokémon for your team.')
       return
     }
 
@@ -220,6 +252,14 @@ export default function App() {
       return
     }
 
+    const invalidSavedTeam = teamNames.some((name) => !pokemonNameSet.has(name))
+    if (invalidSavedTeam) {
+      setOpponent(null)
+      setRankedBuckets({ best: [], good: [], neutral: [], risky: [] })
+      setError(`Your saved team has Pokémon outside the ${selectedGame.label} Pokédex.`)
+      return
+    }
+
     let cancelled = false
 
     async function run(): Promise<void> {
@@ -227,9 +267,9 @@ export default function App() {
       setError(null)
       try {
         const [typeMap, opponentPokemon, teamPokemon] = await Promise.all([
-          getTypeMap(),
-          getPokemon(normalizedOpponent),
-          Promise.all(teamNames.map((name) => getPokemon(name))),
+          getTypeMap({ generation: selectedGame.generation }),
+          getPokemon(normalizedOpponent, { generation: selectedGame.generation }),
+          Promise.all(teamNames.map((name) => getPokemon(name, { generation: selectedGame.generation }))),
         ])
 
         if (cancelled) return
@@ -242,7 +282,7 @@ export default function App() {
       } catch (err) {
         if (cancelled) return
         if (err instanceof PokemonNotFoundError) {
-          setError('Pokemon not found. Please select a valid Pokemon name.')
+          setError('Pokémon not found. Please select a valid name.')
         } else if (err instanceof RateLimitError) {
           setError('Rate limit reached. Please wait a moment and try again.')
         } else {
@@ -258,7 +298,16 @@ export default function App() {
     return () => {
       cancelled = true
     }
-  }, [exactMatchFound, nameIndexReady, normalizedOpponent, screen, teamNames])
+  }, [exactMatchFound, nameIndexReady, normalizedOpponent, pokemonNameSet, screen, selectedGame.generation, selectedGame.label, teamNames])
+
+  function handleGameChange(nextVersion: string): void {
+    setSelectedGameVersion(nextVersion)
+    setOpponentInput('')
+    setOpponent(null)
+    setRankedBuckets({ best: [], good: [], neutral: [], risky: [] })
+    setShowOtherOptions(false)
+    setError(null)
+  }
 
   function renderTypeBadges(types: string[]): JSX.Element {
     return (
@@ -313,6 +362,21 @@ export default function App() {
 
       {screen === 'battle' ? (
         <section className={styles.selectorSection}>
+          <div className={styles.gameSelectorRow}>
+            <label htmlFor="game-version" className={styles.selectorLabel}>Game</label>
+            <select
+              id="game-version"
+              className={styles.gameSelector}
+              value={selectedGame.version}
+              onChange={(e) => handleGameChange(e.target.value)}
+              aria-label="Game Version"
+            >
+              {SUPPORTED_GAMES.map((game) => (
+                <option key={game.version} value={game.version}>{game.label}</option>
+              ))}
+            </select>
+          </div>
+
           <div className={styles.selectorLabel}>Opponent</div>
           <label className={styles.selectorRow} htmlFor="opponent-input">
             <input
@@ -323,7 +387,7 @@ export default function App() {
                 setOpponentInput(e.target.value)
                 setShowOtherOptions(false)
               }}
-              placeholder="Type 2–3 letters (e.g. pik)"
+              placeholder="Type 2–3 letters"
               aria-label="Opponent Pokemon"
             />
           </label>
@@ -357,7 +421,21 @@ export default function App() {
               Back
             </button>
           </div>
-          <p className={styles.configureHint}>Save 1–6 valid Pokémon for quick matchup recommendations.</p>
+          <div className={styles.gameSelectorRow}>
+            <label htmlFor="game-version-team" className={styles.selectorLabel}>Game</label>
+            <select
+              id="game-version-team"
+              className={styles.gameSelector}
+              value={selectedGame.version}
+              onChange={(e) => handleGameChange(e.target.value)}
+              aria-label="Game Version"
+            >
+              {SUPPORTED_GAMES.map((game) => (
+                <option key={game.version} value={game.version}>{game.label}</option>
+              ))}
+            </select>
+          </div>
+          <p className={styles.configureHint}>Save 1–6 Pokémon from the selected game Pokédex.</p>
         </section>
       )}
 
@@ -442,7 +520,7 @@ export default function App() {
                   <h2 className={styles.primaryName}>{toTitleCase(primaryRecommendation.pokemon.name)}</h2>
                   {renderTypeBadges(primaryRecommendation.pokemon.types)}
                   <p className={styles.reasonText}>{primaryRecommendation.reason}</p>
-                  <p className={styles.effectivenessNote}>Based on type effectiveness</p>
+                  <p className={styles.effectivenessNote}>Based on {selectedGame.label} type effectiveness rules</p>
                 </article>
 
                 {otherOptionCount > 0 && (

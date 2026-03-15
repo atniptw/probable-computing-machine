@@ -271,6 +271,48 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-14 - Add Game-Specific Pokédex and Generation Rules
+
+### Objective
+
+- Make matchup flow game-aware so users only see Pokémon from a selected game, with generation-specific type-rule behavior.
+
+### Decisions Made
+
+- Add a selectable game list (default Emerald) and persist selection locally.
+- Replace global Pokémon index with game-scoped Pokédex lookup (`version` → `version-group` → `pokedex`).
+- Use generation-aware type logic: historical Pokémon `past_types` + generation chart overrides for key differences.
+
+### Completed
+
+- Added game catalog in `src/data/games.ts`.
+- Extended `src/services/pokeapi.ts` with:
+	- game version context resolver,
+	- game-scoped `getPokemonNameIndex(version)`,
+	- generation-aware `getPokemon(name, { generation })`,
+	- generation-aware `getTypeMap({ generation })` with historical overrides.
+- Updated `src/App.tsx` to include game selector, selected-game persistence, and selected-game validation for opponent/team entries.
+- Added selector styling in `src/App.module.css`.
+- Updated tests:
+	- `src/tests/getPokemonNameIndex.test.ts`
+	- `src/tests/getPokemon.test.ts`
+	- `e2e/matchup-smoke.spec.ts`
+- Verified:
+	- `npm run tsc`
+	- `npm run test`
+	- `npm run e2e -- e2e/matchup-smoke.spec.ts --project=chromium`
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Expand supported game list coverage and verify each mapped Pokédex behavior.
+- Add targeted tests for Gen 1 and Gen 6 chart differences in app-level ranking scenarios.
+
+---
+
 ## 2026-03-14 - Optimize PokéAPI Call Efficiency
 
 ### Objective

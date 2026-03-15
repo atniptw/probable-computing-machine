@@ -6,22 +6,26 @@ The Pokémon Matchup Advisor gives one clear recommendation for which Pokémon t
 
 ## How to Use It
 
-### Step 1 — Select Opponent on Main Battle Screen
+### Step 1 — Select a Game
+
+Choose a game in the **Game** selector. Opponent and team suggestions are then limited to that game’s Pokédex.
+
+### Step 2 — Select Opponent on Main Battle Screen
 
 The app opens to the battle screen by default.
 
 Type 2–3 letters in the **Opponent** input and tap one of the instant suggestions.
 
-### Step 2 — Read the Primary Recommendation
+### Step 3 — Read the Primary Recommendation
 
 As soon as an exact opponent match is selected, the app shows a large **Best Choice** card with:
 
 - Pokémon name
 - Type badges
 - Reason text (for example: “Immune to Electric ⚡”)
-- “Based on type effectiveness” label
+- Label including selected game rules (for example: “Based on Pokémon Emerald type effectiveness rules”)
 
-### Step 3 — Expand Optional Secondary Options
+### Step 4 — Expand Optional Secondary Options
 
 Tap **Show other options (X)** to open grouped alternatives:
 
@@ -29,11 +33,12 @@ Tap **Show other options (X)** to open grouped alternatives:
 - Neutral
 - Risky
 
-### Step 4 — Edit Team (When Needed)
+### Step 5 — Edit Team (When Needed)
 
 Use **Edit Team** (top-right or team preview bar) to open team configuration.
 
 Use up to 6 slots. Duplicates are allowed. Fewer than 6 entries is valid.
+Only Pokémon from the selected game are accepted.
 
 ```
 Examples: pikachu, charizard, blastoise, gengar, machamp, snorlax
@@ -85,5 +90,6 @@ Selected opponent is Pikachu.
 ## Limitations
 
 - Matchups are **type-only** — moves, abilities, held items, and stats are not considered.
+- Type chart differences are generation-aware for major historical changes only.
 - Data comes from PokéAPI v2 which covers official main-series games only.
 - Fan-made Pokémon and ROM hacks are not supported.

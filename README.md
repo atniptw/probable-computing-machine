@@ -4,7 +4,7 @@ Foundational project workspace for a new web app.
 
 ## Current Status
 
-- Stage: MVP battle UX implemented (mobile-first)
+- Stage: MVP battle UX implemented with game-specific Pokédex filtering
 - Product: Pokémon type matchup advisor (static web app)
 - Stack: React 18 + Vite, hosted on GitHub Pages
 - Collaboration cadence: continuous flow with explicit role handoffs

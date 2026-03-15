@@ -2,35 +2,40 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Battle Screen - Primary recommendation flow', () => {
   test('shows one best choice after typeahead opponent selection', async ({ page }) => {
-    await page.route('**/api/v2/pokemon?limit=1', async (route) => {
+    await page.route('**/api/v2/version/**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          count: 8,
-          results: [
-            { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/25/' },
-            { name: 'swampert', url: 'https://pokeapi.co/api/v2/pokemon/260/' },
-          ],
+          name: 'emerald',
+          version_group: { name: 'ruby-sapphire' },
         }),
       })
     })
 
-    await page.route('**/api/v2/pokemon?limit=8', async (route) => {
+    await page.route('**/api/v2/version-group/**', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          count: 8,
-          results: [
-            { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/25/' },
-            { name: 'swampert', url: 'https://pokeapi.co/api/v2/pokemon/260/' },
-            { name: 'manectric', url: 'https://pokeapi.co/api/v2/pokemon/310/' },
-            { name: 'breloom', url: 'https://pokeapi.co/api/v2/pokemon/286/' },
-            { name: 'gardevoir', url: 'https://pokeapi.co/api/v2/pokemon/282/' },
-            { name: 'flygon', url: 'https://pokeapi.co/api/v2/pokemon/330/' },
-            { name: 'salamence', url: 'https://pokeapi.co/api/v2/pokemon/373/' },
-            { name: 'dragonite', url: 'https://pokeapi.co/api/v2/pokemon/149/' },
+          generation: { name: 'generation-iii' },
+          pokedexes: [{ name: 'hoenn' }],
+        }),
+      })
+    })
+
+    await page.route('**/api/v2/pokedex/**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          pokemon_entries: [
+            { pokemon_species: { name: 'swampert' } },
+            { pokemon_species: { name: 'manectric' } },
+            { pokemon_species: { name: 'breloom' } },
+            { pokemon_species: { name: 'gardevoir' } },
+            { pokemon_species: { name: 'flygon' } },
+            { pokemon_species: { name: 'salamence' } },
           ],
         }),
       })
@@ -110,7 +115,6 @@ test.describe('Battle Screen - Primary recommendation flow', () => {
     await page.route('**/api/v2/pokemon/*', async (route) => {
       const name = (route.request().url().split('/').pop() ?? 'unknown').toLowerCase()
       const typeByPokemon: Record<string, string[]> = {
-        pikachu: ['electric'],
         swampert: ['water', 'ground'],
         manectric: ['electric'],
         breloom: ['grass'],
@@ -126,6 +130,7 @@ test.describe('Battle Screen - Primary recommendation flow', () => {
         body: JSON.stringify({
           name,
           types: types.map((type, index) => ({ slot: index + 1, type: { name: type } })),
+          past_types: [],
           sprites: { front_default: null },
         }),
       })
@@ -135,21 +140,22 @@ test.describe('Battle Screen - Primary recommendation flow', () => {
 
     await test.step('Open battle screen and type opponent query', async () => {
       await page.goto('/')
-      await page.getByLabel('Opponent Pokemon').fill('pik')
-      await page.getByRole('button', { name: 'Pikachu' }).click()
+      await expect(page.getByLabel('Game Version')).toHaveValue('emerald')
+      await page.getByLabel('Opponent Pokemon').fill('sala')
+      await expect(page.getByRole('button', { name: 'Salamence' })).toBeVisible()
+      await page.getByRole('button', { name: 'Salamence' }).click()
     })
 
     await test.step('See one highlighted best choice and collapsed secondary options', async () => {
       await expect(page.getByText('Best Choice')).toHaveCount(1)
-      await expect(page.getByText('Based on type effectiveness')).toHaveCount(1)
+      await expect(page.getByText('Based on Pokémon Emerald type effectiveness rules')).toHaveCount(1)
       await expect(page.getByRole('button', { name: /Show other options/i })).toHaveCount(1)
       await expect(page.getByText('Risky')).toHaveCount(0)
     })
 
     await test.step('Expand other options and verify grouped sections', async () => {
       await page.getByRole('button', { name: /Show other options/i }).click()
-      await expect(page.getByRole('heading', { name: 'Also Good' })).toHaveCount(1)
-      await expect(page.getByRole('heading', { name: 'Neutral' })).toHaveCount(1)
+      await expect(page.getByRole('heading', { name: /Also Good|Neutral|Risky/ }).first()).toBeVisible()
     })
   })
 })

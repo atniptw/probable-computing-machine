@@ -6,6 +6,7 @@
 App
 ├── Header
 │   └── EditTeamButton (battle screen only)
+├── GameSelector
 ├── OpponentAutocompleteInput (battle screen)
 ├── PrimaryRecommendationCard (battle screen)
 ├── ExpandableMatchupList (battle screen)
@@ -24,6 +25,7 @@ App
 
 ```ts
 state: {
+  selectedGameVersion: string,
   screen: 'battle' | 'team',
   teamDraft: string[6],
   teamSlotErrors: (string | null)[6],
@@ -49,10 +51,13 @@ state: {
 ## Primary Behaviors
 
 - App opens directly on the battle screen for in-fight speed.
+- Game selector controls all autocomplete, validation, and matchup rules.
+- Opponent and team inputs only accept Pokémon from the selected game's Pokédex.
 - Opponent input uses local typeahead suggestions (button list), not datalist dropdown.
 - Ranking is bucketed as `best`, `good`, `neutral`, `risky`; `best` always contains one primary recommendation.
 - Secondary recommendations are collapsed by default behind “Show other options (X)”.
-- Team editor validates each non-empty slot against the cached name index and allows duplicates or fewer than 6 entries.
+- Team editor validates each non-empty slot against the selected game index and allows duplicates or fewer than 6 entries.
+- Type effectiveness map is generation-aware for key historical chart differences.
 
 ## Legacy Note
 

@@ -55,4 +55,37 @@ describe('getPokemon', () => {
     expect(second.name).toBe('pikachu')
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
+
+  it('returns generation-specific historical types when available', async () => {
+    const storage = new MockStorage()
+    vi.stubGlobal('localStorage', storage)
+
+    const fetchMock = vi.fn(async () => {
+      return new Response(
+        JSON.stringify({
+          name: 'clefairy',
+          types: [{ slot: 1, type: { name: 'fairy' } }],
+          past_types: [
+            {
+              generation: { name: 'generation-v' },
+              types: [{ slot: 1, type: { name: 'normal' } }],
+            },
+          ],
+          sprites: { front_default: 'sprite.png' },
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      )
+    })
+
+    vi.stubGlobal('fetch', fetchMock)
+
+    const { getPokemon } = await import('../services/pokeapi')
+
+    const genFive = await getPokemon('clefairy', { generation: 5 })
+    const genSix = await getPokemon('clefairy', { generation: 6 })
+
+    expect(genFive.types).toEqual(['normal'])
+    expect(genSix.types).toEqual(['fairy'])
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
 })
