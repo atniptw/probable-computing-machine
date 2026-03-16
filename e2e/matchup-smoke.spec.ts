@@ -71,6 +71,7 @@ test('user selects opponent and sees ranked matchup cards', async ({ page }) => 
 
   await expect(page.getByRole('heading', { name: 'BEST' })).toBeVisible()
   await expect(page.getByText('swampert')).toBeVisible()
-  await page.getByRole('button', { name: /Best/i }).first().click()
-  await expect(page.getByText('Attack effectiveness:')).toBeVisible()
+  const bestCard = page.getByRole('button', { name: /Best/i }).first()
+  await bestCard.click()
+  await expect(bestCard.getByText('Attack effectiveness:')).toBeVisible()
 })

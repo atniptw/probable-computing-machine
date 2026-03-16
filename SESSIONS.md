@@ -152,3 +152,28 @@ YYYY-MM-DD
 
 - Configure required status check for `Gate Evidence Check` on `main`.
 - Run a pilot PR to validate the cleanup behavior.
+
+---
+
+## 2026-03-16 - Fix E2E Selector Regression
+
+### Objective
+
+- Restore the GitHub Pages workflow by fixing the Playwright smoke test after the card-based UI redesign.
+
+### Decisions Made
+
+- Scope the E2E assertion to the clicked matchup card instead of querying duplicated text across the full page.
+
+### Completed
+
+- Identified the latest workflow failure as a Playwright strict-mode locator error in `e2e/matchup-smoke.spec.ts`.
+- Updated the smoke test to assert `Attack effectiveness:` within the expanded card only.
+
+### Blockers
+
+- Local browser execution in this dev container may still require additional Playwright system libraries, so final end-to-end validation is expected in GitHub Actions.
+
+### Next Actions
+
+- Push the fix and confirm the latest `Deploy to GitHub Pages` workflow passes.
