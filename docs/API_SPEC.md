@@ -29,6 +29,29 @@ Fetch a Pokémon's type assignments by name.
 
 ---
 
+### GET /pokemon?limit=100000
+
+Fetch the full Pokemon name index for client-side partial search.
+
+| | |
+|---|---|
+| Auth | None |
+| Cache | `localStorage`, 7-day TTL (`pkm_names_v1`) |
+| Failure fallback | Use stale cached names if available |
+
+**Success - fields used**
+```json
+{
+  "count": 1302,
+  "results": [
+    { "name": "bulbasaur", "url": "https://pokeapi.co/api/v2/pokemon/1/" },
+    { "name": "ivysaur", "url": "https://pokeapi.co/api/v2/pokemon/2/" }
+  ]
+}
+```
+
+---
+
 ### GET /type/{name}
 
 Fetch type effectiveness relations.
@@ -68,6 +91,10 @@ List all type names. Called once on startup to prefetch the full TypeMap.
 // Returns Pokemon with name and types.
 // Checks localStorage first; falls back to PokéAPI fetch.
 async function getPokemon(name: string): Promise<Pokemon>
+
+// Returns all Pokemon names for local partial search.
+// Uses cached localStorage index and falls back to stale cache on fetch failure.
+async function getPokemonNameIndex(): Promise<string[]>
 
 // Returns complete TypeMap.
 // Fetches all types once per session; subsequent calls return cached map.

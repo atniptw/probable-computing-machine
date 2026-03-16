@@ -58,8 +58,16 @@ interface PokeApiTypeResponse {
 interface PokeApiTypeListResponse {
   results: { name: string; url: string }[]
 }
+interface PokeApiPokemonListResponse {
+  count: number
+  results: { name: string; url: string }[]
+}
 interface CachedPokemon {
   data: Pokemon
+  expires: number
+}
+interface CachedPokemonNameIndex {
+  names: string[]
   expires: number
 }
 
@@ -70,6 +78,10 @@ const typeMapCache = new Map<string, TypeRelations>()
 const BASE_URL = 'https://pokeapi.co/api/v2'
 const CACHE_PREFIX = 'pkm_v1_'
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000
+const NAME_INDEX_CACHE_KEY = 'pkm_names_v1'
+const NAME_INDEX_LIMIT = 100000
+
+let pokemonNameIndexCache: string[] | null = null
 
 // --- Error types ---
 
@@ -147,6 +159,57 @@ export async function getPokemon(name: string): Promise<Pokemon> {
 
   localStorage.setItem(key, JSON.stringify({ data, expires: Date.now() + CACHE_TTL_MS }))
   return data
+}
+
+// --- getPokemonNameIndex ---
+
+export async function getPokemonNameIndex(): Promise<string[]> {
+  if (pokemonNameIndexCache) return pokemonNameIndexCache
+
+  const cachedRaw = localStorage.getItem(NAME_INDEX_CACHE_KEY)
+  let cached: CachedPokemonNameIndex | null = null
+
+  if (cachedRaw) {
+    try {
+      cached = JSON.parse(cachedRaw) as CachedPokemonNameIndex
+      if (
+        !Array.isArray(cached.names)
+        || typeof cached.expires !== 'number'
+      ) {
+        cached = null
+      }
+    } catch {
+      cached = null
+    }
+  }
+
+  if (cached && Date.now() < cached.expires) {
+    pokemonNameIndexCache = cached.names
+    return cached.names
+  }
+
+  try {
+    const listRes = await fetchWithRetry(`${BASE_URL}/pokemon?limit=${NAME_INDEX_LIMIT}`)
+    if (!listRes.ok) throw new NetworkError()
+
+    const listJson = (await listRes.json()) as PokeApiPokemonListResponse
+    const names = listJson.results.map((entry) => entry.name.toLowerCase()).filter(Boolean)
+
+    const payload: CachedPokemonNameIndex = {
+      names,
+      expires: Date.now() + CACHE_TTL_MS,
+    }
+
+    localStorage.setItem(NAME_INDEX_CACHE_KEY, JSON.stringify(payload))
+    pokemonNameIndexCache = names
+    return names
+  } catch (error) {
+    if (cached && cached.names.length > 0) {
+      pokemonNameIndexCache = cached.names
+      return cached.names
+    }
+    throw error
+  }
 }
 
 // --- getTypeMap ---

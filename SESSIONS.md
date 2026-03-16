@@ -177,3 +177,34 @@ YYYY-MM-DD
 ### Next Actions
 
 - Push the fix and confirm the latest `Deploy to GitHub Pages` workflow passes.
+
+---
+
+## 2026-03-16 - Implement Global Pokemon Name Search Index
+
+### Objective
+
+- Replace Emerald-opponent allowlist with full Pokemon name index search and exact-match detail fetch.
+
+### Decisions Made
+
+- Fetch all Pokemon names once via `GET /pokemon?limit=100000` and cache locally with TTL.
+- Use prefix-first local filtering and cap datalist suggestions to 20 entries.
+- Fetch matchup details only after the opponent input exactly matches an indexed name.
+
+### Completed
+
+- Added `getPokemonNameIndex()` with cache + stale-cache fallback in `src/services/pokeapi.ts`.
+- Updated opponent flow in `src/App.tsx` to use index-backed suggestions instead of static Emerald list.
+- Updated Playwright smoke test to mock the list endpoint and validate partial-to-exact flow.
+- Added unit tests for name-index caching behavior.
+- Updated `docs/API_SPEC.md` with the new list endpoint contract.
+
+### Blockers
+
+- None during local implementation.
+
+### Next Actions
+
+- Run and verify `npm run tsc`, `npm run test`, and `npm run e2e` in CI-safe environment.
+- Update user-facing guide copy for single-opponent search flow alignment.

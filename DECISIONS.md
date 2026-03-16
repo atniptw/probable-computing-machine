@@ -199,3 +199,32 @@ YYYY-MM-DD
 ### Owner
 
 - Tech Lead
+
+---
+
+## DEC-0007
+
+### Date
+
+2026-03-16
+
+### Context
+
+- Opponent selection was constrained to a static Emerald subset despite the data layer supporting all valid Pokemon names.
+- Partial search needed to be responsive without triggering repeated per-keystroke detail API calls.
+
+### Decision
+
+- Build a client-side global Pokemon name index using `GET /pokemon?limit=100000`.
+- Cache names in `localStorage` with a 7-day TTL and versioned key (`pkm_names_v1`).
+- Use stale cached names when index refresh fails to preserve search availability.
+- Trigger detailed Pokemon fetches only when the user input exactly matches an indexed name.
+
+### Consequences
+
+- Positive: fast local partial search, lower API call volume, broader opponent coverage.
+- Trade-offs: larger initial index payload and possible temporary staleness when serving fallback cache.
+
+### Owner
+
+- Frontend + Architect

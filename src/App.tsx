@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   calcEffectiveness,
+  getPokemonNameIndex,
   getPokemon,
   getTypeMap,
   PokemonNotFoundError,
@@ -18,18 +19,7 @@ const EMERALD_DEFAULT_TEAM = [
   'flygon',
   'salamence',
 ]
-
-const EMERALD_OPPONENTS = [
-  'absol', 'aggron', 'altaria', 'armaldo', 'banette', 'blaziken', 'breloom', 'camerupt', 'claydol',
-  'cradily', 'crawdaunt', 'dusclops', 'exploud', 'flygon', 'gardevoir', 'glalie', 'golbat', 'golem',
-  'gyarados', 'hariyama', 'heracross', 'houndoom', 'huntail', 'jirachi', 'kecleon', 'kingdra', 'latias',
-  'latios', 'ludicolo', 'lunatone', 'magneton', 'manectric', 'metagross', 'milotic', 'mightyena',
-  'ninetales', 'pelipper', 'rhydon', 'salamence', 'sceptile', 'seviper', 'sharpedo', 'shiftry',
-  'skarmory', 'slaking', 'solrock', 'starmie', 'swampert', 'tentacruel', 'torkoal', 'walrein', 'weezing',
-  'whiscash', 'zangoose',
-]
-
-const OPPONENT_SET = new Set(EMERALD_OPPONENTS)
+const MAX_SUGGESTIONS = 20
 
 type MatchCategory = 'Best' | 'Neutral' | 'Risky' | 'Avoid'
 
@@ -85,6 +75,8 @@ export default function App() {
   const [opponent, setOpponent] = useState<Pokemon | null>(null)
   const [ranked, setRanked] = useState<RankedMatchup[]>([])
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
+  const [pokemonNameIndex, setPokemonNameIndex] = useState<string[]>([])
+  const [nameIndexReady, setNameIndexReady] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -92,12 +84,54 @@ export default function App() {
     void getTypeMap().catch(() => {
       // Warm cache to keep opponent-switch updates snappy.
     })
+
+    void getPokemonNameIndex()
+      .then((names) => {
+        setPokemonNameIndex(names)
+      })
+      .catch(() => {
+        setError('Unable to load Pokemon search index. Please try again.')
+      })
+      .finally(() => {
+        setNameIndexReady(true)
+      })
   }, [])
 
   const normalizedOpponent = opponentInput.trim().toLowerCase()
+  const pokemonNameSet = useMemo(() => new Set(pokemonNameIndex), [pokemonNameIndex])
+  const exactMatchFound = pokemonNameSet.has(normalizedOpponent)
+
+  const opponentSuggestions = useMemo(() => {
+    if (!pokemonNameIndex.length) return []
+
+    const query = normalizedOpponent
+    if (!query) return pokemonNameIndex.slice(0, MAX_SUGGESTIONS)
+
+    const prefixMatches: string[] = []
+    const containsMatches: string[] = []
+
+    for (const name of pokemonNameIndex) {
+      if (name.startsWith(query)) {
+        prefixMatches.push(name)
+        continue
+      }
+      if (name.includes(query)) containsMatches.push(name)
+    }
+
+    return [...prefixMatches, ...containsMatches].slice(0, MAX_SUGGESTIONS)
+  }, [pokemonNameIndex, normalizedOpponent])
 
   useEffect(() => {
-    if (!normalizedOpponent || !OPPONENT_SET.has(normalizedOpponent)) {
+    if (!normalizedOpponent) {
+      setOpponent(null)
+      setRanked([])
+      setError(null)
+      return
+    }
+
+    if (!nameIndexReady) return
+
+    if (!exactMatchFound) {
       setOpponent(null)
       setRanked([])
       setError(null)
@@ -152,7 +186,7 @@ export default function App() {
       } catch (err) {
         if (cancelled) return
         if (err instanceof PokemonNotFoundError) {
-          setError('Opponent not found in Emerald list.')
+          setError('Pokemon not found. Please select a valid Pokemon name.')
         } else if (err instanceof RateLimitError) {
           setError('Rate limit reached. Please wait a moment and try again.')
         } else {
@@ -168,7 +202,7 @@ export default function App() {
     return () => {
       cancelled = true
     }
-  }, [normalizedOpponent, teamNames])
+  }, [exactMatchFound, nameIndexReady, normalizedOpponent, teamNames])
 
   const grouped = useMemo(() => {
     const groups: Record<MatchCategory, RankedMatchup[]> = {
@@ -206,7 +240,7 @@ export default function App() {
           </span>
           <input
             className={styles.selectorInput}
-            list="emerald-opponents"
+            list="pokemon-name-index"
             value={opponentInput}
             onChange={(e) => {
               setExpandedCard(null)
@@ -216,8 +250,8 @@ export default function App() {
             aria-label="Opponent Pokemon"
           />
         </label>
-        <datalist id="emerald-opponents">
-          {EMERALD_OPPONENTS.map((name) => (
+        <datalist id="pokemon-name-index">
+          {opponentSuggestions.map((name) => (
             <option value={name} key={name} />
           ))}
         </datalist>

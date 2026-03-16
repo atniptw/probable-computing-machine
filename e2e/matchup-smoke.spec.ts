@@ -1,6 +1,20 @@
 import { expect, test } from '@playwright/test'
 
 test('user selects opponent and sees ranked matchup cards', async ({ page }) => {
+  await page.route('**/api/v2/pokemon?limit=100000', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        count: 2,
+        results: [
+          { name: 'salamence', url: 'https://pokeapi.co/api/v2/pokemon/373/' },
+          { name: 'swampert', url: 'https://pokeapi.co/api/v2/pokemon/260/' },
+        ],
+      }),
+    })
+  })
+
   await page.route('**/api/v2/type?limit=100', async (route) => {
     await route.fulfill({
       status: 200,
@@ -66,6 +80,9 @@ test('user selects opponent and sees ranked matchup cards', async ({ page }) => 
 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
+
+  await page.getByLabel('Opponent Pokemon').fill('sala')
+  await expect(page.getByRole('heading', { name: 'BEST' })).toHaveCount(0)
 
   await page.getByLabel('Opponent Pokemon').fill('salamence')
 

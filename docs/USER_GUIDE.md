@@ -20,6 +20,9 @@ You can fill 1–6 slots. Empty slots are ignored.
 
 Type the opponent's Pokémon names into the "Opponent Team" slots.
 
+Opponent search now uses a full cached Pokémon name index from PokéAPI.
+You can type partial text to narrow suggestions, then select or complete an exact name to trigger matchup calculation.
+
 ### Step 3 — Check Matchups
 
 Click the **Check Matchups** button. Results appear within 1–2 seconds.
