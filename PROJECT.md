@@ -2,64 +2,67 @@
 
 ## Project Summary
 
-- Type: web app
-- Mission: build a production-ready product through iterative implementation with tight feedback loops.
+- Type: static web app hosted on GitHub Pages
+- Mission: help Pokémon players understand type matchups when playing newer generations they haven't mastered yet.
 - Documentation style: lean
 
 ## Goals
 
-- Define and ship an MVP with clear user value.
-- Maintain continuity across long-running conversations.
-- Keep decision rationale discoverable and concise.
+- Ship an MVP where a player can input their team and an opponent's team and immediately see which matchups are strong, weak, or neutral.
+- Make the tool fast enough to use mid-battle.
+- Keep the UI simple enough that no explanation is needed to use it.
 
 ## Non-Goals
 
-- Large upfront specification before implementation starts.
-- Heavyweight process overhead.
-- Premature optimization of tooling or architecture.
+- User accounts or saved teams.
+- Move-level matchup analysis (type-only for MVP).
+- Mobile app or browser extension.
+- Competitive tier ratings or team builder recommendations.
+- Support for fan-made or ROM hack Pokémon games.
 
 ## Target User
 
-- Primary user: TBD
-- Core job to be done: TBD
-- Primary pain point addressed: TBD
+- Primary user: casual Pokémon player experiencing a new generation for the first time.
+- Core job to be done: quickly figure out which of my Pokémon can beat which of the opponent's during a battle.
+- Primary pain point: not knowing type effectiveness charts for newer generations by memory.
 
 ## Success Criteria
 
-- MVP scope is explicitly listed and stable for the first implementation phase.
-- At least one end-to-end user flow is implemented and testable.
-- Every significant product/architecture choice is logged in `DECISIONS.md`.
+- User can input two teams of up to 6 Pokémon each and see matchup results.
+- Matchup accuracy matches PokéAPI type effectiveness data exactly.
+- Results render within 2 seconds on first load; under 500ms on subsequent queries.
+- App is accessible at the GitHub Pages URL with no server required.
+- All major architecture and product choices are logged in `DECISIONS.md`.
 
 ## Constraints
 
-- Technical constraints: TBD
-- Time constraints: TBD
-- Budget/hosting constraints: TBD
+- Data source: PokéAPI v2 (https://pokeapi.co/docs/v2) — free, CORS-enabled, ~100 req/min rate limit.
+- Hosting: GitHub Pages (static files only, no server-side logic).
+- Stack: React 18 + Vite, no backend.
+- Time constraints: no hard deadline.
+- Budget: zero — all tooling and hosting must be free tier.
 
 ## Out of Scope (Initial Phase)
 
-- Multi-platform expansion beyond web.
-- Advanced analytics and enterprise integrations.
-- Full optimization pass before validating core flow.
+- User accounts, authentication, or saved teams.
+- Move-level or ability-level analysis.
+- Mobile app, PWA, or browser extension.
+- Team recommendations or competitive tier lists.
+- Custom Pokémon or fan-game support.
 
-## Quick Kickoff Questionnaire (Answered)
+## Tech Stack
 
-1. Project type: Web app
-2. Documentation level: Lean (just essentials)
-3. Conversation cadence: Continuous flow with role handoffs
-4. Questionnaire depth: Both (quick now, deep later)
+- Frontend: React 18 + Vite
+- Hosting: GitHub Pages
+- Deployment: GitHub Actions (push to main → auto-deploy)
+- Data: PokéAPI v2 (client-side fetch, localStorage cache)
 
-## Quick Kickoff Questionnaire (Open)
+## Design Documentation
 
-1. What exact problem should the MVP solve first?
-2. Who is the first real user persona?
-3. What is the must-have first release date or milestone?
-4. What stack preferences are fixed versus flexible?
-
-## Deep Questionnaire Categories (Planned)
-
-- Product and UX
-- Architecture and data model
-- Security and compliance
-- Delivery, testing, and release process
-- Risks and fallback strategies
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): system design and caching strategy
+- [docs/DATA_MODEL.md](docs/DATA_MODEL.md): Pokémon, team, and matchup data structures
+- [docs/API_SPEC.md](docs/API_SPEC.md): PokéAPI endpoints and client-side interface
+- [docs/COMPONENT_DESIGN.md](docs/COMPONENT_DESIGN.md): React component tree and state
+- [docs/DATA_FLOW.md](docs/DATA_FLOW.md): input → fetch → compute → render flow
+- [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md): local setup, build, and deploy steps
+- [docs/USER_GUIDE.md](docs/USER_GUIDE.md): how to use the app

@@ -142,3 +142,60 @@ YYYY-MM-DD
 ### Owner
 
 - Product Owner + Team
+
+---
+
+## DEC-0005
+
+### Date
+
+2026-03-16
+
+### Context
+
+- MVP requires authoritative Pokémon type and effectiveness data.
+- Maintaining a static dataset would create ongoing maintenance burden.
+
+### Decision
+
+- Use PokéAPI v2 (https://pokeapi.co/docs/v2) as the sole data source.
+- Call PokéAPI directly from the browser (CORS is supported).
+- Cache type data in memory on first load; cache Pokémon data in localStorage per name.
+
+### Consequences
+
+- Positive: zero data maintenance, always up to date with new generations.
+- Trade-offs: dependent on third-party uptime; rate limit of ~100 req/min mitigated by caching.
+
+### Owner
+
+- Architect
+
+---
+
+## DEC-0006
+
+### Date
+
+2026-03-16
+
+### Context
+
+- Project must be hosted on GitHub Pages (static only, no server).
+- Team has no frontend framework preference.
+- Tech lead selected stack based on performance and ecosystem maturity.
+
+### Decision
+
+- Frontend: React 18 with Vite as the build tool.
+- No backend — all logic runs client-side in the browser.
+- Deployment: GitHub Actions builds on push to main and publishes to gh-pages branch.
+
+### Consequences
+
+- Positive: zero hosting cost, fast builds (~5s), instant deploys, no server ops.
+- Trade-offs: PokéAPI rate limiting is sole external risk; mitigated by localStorage caching.
+
+### Owner
+
+- Tech Lead

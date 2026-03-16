@@ -4,8 +4,9 @@ Foundational project workspace for a new web app.
 
 ## Current Status
 
-- Stage: agentic team setup complete for templates and gate checks
-- Documentation mode: lean
+- Stage: design documentation in progress
+- Product: Pokémon type matchup advisor (static web app)
+- Stack: React 18 + Vite, hosted on GitHub Pages
 - Collaboration cadence: continuous flow with explicit role handoffs
 
 ## Collaboration Workflow
@@ -32,6 +33,6 @@ Foundational project workspace for a new web app.
 
 ## Next Immediate Actions
 
-1. Create first feature issue using the PM intake template.
-2. Run architecture review prompt and API contract skill for that feature.
-3. Open a pilot PR and validate gate workflow behavior.
+1. Complete design documentation stubs in `docs/`.
+2. Scaffold the React + Vite project.
+3. Create GitHub issues for each MVP story.
