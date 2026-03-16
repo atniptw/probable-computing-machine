@@ -1,0 +1,71 @@
+name: Feature Intake
+description: Product owner intake template for new feature work
+title: "feature: "
+labels:
+  - feature
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem are we solving?
+      placeholder: Describe current pain and why now.
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-value
+    attributes:
+      label: User Value
+      description: Who benefits and what outcome improves?
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: In Scope
+      description: List what is included in this change.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of Scope
+      description: List what is explicitly excluded.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Provide a testable checklist.
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and Risks
+      description: Note blockers, assumptions, and key risks.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: primary-owner
+    attributes:
+      label: First Handoff Owner
+      options:
+        - Architect
+        - Backend
+        - Frontend
+        - QA
+        - DevOps
+        - Docs
+    validations:
+      required: true
