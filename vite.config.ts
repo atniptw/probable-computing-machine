@@ -7,5 +7,6 @@ export default defineConfig({
   base: '/probable-computing-machine/',
   test: {
     environment: 'node',
+    exclude: ['e2e/**', 'node_modules/**'],
   },
 })
