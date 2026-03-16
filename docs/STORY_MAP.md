@@ -7,8 +7,15 @@ Each column is a user activity. Each row is a release slice. Stories within a sl
 
 ## User Journey (Backbone)
 
-```
-Open App → Enter Your Team → Enter Opponent Team → Run Matchup → Read Results → Iterate
+```mermaid
+flowchart LR
+    A([Open App]) --> B[Enter Your Team]
+    B --> C[Enter Opponent Team]
+    C --> D[Run Matchup]
+    D --> E[Read Results]
+    E --> F{Iterate?}
+    F -->|edit team| B
+    F -->|done| Z([Exit])
 ```
 
 ---
@@ -147,17 +154,37 @@ Stories:
 
 Dependencies determine build order:
 
-```
-1. pokeapi.js service (getPokemon, getTypeMap, computeMatchups)   ← no UI deps
-2. calcEffectiveness logic + Vitest unit tests                    ← no UI deps
-3. App state scaffold (yourTeam, opponentTeam, result, loading)   ← needs service
-4. TeamInput → TeamSlots → PokemonSlot                           ← needs App state
-5. SubmitButton                                                   ← needs TeamInput
-6. MatchupResults → MatchupGrid → MatchupCell                    ← needs result type
-7. SummaryBar                                                     ← needs result type
-8. Error handling: inline slot errors + banner                    ← needs all above
-9. GitHub Actions deploy.yml + vite.config.js base path           ← needs build
-10. End-to-end smoke test: open URL → enter teams → check result  ← needs deploy
+```mermaid
+flowchart TD
+    classDef service fill:#dbeafe,stroke:#3b82f6
+    classDef state   fill:#dcfce7,stroke:#16a34a
+    classDef ui      fill:#f3e8ff,stroke:#9333ea
+    classDef infra   fill:#fef9c3,stroke:#ca8a04
+    classDef deploy  fill:#fee2e2,stroke:#dc2626
+
+    S1["1 · pokeapi.js service\ngetPokemon · getTypeMap · computeMatchups"]:::service
+    S2["2 · calcEffectiveness\n+ Vitest unit tests"]:::service
+    S3["3 · App state scaffold\nyourTeam · opponentTeam · result · loading"]:::state
+    S4["4 · TeamInput\nTeamSlots · PokemonSlot"]:::ui
+    S5["5 · SubmitButton"]:::ui
+    S6["6 · MatchupResults\nMatchupGrid · MatchupCell"]:::ui
+    S7["7 · SummaryBar"]:::ui
+    S8["8 · Error handling\ninline slot errors + network banner"]:::infra
+    S9["9 · deploy.yml\nvite.config.js base path"]:::deploy
+    S10["10 · E2E smoke test\nopen URL → enter teams → check result"]:::deploy
+
+    S1 --> S2
+    S1 --> S3
+    S2 --> S3
+    S3 --> S4
+    S4 --> S5
+    S3 --> S6
+    S3 --> S7
+    S5 --> S8
+    S6 --> S8
+    S7 --> S8
+    S8 --> S9
+    S9 --> S10
 ```
 
 ---
