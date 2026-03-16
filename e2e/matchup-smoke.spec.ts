@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-test('user can submit two pokemon and see matchup results', async ({ page }) => {
+test('user selects opponent and sees ranked matchup cards', async ({ page }) => {
   await page.route('**/api/v2/type?limit=100', async (route) => {
     await route.fulfill({
       status: 200,
@@ -50,36 +50,27 @@ test('user can submit two pokemon and see matchup results', async ({ page }) => 
     })
   })
 
-  await page.route('**/api/v2/pokemon/pikachu', async (route) => {
+  await page.route('**/api/v2/pokemon/*', async (route) => {
+    const name = route.request().url().split('/').pop() ?? 'unknown'
+    const isOpponent = name.toLowerCase() === 'salamence'
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        name: 'pikachu',
-        types: [{ slot: 1, type: { name: 'electric' } }],
+        name,
+        types: [{ slot: 1, type: { name: isOpponent ? 'water' : 'electric' } }],
+        sprites: { front_default: null },
       }),
     })
   })
 
-  await page.route('**/api/v2/pokemon/blastoise', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        name: 'blastoise',
-        types: [{ slot: 1, type: { name: 'water' } }],
-      }),
-    })
-  })
-
+  await page.setViewportSize({ width: 390, height: 844 })
   await page.goto('/')
 
-  await page.getByLabel('Pokémon 1').first().fill('pikachu')
-  await page.getByLabel('Pokémon 1').nth(1).fill('blastoise')
-  await page.getByRole('button', { name: 'Check Matchups' }).click()
+  await page.getByLabel('Opponent Pokemon').fill('salamence')
 
-  await expect(page.getByRole('heading', { name: 'Matchup Results' })).toBeVisible()
-  await expect(page.getByText('Super effective: 1')).toBeVisible()
-  await expect(page.getByText('2x')).toBeVisible()
-  await expect(page.getByText('1x')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'BEST' })).toBeVisible()
+  await expect(page.getByText('swampert')).toBeVisible()
+  await page.getByRole('button', { name: /Best/i }).first().click()
+  await expect(page.getByText('Attack effectiveness:')).toBeVisible()
 })

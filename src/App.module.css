@@ -1,28 +1,197 @@
 .app {
-  max-width: 960px;
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  background: #f6f6f6;
+  color: #1f2933;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .header {
-  margin-bottom: 1.5rem;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  background: #f6f6f6;
 }
 
 .header h1 {
-  margin: 0 0 0.25rem;
-  font-size: 1.75rem;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
 }
 
-.header p {
-  margin: 0;
-  color: #64748b;
+.selectorSection {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f6f6f6;
+  padding: 8px 12px 10px;
+  border-bottom: 1px solid #d7dce0;
+}
+
+.selectorLabel {
+  font-size: 0.78rem;
+  color: #5f6b77;
+  margin-bottom: 4px;
+}
+
+.selectorRow {
+  height: 52px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #d7dce0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+.sprite {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #f2f4f6;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  flex: 0 0 36px;
+}
+
+.sprite img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.selectorInput {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  text-transform: capitalize;
 }
 
 .banner {
-  background: #fee2e2;
-  border: 1px solid #fca5a5;
-  color: #991b1b;
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
+  margin: 8px 12px 0;
+  background: #fdecea;
+  border: 1px solid #e74c3c;
+  color: #8a2c24;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+}
+
+.resultsPane {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px 14px;
+}
+
+.empty {
+  min-height: 64px;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #d7dce0;
+  color: #5f6b77;
+  font-size: 0.92rem;
+  text-align: center;
+  padding: 12px;
+}
+
+.group {
+  margin-bottom: 10px;
+}
+
+.groupTitle {
+  margin: 0 0 6px;
+  font-size: 0.84rem;
+  letter-spacing: 0.03em;
+  color: #4a5562;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card {
+  width: 100%;
+  min-height: 64px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.cardRow1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardIndicator {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.cardName {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.cardRow2 {
+  margin-top: 4px;
+  font-size: 0.84rem;
+  color: #4d5a67;
+  text-transform: capitalize;
+}
+
+.cardDetails {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 180ms ease;
+  color: #4d5a67;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.cardDetailsOpen {
+  max-height: 120px;
+  margin-top: 8px;
+}
+
+.best {
+  border-color: #2ecc71;
+}
+
+.neutral {
+  border-color: #f1c40f;
+}
+
+.risky {
+  border-color: #e74c3c;
+}
+
+.avoid {
+  border-color: #7f8c8d;
 }

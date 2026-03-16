@@ -3,6 +3,7 @@
 export interface Pokemon {
   name: string
   types: string[]
+  sprite: string | null
 }
 
 export interface TypeRelations {
@@ -42,6 +43,9 @@ interface PokeApiTypeEntry {
 interface PokeApiPokemonResponse {
   name: string
   types: PokeApiTypeEntry[]
+  sprites: {
+    front_default: string | null
+  }
 }
 interface PokeApiDamageRelations {
   double_damage_to: { name: string }[]
@@ -138,6 +142,7 @@ export async function getPokemon(name: string): Promise<Pokemon> {
   const data: Pokemon = {
     name: json.name,
     types: json.types.map((t) => t.type.name),
+    sprite: json.sprites.front_default,
   }
 
   localStorage.setItem(key, JSON.stringify({ data, expires: Date.now() + CACHE_TTL_MS }))
