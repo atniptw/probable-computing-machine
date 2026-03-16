@@ -1,8 +1,14 @@
-import SummaryBar from './SummaryBar.jsx'
-import MatchupGrid from './MatchupGrid.jsx'
+import SummaryBar from './SummaryBar'
+import MatchupGrid from './MatchupGrid'
 import styles from './MatchupResults.module.css'
 
-export default function MatchupResults({ result }) {
+import type { MatchupResult } from '../../services/pokeapi'
+
+interface MatchupResultsProps {
+  result: MatchupResult
+}
+
+export default function MatchupResults({ result }: MatchupResultsProps) {
   return (
     <div className={styles.results}>
       <h2 className={styles.heading}>Matchup Results</h2>

@@ -1,6 +1,17 @@
-import TeamSlots from './TeamSlots.jsx'
-import SubmitButton from './SubmitButton.jsx'
+import TeamSlots from './TeamSlots'
+import SubmitButton from './SubmitButton'
 import styles from './TeamInput.module.css'
+
+interface TeamInputProps {
+  yourTeam: string[]
+  opponentTeam: string[]
+  yourSlotErrors: (string | null)[]
+  opponentSlotErrors: (string | null)[]
+  onYourTeamChange: (index: number, value: string) => void
+  onOpponentTeamChange: (index: number, value: string) => void
+  onSubmit: () => void
+  loading: boolean
+}
 
 export default function TeamInput({
   yourTeam,
@@ -11,7 +22,7 @@ export default function TeamInput({
   onOpponentTeamChange,
   onSubmit,
   loading,
-}) {
+}: TeamInputProps) {
   const hasYours = yourTeam.some((v) => v.trim())
   const hasTheirs = opponentTeam.some((v) => v.trim())
 

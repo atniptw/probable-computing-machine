@@ -1,9 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { calcEffectiveness } from '../services/pokeapi.js'
+import { calcEffectiveness, type TypeRelations } from '../services/pokeapi'
 
-// Minimal type map for deterministic unit tests — no network calls needed
-function buildTypeMap(entries) {
-  const map = new Map()
+function buildTypeMap(entries: [string, Partial<TypeRelations>][]): Map<string, TypeRelations> {
+  const map = new Map<string, TypeRelations>()
   for (const [type, relations] of entries) {
     map.set(type, {
       doubleDamageTo: relations.doubleDamageTo ?? [],

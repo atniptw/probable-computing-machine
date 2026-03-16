@@ -1,6 +1,12 @@
 import styles from './SummaryBar.module.css'
 
-export default function SummaryBar({ summary }) {
+import type { MatchupSummary } from '../../services/pokeapi'
+
+interface SummaryBarProps {
+  summary: MatchupSummary
+}
+
+export default function SummaryBar({ summary }: SummaryBarProps) {
   return (
     <div className={styles.bar}>
       <span className={`${styles.badge} ${styles.super}`}>

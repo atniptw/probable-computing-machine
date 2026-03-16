@@ -1,25 +1,33 @@
 import { useState } from 'react'
-import TeamInput from './components/TeamInput/TeamInput.jsx'
-import MatchupResults from './components/MatchupResults/MatchupResults.jsx'
-import { computeMatchups, PokemonNotFoundError, RateLimitError } from './services/pokeapi.js'
+import TeamInput from './components/TeamInput/TeamInput'
+import MatchupResults from './components/MatchupResults/MatchupResults'
+import { computeMatchups, PokemonNotFoundError, RateLimitError, type MatchupResult } from './services/pokeapi'
 import styles from './App.module.css'
 
-const EMPTY_TEAM = ['', '', '', '', '', '']
+const EMPTY_TEAM: string[] = ['', '', '', '', '', '']
+
+interface SlotErrors {
+  yours: (string | null)[]
+  theirs: (string | null)[]
+}
 
 export default function App() {
-  const [yourTeam, setYourTeam] = useState([...EMPTY_TEAM])
-  const [opponentTeam, setOpponentTeam] = useState([...EMPTY_TEAM])
-  const [slotErrors, setSlotErrors] = useState({ yours: Array(6).fill(null), theirs: Array(6).fill(null) })
-  const [result, setResult] = useState(null)
+  const [yourTeam, setYourTeam] = useState<string[]>([...EMPTY_TEAM])
+  const [opponentTeam, setOpponentTeam] = useState<string[]>([...EMPTY_TEAM])
+  const [slotErrors, setSlotErrors] = useState<SlotErrors>({
+    yours: Array<string | null>(6).fill(null),
+    theirs: Array<string | null>(6).fill(null),
+  })
+  const [result, setResult] = useState<MatchupResult | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
-  function handleYourTeamChange(index, value) {
+  function handleYourTeamChange(index: number, value: string) {
     setYourTeam((prev) => prev.map((v, i) => (i === index ? value : v)))
     setSlotErrors((prev) => ({ ...prev, yours: prev.yours.map((e, i) => (i === index ? null : e)) }))
   }
 
-  function handleOpponentTeamChange(index, value) {
+  function handleOpponentTeamChange(index: number, value: string) {
     setOpponentTeam((prev) => prev.map((v, i) => (i === index ? value : v)))
     setSlotErrors((prev) => ({ ...prev, theirs: prev.theirs.map((e, i) => (i === index ? null : e)) }))
   }

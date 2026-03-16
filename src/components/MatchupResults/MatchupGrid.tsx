@@ -1,7 +1,15 @@
-import MatchupCell from './MatchupCell.jsx'
+import MatchupCell from './MatchupCell'
 import styles from './MatchupGrid.module.css'
 
-export default function MatchupGrid({ matrix, yourTeam, opponentTeam }) {
+import type { MatchupEntry, Pokemon } from '../../services/pokeapi'
+
+interface MatchupGridProps {
+  matrix: MatchupEntry[]
+  yourTeam: Pokemon[]
+  opponentTeam: Pokemon[]
+}
+
+export default function MatchupGrid({ matrix, yourTeam, opponentTeam }: MatchupGridProps) {
   return (
     <div className={styles.wrapper}>
       <table className={styles.table}>

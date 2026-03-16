@@ -1,6 +1,14 @@
 import styles from './PokemonSlot.module.css'
 
-export default function PokemonSlot({ value, onChange, error, placeholder, disabled }) {
+interface PokemonSlotProps {
+  value: string
+  onChange: (value: string) => void
+  error: string | null
+  placeholder: string
+  disabled: boolean
+}
+
+export default function PokemonSlot({ value, onChange, error, placeholder, disabled }: PokemonSlotProps) {
   return (
     <div className={styles.slot}>
       <input

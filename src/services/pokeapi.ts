@@ -1,14 +1,77 @@
-/** @type {Map<string, object>} Module-level type effectiveness cache (session lifetime) */
-const typeMapCache = new Map()
+// --- Exported domain types ---
+
+export interface Pokemon {
+  name: string
+  types: string[]
+}
+
+export interface TypeRelations {
+  doubleDamageTo: string[]
+  halfDamageTo: string[]
+  noDamageTo: string[]
+}
+
+export type Effectiveness = '2x' | '1x' | '0.5x' | '0x'
+
+export interface MatchupEntry {
+  yours: Pokemon
+  theirs: Pokemon
+  youVsThem: Effectiveness
+  themVsYou: Effectiveness
+}
+
+export interface MatchupSummary {
+  superEffective: number
+  neutral: number
+  notVeryEffective: number
+}
+
+export interface MatchupResult {
+  yourTeam: Pokemon[]
+  opponentTeam: Pokemon[]
+  matrix: MatchupEntry[]
+  summary: MatchupSummary
+}
+
+// --- Internal types ---
+
+interface PokeApiTypeEntry {
+  slot: number
+  type: { name: string }
+}
+interface PokeApiPokemonResponse {
+  name: string
+  types: PokeApiTypeEntry[]
+}
+interface PokeApiDamageRelations {
+  double_damage_to: { name: string }[]
+  half_damage_to: { name: string }[]
+  no_damage_to: { name: string }[]
+}
+interface PokeApiTypeResponse {
+  damage_relations: PokeApiDamageRelations
+}
+interface PokeApiTypeListResponse {
+  results: { name: string; url: string }[]
+}
+interface CachedPokemon {
+  data: Pokemon
+  expires: number
+}
+
+// --- Module-level cache ---
+
+const typeMapCache = new Map<string, TypeRelations>()
 
 const BASE_URL = 'https://pokeapi.co/api/v2'
 const CACHE_PREFIX = 'pkm_v1_'
-const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
+const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000
 
 // --- Error types ---
 
 export class PokemonNotFoundError extends Error {
-  constructor(name) {
+  pokemonName: string
+  constructor(name: string) {
     super(`Pokémon not found: "${name}"`)
     this.name = 'PokemonNotFoundError'
     this.pokemonName = name
@@ -31,8 +94,8 @@ export class NetworkError extends Error {
 
 // --- Fetch helper with 429 retry ---
 
-async function fetchWithRetry(url) {
-  let res
+async function fetchWithRetry(url: string): Promise<Response> {
+  let res: Response
   try {
     res = await fetch(url)
   } catch {
@@ -40,7 +103,7 @@ async function fetchWithRetry(url) {
   }
 
   if (res.status === 429) {
-    await new Promise((r) => setTimeout(r, 1000))
+    await new Promise<void>((r) => setTimeout(r, 1000))
     try {
       res = await fetch(url)
     } catch {
@@ -54,29 +117,25 @@ async function fetchWithRetry(url) {
 
 // --- getPokemon ---
 
-/**
- * Fetch a Pokémon's name and types.
- * Checks localStorage first (7-day TTL), then falls back to PokéAPI.
- * @param {string} name
- * @returns {Promise<{name: string, types: string[]}>}
- */
-export async function getPokemon(name) {
+export async function getPokemon(name: string): Promise<Pokemon> {
   const key = CACHE_PREFIX + name.toLowerCase().trim()
 
   const cached = localStorage.getItem(key)
   if (cached) {
-    const { data, expires } = JSON.parse(cached)
+    const { data, expires } = JSON.parse(cached) as CachedPokemon
     if (Date.now() < expires) return data
     localStorage.removeItem(key)
   }
 
-  const res = await fetchWithRetry(`${BASE_URL}/pokemon/${encodeURIComponent(name.toLowerCase().trim())}`)
+  const res = await fetchWithRetry(
+    `${BASE_URL}/pokemon/${encodeURIComponent(name.toLowerCase().trim())}`,
+  )
 
   if (res.status === 404) throw new PokemonNotFoundError(name)
   if (!res.ok) throw new NetworkError()
 
-  const json = await res.json()
-  const data = {
+  const json = (await res.json()) as PokeApiPokemonResponse
+  const data: Pokemon = {
     name: json.name,
     types: json.types.map((t) => t.type.name),
   }
@@ -87,16 +146,12 @@ export async function getPokemon(name) {
 
 // --- getTypeMap ---
 
-/**
- * Fetch and cache the full type effectiveness map for the session.
- * @returns {Promise<Map<string, {doubleDamageTo: string[], halfDamageTo: string[], noDamageTo: string[]}>>}
- */
-export async function getTypeMap() {
+export async function getTypeMap(): Promise<Map<string, TypeRelations>> {
   if (typeMapCache.size > 0) return typeMapCache
 
   const listRes = await fetchWithRetry(`${BASE_URL}/type?limit=100`)
   if (!listRes.ok) throw new NetworkError()
-  const listJson = await listRes.json()
+  const listJson = (await listRes.json()) as PokeApiTypeListResponse
 
   const typeNames = listJson.results
     .map((t) => t.name)
@@ -106,7 +161,7 @@ export async function getTypeMap() {
     typeNames.map(async (typeName) => {
       const res = await fetchWithRetry(`${BASE_URL}/type/${typeName}`)
       if (!res.ok) return
-      const json = await res.json()
+      const json = (await res.json()) as PokeApiTypeResponse
       const dr = json.damage_relations
       typeMapCache.set(typeName, {
         doubleDamageTo: dr.double_damage_to.map((t) => t.name),
@@ -121,14 +176,11 @@ export async function getTypeMap() {
 
 // --- calcEffectiveness (exported for unit tests) ---
 
-/**
- * Compute attack effectiveness modifier for an attacker's types vs a defender's types.
- * @param {string[]} attackerTypes
- * @param {string[]} defenderTypes
- * @param {Map} typeMap
- * @returns {number} modifier (0, 0.25, 0.5, 1, 2, 4)
- */
-export function calcEffectiveness(attackerTypes, defenderTypes, typeMap) {
+export function calcEffectiveness(
+  attackerTypes: string[],
+  defenderTypes: string[],
+  typeMap: Map<string, TypeRelations>,
+): number {
   let modifier = 1
   for (const atkType of attackerTypes) {
     const relations = typeMap.get(atkType)
@@ -142,7 +194,7 @@ export function calcEffectiveness(attackerTypes, defenderTypes, typeMap) {
   return modifier
 }
 
-function modifierLabel(modifier) {
+function modifierLabel(modifier: number): Effectiveness {
   if (modifier >= 2) return '2x'
   if (modifier === 1) return '1x'
   if (modifier > 0) return '0.5x'
@@ -151,25 +203,19 @@ function modifierLabel(modifier) {
 
 // --- computeMatchups ---
 
-/**
- * Resolve all Pokémon, build TypeMap, return full matchup matrix.
- * @param {string[]} yourTeam   - non-empty name strings
- * @param {string[]} opponentTeam
- * @returns {Promise<{yourTeam: object[], opponentTeam: object[], matrix: object[], summary: object}>}
- */
-export async function computeMatchups(yourTeam, opponentTeam) {
-  const [typeMap, ...allPokemon] = await Promise.all([
+export async function computeMatchups(
+  yourTeam: string[],
+  opponentTeam: string[],
+): Promise<MatchupResult> {
+  const [typeMap, yourPokemon, theirPokemon] = await Promise.all([
     getTypeMap(),
-    ...yourTeam.map(getPokemon),
-    ...opponentTeam.map(getPokemon),
+    Promise.all(yourTeam.map(getPokemon)),
+    Promise.all(opponentTeam.map(getPokemon)),
   ])
 
-  const resolvedYours = allPokemon.slice(0, yourTeam.length)
-  const resolvedOpponents = allPokemon.slice(yourTeam.length)
-
-  const matrix = []
-  for (const yours of resolvedYours) {
-    for (const theirs of resolvedOpponents) {
+  const matrix: MatchupEntry[] = []
+  for (const yours of yourPokemon) {
+    for (const theirs of theirPokemon) {
       const youVsThemMod = calcEffectiveness(yours.types, theirs.types, typeMap)
       const themVsYouMod = calcEffectiveness(theirs.types, yours.types, typeMap)
       matrix.push({
@@ -181,11 +227,11 @@ export async function computeMatchups(yourTeam, opponentTeam) {
     }
   }
 
-  const summary = {
+  const summary: MatchupSummary = {
     superEffective: matrix.filter((e) => e.youVsThem === '2x').length,
     neutral: matrix.filter((e) => e.youVsThem === '1x').length,
     notVeryEffective: matrix.filter((e) => e.youVsThem === '0.5x' || e.youVsThem === '0x').length,
   }
 
-  return { yourTeam: resolvedYours, opponentTeam: resolvedOpponents, matrix, summary }
+  return { yourTeam: yourPokemon, opponentTeam: theirPokemon, matrix, summary }
 }

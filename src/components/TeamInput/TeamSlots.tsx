@@ -1,7 +1,15 @@
-import PokemonSlot from './PokemonSlot.jsx'
+import PokemonSlot from './PokemonSlot'
 import styles from './TeamSlots.module.css'
 
-export default function TeamSlots({ label, slots, slotErrors, onChange, disabled }) {
+interface TeamSlotsProps {
+  label: string
+  slots: string[]
+  slotErrors: (string | null)[]
+  onChange: (index: number, value: string) => void
+  disabled: boolean
+}
+
+export default function TeamSlots({ label, slots, slotErrors, onChange, disabled }: TeamSlotsProps) {
   return (
     <div className={styles.group}>
       <h2 className={styles.label}>{label}</h2>
