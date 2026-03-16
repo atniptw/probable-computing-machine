@@ -13,7 +13,8 @@
 		"vscode": {
 			"extensions": [
 				"bierner.markdown-mermaid",
-				"vitest.explorer"
+				"vitest.explorer",
+				"github.vscode-github-actions"
 			]
 		}
 	}
