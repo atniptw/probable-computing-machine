@@ -2,9 +2,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: '/probable-computing-machine/',
+  base: command === 'serve' ? '/' : '/probable-computing-machine/',
   test: {
     environment: 'jsdom',
     exclude: ['e2e/**', 'node_modules/**'],
@@ -21,4 +21,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

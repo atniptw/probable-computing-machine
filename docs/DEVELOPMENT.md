@@ -84,13 +84,13 @@ probable-computing-machine/
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: '/probable-computing-machine/',
-})
+  base: command === 'serve' ? '/' : '/probable-computing-machine/',
+}))
 ```
 
-The `base` path must match the repository name for GitHub Pages to serve assets correctly.
+Local dev uses `/` so `http://localhost:5173` works directly. Production builds still use the repository base path for GitHub Pages.
 
 ## GitHub Actions Deploy Workflow
 

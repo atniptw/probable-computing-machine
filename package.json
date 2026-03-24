@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
@@ -13,6 +13,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"{README,DECISIONS,SESSIONS}.md\" docs/DEVELOPMENT.md eslint.config.js playwright.config.ts vite.config.ts package.json .prettierrc.json .lintstagedrc.json .github/workflows/*.yml .github/dependabot.yml .devcontainer/devcontainer.json",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"{README,DECISIONS,SESSIONS}.md\" docs/DEVELOPMENT.md eslint.config.js playwright.config.ts vite.config.ts package.json .prettierrc.json .lintstagedrc.json .github/workflows/*.yml .github/dependabot.yml .devcontainer/devcontainer.json",
     "tsc": "tsc --noEmit",
+    "check": "tsc --noEmit && vite build",
     "e2e": "playwright test",
     "prepare": "husky"
   },

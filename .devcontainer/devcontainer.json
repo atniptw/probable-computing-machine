@@ -8,21 +8,22 @@
     "ghcr.io/devcontainers/features/copilot-cli:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
+  "postCreateCommand": "npm install",
+
   "customizations": {
     "vscode": {
       "extensions": [
         "bierner.markdown-mermaid",
         "vitest.explorer",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "ms-playwright.playwright"
       ]
     }
-  }
-
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
+  },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
+  // 5173 = Vite dev server, 4173 = Vite preview (used by Playwright e2e)
+  "forwardPorts": [5173, 4173]
 
   // Configure tool-specific properties.
   // "customizations": {},

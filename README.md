@@ -2,6 +2,15 @@
 
 Foundational project workspace for a new web app.
 
+## Quick Start
+
+```bash
+npm install       # install dependencies (auto-runs on devcontainer open)
+npm run dev       # start dev server → open http://localhost:5173
+```
+
+Port 5173 is automatically forwarded when opened in a devcontainer — VS Code will show an "Open in Browser" notification.
+
 ## Current Status
 
 - Stage: MVP battle UX implemented with game-specific Pokédex filtering
@@ -40,6 +49,7 @@ Foundational project workspace for a new web app.
 ## Validation Commands
 
 ```bash
+npm run check          # typecheck + production build (pre-flight sanity check)
 npm run lint
 npm run format:check
 npm run tsc
