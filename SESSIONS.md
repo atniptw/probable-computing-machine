@@ -88,6 +88,31 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-24 - Fix CI Build Runtime for Coverage Job
+
+### Objective
+
+- Resolve GitHub Actions deploy workflow failure during `npm run test:coverage`.
+
+### Decisions Made
+
+- Move CI runtime from Node 18 to Node 22 in deploy workflow to satisfy dependency engine requirements.
+
+### Completed
+
+- Updated `.github/workflows/deploy.yml` to use `actions/setup-node@v4` with `node-version: '22'`.
+- Verified local validation commands still pass after workflow update.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Monitor the next `Deploy to GitHub Pages` run to confirm green build on hosted runners.
+
+---
+
 ## 2026-03-24 - Add Team Move Editing to Team Configuration
 
 ### Objective
