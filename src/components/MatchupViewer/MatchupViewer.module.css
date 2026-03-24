@@ -25,7 +25,7 @@
 }
 
 .cycleControls {
-  display: none;
+  display: inline-flex;
   gap: 8px;
 }
 
@@ -214,47 +214,7 @@
   cursor: pointer;
 }
 
-.teamNav {
-  border-top: 1px solid #eef1f3;
-  padding-top: 10px;
-}
-
-.tabs {
-  margin-top: 8px;
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-}
-
-.tab {
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 999px;
-  border: 1px solid #d7dce0;
-  background: #ffffff;
-  color: #1f2933;
-  font-size: 0.8rem;
-  text-transform: capitalize;
-  cursor: pointer;
-  flex: 0 0 auto;
-}
-
-.tabActive {
-  border-color: #1f2933;
-  background: #edf1f4;
-}
-
-.swipeHint {
-  margin: 8px 0 0;
-  color: #5f6b77;
-  font-size: 0.75rem;
-}
-
 @media (min-width: 768px) {
-  .cycleControls {
-    display: inline-flex;
-  }
-
   .sideGrid {
     grid-template-columns: 1fr 1fr;
   }

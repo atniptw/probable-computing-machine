@@ -30,6 +30,36 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-24 - Remove Bottom Team Cycling Panel
+
+### Objective
+
+- Simplify matchup viewer layout by removing the bottom "Cycle Team Members" panel.
+
+### Decisions Made
+
+- Keep team-member cycling only through existing swipe and header arrow controls.
+- Remove the duplicated lower navigation region to reduce visual noise.
+
+### Completed
+
+- Removed bottom team navigation section from `src/components/MatchupViewer/MatchupContainer.tsx`.
+- Removed no-longer-used helper/import logic tied to tab-style bottom cycling UI.
+- Removed orphaned CSS classes from `src/components/MatchupViewer/MatchupViewer.module.css`.
+- Validation evidence:
+  - `npm run lint` -> pass
+  - `npm run test` -> pass (12 files, 74 tests)
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Optionally add a subtle first-time swipe coachmark if discoverability feedback continues.
+
+---
+
 ## 2026-03-24 - Implement Matchup Viewer UI Replacement
 
 ### Objective

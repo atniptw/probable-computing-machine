@@ -1,4 +1,4 @@
-import { useMemo, useState, type TouchEvent } from 'react'
+import { useState, type TouchEvent } from 'react'
 
 import { toTitleCase } from '../../utils/format'
 import { useMatchupMatrix } from '../../hooks/useMatchupMatrix'
@@ -23,12 +23,6 @@ const SWIPE_THRESHOLD = 40
 function positiveModulo(value: number, mod: number): number {
   if (mod === 0) return 0
   return ((value % mod) + mod) % mod
-}
-
-function tabLabel(name: string, fallbackIndex: number): string {
-  const parsed = toTitleCase(name)
-  if (parsed) return parsed
-  return `Slot ${fallbackIndex + 1}`
 }
 
 export default function MatchupContainer({
@@ -57,11 +51,6 @@ export default function MatchupContainer({
     selectedTeamIndex,
     teamNames,
   })
-
-  const activeTeamIndex = useMemo(
-    () => positiveModulo(selectedTeamIndex, Math.max(teamNames.length, 1)),
-    [selectedTeamIndex, teamNames.length],
-  )
 
   function cycle(delta: number): void {
     setSelectedTeamIndex((current) =>
@@ -173,34 +162,6 @@ export default function MatchupContainer({
             />
           </article>
         </div>
-
-        <section className={styles.teamNav} aria-label="Team member navigation">
-          <div className={styles.titleRow}>
-            <p className={styles.cardLabel}>Cycle Team Members</p>
-          </div>
-
-          <div className={styles.tabs} role="tablist" aria-label="Team members">
-            {teamNames.map((name, index) => {
-              const isActive = index === activeTeamIndex
-              return (
-                <button
-                  key={`${name}-${index}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  className={`${styles.tab} ${isActive ? styles.tabActive : ''}`}
-                  onClick={() => setSelectedTeamIndex(index)}
-                >
-                  {tabLabel(name, index)}
-                </button>
-              )
-            })}
-          </div>
-
-          <p className={styles.swipeHint}>
-            Swipe left or right on mobile to cycle members.
-          </p>
-        </section>
       </article>
     </section>
   )
