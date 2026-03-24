@@ -3,11 +3,13 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   calcEffectiveness,
   getPokemon,
+  getMoveType,
   getTypeMap,
   PokemonNotFoundError,
   RateLimitError,
   type Pokemon,
 } from '../services/pokeapi'
+import type { TeamMemberConfig } from './useTeamConfiguration'
 
 interface MatchupMove {
   name: string
@@ -48,6 +50,7 @@ interface UseMatchupMatrixParams {
   onError: (message: string | null) => void
   pokemonNameSet: Set<string>
   selectedTeamIndex: number
+  teamMembers: TeamMemberConfig[]
   teamNames: string[]
 }
 
@@ -143,7 +146,14 @@ function clampIndex(index: number, size: number): number {
   return index
 }
 
-function buildOffenseMoves(types: string[]): MoveTemplate[] {
+function buildOffenseMoves(
+  types: string[],
+  configuredMoves: MoveTemplate[],
+): MoveTemplate[] {
+  if (configuredMoves.length > 0) {
+    return configuredMoves
+  }
+
   const baseMoves = types.flatMap(
     (typeName) => OFFENSE_MOVES_BY_TYPE[typeName] ?? [],
   )
@@ -151,6 +161,35 @@ function buildOffenseMoves(types: string[]): MoveTemplate[] {
     return OFFENSE_MOVES_BY_TYPE.normal
   }
   return [...baseMoves, { name: 'Quick Attack', type: 'normal' }]
+}
+
+function formatMoveName(value: string): string {
+  return value
+    .trim()
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .split(' ')
+    .filter(Boolean)
+    .map((segment) => segment[0].toUpperCase() + segment.slice(1).toLowerCase())
+    .join(' ')
+}
+
+async function resolveConfiguredMoves(
+  moveNames: string[],
+): Promise<MoveTemplate[]> {
+  const moveResults = await Promise.allSettled(
+    moveNames.map(async (moveName) => ({
+      name: formatMoveName(moveName),
+      type: await getMoveType(moveName),
+    })),
+  )
+
+  return moveResults
+    .filter(
+      (result): result is PromiseFulfilledResult<MoveTemplate> =>
+        result.status === 'fulfilled',
+    )
+    .map((result) => result.value)
 }
 
 function buildDefenseMoves(opponentTypes: string[]): MoveTemplate[] {
@@ -216,15 +255,18 @@ export function useMatchupMatrix({
   onError,
   pokemonNameSet,
   selectedTeamIndex,
+  teamMembers,
   teamNames,
 }: UseMatchupMatrixParams) {
   const [loading, setLoading] = useState(false)
   const [matchup, setMatchup] = useState<MatchupViewModel | null>(null)
 
-  const selectedTeamName = useMemo(() => {
+  const selectedTeamMember = useMemo(() => {
     const nextIndex = clampIndex(selectedTeamIndex, teamNames.length)
-    return teamNames[nextIndex] ?? null
-  }, [selectedTeamIndex, teamNames])
+    return teamMembers[nextIndex] ?? null
+  }, [selectedTeamIndex, teamMembers, teamNames.length])
+
+  const selectedTeamName = selectedTeamMember?.name ?? null
 
   useEffect(() => {
     if (!teamNames.length || !pokemonNameSet.size) {
@@ -233,7 +275,9 @@ export function useMatchupMatrix({
       return
     }
 
-    const teamStillValid = teamNames.every((name) => pokemonNameSet.has(name))
+    const teamStillValid = teamMembers.every((member) =>
+      pokemonNameSet.has(member.name),
+    )
     if (!teamStillValid) {
       setMatchup(null)
       setLoading(false)
@@ -270,17 +314,23 @@ export function useMatchupMatrix({
           getPokemon(selectedTeamName, { generation }),
         ])
 
+        const configuredMoves = selectedTeamMember
+          ? await resolveConfiguredMoves(selectedTeamMember.moves)
+          : []
+
         if (cancelled) return
 
         const offenseMoves = sortMovesByMultiplier(
-          buildOffenseMoves(playerPokemon.types).map((move) => ({
-            name: move.name,
-            multiplier: calcEffectiveness(
-              [move.type],
-              opponentPokemon.types,
-              typeMap,
-            ),
-          })),
+          buildOffenseMoves(playerPokemon.types, configuredMoves).map(
+            (move) => ({
+              name: move.name,
+              multiplier: calcEffectiveness(
+                [move.type],
+                opponentPokemon.types,
+                typeMap,
+              ),
+            }),
+          ),
         )
 
         const defenseMoves = sortMovesByMultiplier(
@@ -337,7 +387,9 @@ export function useMatchupMatrix({
     normalizedOpponent,
     onError,
     pokemonNameSet,
+    selectedTeamMember,
     selectedTeamName,
+    teamMembers,
     teamNames,
   ])
 

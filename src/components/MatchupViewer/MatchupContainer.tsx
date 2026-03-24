@@ -2,6 +2,7 @@ import { useState, type TouchEvent } from 'react'
 
 import { toTitleCase } from '../../utils/format'
 import { useMatchupMatrix } from '../../hooks/useMatchupMatrix'
+import type { TeamMemberConfig } from '../../hooks/useTeamConfiguration'
 import styles from './MatchupViewer.module.css'
 import DefenseSection from './DefenseSection'
 import OffenseSection from './OffenseSection'
@@ -15,6 +16,7 @@ interface MatchupContainerProps {
   normalizedOpponent: string
   onError: (message: string | null) => void
   pokemonNameSet: Set<string>
+  teamMembers: TeamMemberConfig[]
   teamNames: string[]
 }
 
@@ -33,6 +35,7 @@ export default function MatchupContainer({
   normalizedOpponent,
   onError,
   pokemonNameSet,
+  teamMembers,
   teamNames,
 }: MatchupContainerProps) {
   const [selectedTeamIndex, setSelectedTeamIndex] = useState(0)
@@ -49,6 +52,7 @@ export default function MatchupContainer({
     onError,
     pokemonNameSet,
     selectedTeamIndex,
+    teamMembers,
     teamNames,
   })
 

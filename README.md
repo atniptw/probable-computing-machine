@@ -13,7 +13,7 @@ Port 5173 is automatically forwarded when opened in a devcontainer — VS Code w
 
 ## Current Status
 
-- Stage: MVP battle UX implemented with game-specific Pokédex filtering
+- Stage: MVP battle UX implemented with game-specific Pokédex filtering and structured team move editing with autocomplete
 - Product: Pokémon matchup viewer (descriptive offense/defense UI, static web app)
 - Stack: React 18 + Vite, hosted on GitHub Pages
 - Collaboration cadence: continuous flow with explicit role handoffs
@@ -44,7 +44,7 @@ Port 5173 is automatically forwarded when opened in a devcontainer — VS Code w
 
 1. Add focused tests for `src/components/MatchupViewer/*` covering swipe/cycle behavior and section rendering states.
 2. Remove or archive deprecated recommendation-only rendering assets if no longer part of product direction.
-3. Evaluate mobile UX refinements for faster in-battle team member cycling.
+3. Add focused UI tests for team editor move chip interactions, autocomplete states, and save validation errors.
 
 ## Testing Reliability Notes
 

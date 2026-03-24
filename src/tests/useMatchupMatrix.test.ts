@@ -2,12 +2,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 
 import { useMatchupMatrix } from '../hooks/useMatchupMatrix'
-import { getPokemon, getTypeMap, RateLimitError } from '../services/pokeapi'
+import type { TeamMemberConfig } from '../hooks/useTeamConfiguration'
+import {
+  getMoveType,
+  getPokemon,
+  getTypeMap,
+  RateLimitError,
+} from '../services/pokeapi'
 
 vi.mock('../services/pokeapi', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../services/pokeapi')>()
   return {
     ...actual,
+    getMoveType: vi.fn(),
     getPokemon: vi.fn(),
     getTypeMap: vi.fn(),
   }
@@ -21,6 +28,7 @@ const BASE_PARAMS = {
   normalizedOpponent: 'gyarados',
   pokemonNameSet: new Set(['manectric']),
   selectedTeamIndex: 0,
+  teamMembers: [{ name: 'manectric', moves: [] }] as TeamMemberConfig[],
   teamNames: ['manectric'],
 }
 
@@ -38,6 +46,8 @@ function makeParams(
 
 describe('useMatchupMatrix', () => {
   beforeEach(() => {
+    vi.mocked(getMoveType).mockResolvedValue('electric')
+
     vi.mocked(getTypeMap).mockResolvedValue(
       new Map([
         [
@@ -144,10 +154,44 @@ describe('useMatchupMatrix', () => {
     expect(matchup.summary.defenseRating).toBeGreaterThanOrEqual(1)
   })
 
+  it('uses configured team moves when provided', async () => {
+    vi.mocked(getMoveType).mockImplementation(async (moveName) => {
+      if (moveName === 'ice beam') return 'ice'
+      if (moveName === 'thunderbolt') return 'electric'
+      return 'normal'
+    })
+
+    const onError = vi.fn()
+    const params = makeParams({
+      onError,
+      teamMembers: [
+        {
+          name: 'manectric',
+          moves: ['ice beam', 'thunderbolt'],
+        },
+      ],
+    })
+
+    const { result } = renderHook(() => useMatchupMatrix(params))
+
+    await waitFor(() => expect(result.current.matchup).not.toBe(null))
+
+    const superMoveNames = result.current.matchup!.offense.superEffective.map(
+      (move) => move.name,
+    )
+    expect(superMoveNames).toContain('Thunderbolt')
+
+    const neutralMoveNames = result.current.matchup!.offense.neutral.map(
+      (move) => move.name,
+    )
+    expect(neutralMoveNames).toContain('Ice Beam')
+  })
+
   it('reports validation error when saved team contains out-of-dex pokemon', async () => {
     const onError = vi.fn()
     const params = makeParams({
       onError,
+      teamMembers: [{ name: 'charizard', moves: [] }],
       teamNames: ['charizard'],
       pokemonNameSet: new Set(['manectric']),
     })

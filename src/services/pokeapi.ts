@@ -66,6 +66,9 @@ interface PokeApiPokemonResponse {
     front_default: string | null
   }
 }
+interface PokeApiMoveResponse {
+  type: { name: string }
+}
 interface PokeApiDamageRelations {
   double_damage_to: { name: string }[]
   half_damage_to: { name: string }[]
@@ -78,6 +81,10 @@ interface PokeApiTypeListResponse {
   results: { name: string; url: string }[]
 }
 interface PokeApiPokemonListResponse {
+  count: number
+  results: { name: string; url: string }[]
+}
+interface PokeApiMoveListResponse {
   count: number
   results: { name: string; url: string }[]
 }
@@ -111,11 +118,17 @@ const BASE_URL = 'https://pokeapi.co/api/v2'
 const CACHE_PREFIX = 'pkm_v2_'
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000
 const NAME_INDEX_CACHE_KEY = 'pkm_names_v2_all'
+const MOVE_INDEX_CACHE_KEY = 'pkm_moves_v1_all'
 const NAME_INDEX_LIMIT = 100000
+const MOVE_INDEX_LIMIT = 100000
 
 const pokemonNameIndexCache = new Map<string, string[]>()
 const pokemonNameIndexPromise = new Map<string, Promise<string[]>>()
+const moveNameIndexCache = new Map<string, string[]>()
+const moveNameIndexPromise = new Map<string, Promise<string[]>>()
 const pokemonRequestCache = new Map<string, Promise<Pokemon>>()
+const moveTypeCache = new Map<string, string>()
+const moveTypePromise = new Map<string, Promise<string>>()
 const gameContextCache = new Map<string, GameVersionContext>()
 const gameContextPromise = new Map<string, Promise<GameVersionContext>>()
 
@@ -263,6 +276,42 @@ export async function getPokemon(
   }
 }
 
+function normalizeMoveName(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, '-')
+}
+
+export async function getMoveType(moveName: string): Promise<string> {
+  const normalizedName = normalizeMoveName(moveName)
+  if (!normalizedName) throw new NetworkError()
+
+  if (moveTypeCache.has(normalizedName)) {
+    return moveTypeCache.get(normalizedName) as string
+  }
+
+  const inFlight = moveTypePromise.get(normalizedName)
+  if (inFlight) return inFlight
+
+  const request = (async () => {
+    const res = await fetchWithRetry(
+      `${BASE_URL}/move/${encodeURIComponent(normalizedName)}`,
+    )
+
+    if (!res.ok) throw new NetworkError()
+
+    const json = (await res.json()) as PokeApiMoveResponse
+    const typeName = json.type.name
+    moveTypeCache.set(normalizedName, typeName)
+    return typeName
+  })()
+
+  moveTypePromise.set(normalizedName, request)
+  try {
+    return await request
+  } finally {
+    moveTypePromise.delete(normalizedName)
+  }
+}
+
 // --- getPokemonNameIndex ---
 
 async function fetchPokemonNameIndexFromApi(): Promise<string[]> {
@@ -281,6 +330,25 @@ async function fetchPokemonNameIndexFromApi(): Promise<string[]> {
   const listJson = (await listRes.json()) as PokeApiPokemonListResponse
   return listJson.results
     .map((entry) => entry.name.toLowerCase())
+    .filter(Boolean)
+}
+
+async function fetchMoveNameIndexFromApi(): Promise<string[]> {
+  const countRes = await fetchWithRetry(`${BASE_URL}/move?limit=1`)
+  if (!countRes.ok) throw new NetworkError()
+  const countJson = (await countRes.json()) as PokeApiMoveListResponse
+
+  const safeLimit = Math.max(
+    1,
+    Math.min(countJson.count || 1, MOVE_INDEX_LIMIT),
+  )
+
+  const listRes = await fetchWithRetry(`${BASE_URL}/move?limit=${safeLimit}`)
+  if (!listRes.ok) throw new NetworkError()
+
+  const listJson = (await listRes.json()) as PokeApiMoveListResponse
+  return listJson.results
+    .map((entry) => entry.name.toLowerCase().replace(/-/g, ' '))
     .filter(Boolean)
 }
 
@@ -406,6 +474,62 @@ export async function getPokemonNameIndex(version?: string): Promise<string[]> {
     return await request
   } finally {
     pokemonNameIndexPromise.delete(cacheKey)
+  }
+}
+
+export async function getMoveNameIndex(): Promise<string[]> {
+  if (moveNameIndexCache.has(MOVE_INDEX_CACHE_KEY)) {
+    return moveNameIndexCache.get(MOVE_INDEX_CACHE_KEY) as string[]
+  }
+
+  if (moveNameIndexPromise.has(MOVE_INDEX_CACHE_KEY)) {
+    return moveNameIndexPromise.get(MOVE_INDEX_CACHE_KEY) as Promise<string[]>
+  }
+
+  const cachedRaw = localStorage.getItem(MOVE_INDEX_CACHE_KEY)
+  let cached: CachedPokemonNameIndex | null = null
+
+  if (cachedRaw) {
+    try {
+      cached = JSON.parse(cachedRaw) as CachedPokemonNameIndex
+      if (!Array.isArray(cached.names) || typeof cached.expires !== 'number') {
+        cached = null
+      }
+    } catch {
+      cached = null
+    }
+  }
+
+  if (cached && Date.now() < cached.expires) {
+    moveNameIndexCache.set(MOVE_INDEX_CACHE_KEY, cached.names)
+    return cached.names
+  }
+
+  const request = (async () => {
+    try {
+      const names = await fetchMoveNameIndexFromApi()
+      const payload: CachedPokemonNameIndex = {
+        names,
+        expires: Date.now() + CACHE_TTL_MS,
+      }
+
+      localStorage.setItem(MOVE_INDEX_CACHE_KEY, JSON.stringify(payload))
+      moveNameIndexCache.set(MOVE_INDEX_CACHE_KEY, names)
+      return names
+    } catch (error) {
+      if (cached && cached.names.length > 0) {
+        moveNameIndexCache.set(MOVE_INDEX_CACHE_KEY, cached.names)
+        return cached.names
+      }
+      throw error
+    }
+  })()
+
+  moveNameIndexPromise.set(MOVE_INDEX_CACHE_KEY, request)
+  try {
+    return await request
+  } finally {
+    moveNameIndexPromise.delete(MOVE_INDEX_CACHE_KEY)
   }
 }
 

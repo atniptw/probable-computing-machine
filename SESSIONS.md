@@ -30,6 +30,73 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-24 - Replace Comma-Separated Move Input with Structured Move Picker
+
+### Objective
+
+- Replace freeform comma-separated team move entry with an add/remove move flow backed by autocomplete.
+
+### Decisions Made
+
+- Store draft moves as arrays in editor state so the UI can represent individual moves directly.
+- Load a cached global move-name index from PokéAPI for client-side autocomplete instead of move-by-move lookups while typing.
+- Keep manual typing available so move entry still works if autocomplete data fails to load.
+
+### Completed
+
+- Reworked `useTeamConfiguration` to expose `addTeamMove` and `removeTeamMove` operations with duplicate, slot, and max-count validation.
+- Added cached `getMoveNameIndex` support in `src/services/pokeapi.ts` and a new `useMoveNameIndex` hook.
+- Replaced the team editor comma-separated move field with chip-style added moves, remove actions, and an autocomplete-backed `Add Move` input.
+- Added test coverage for structured move editing and move-name index caching.
+- Validation evidence:
+  - `npm run lint` -> pass
+  - `npm run test` -> pass (13 files, 83 tests)
+  - `npm run tsc` -> pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Add focused component or e2e coverage for move suggestion selection and chip removal behavior.
+
+---
+
+## 2026-03-24 - Add Team Move Editing to Team Configuration
+
+### Objective
+
+- Allow users to save each team member's actual moves from the Edit Team flow and use those moves in matchup calculations.
+
+### Decisions Made
+
+- Keep Pokemon name suggestions as-is and add a separate optional comma-separated move input per team slot.
+- Persist team data as member objects (`name`, `moves`) while preserving compatibility with legacy name-array storage.
+- Resolve move typing through PokéAPI move endpoints, falling back to default type-based templates when custom move resolution yields no usable moves.
+
+### Completed
+
+- Updated team configuration hook to support move drafts, move validation, and member-object persistence.
+- Updated team editor panel UI with per-slot optional move input and validation messaging.
+- Wired team member move data from app state into matchup rendering flow.
+- Added `getMoveType` helper in `src/services/pokeapi.ts` with in-memory request de-duplication and caching.
+- Updated matchup matrix hook to use configured moves when available and keep existing fallback behavior.
+- Expanded unit coverage in `useTeamConfiguration` and `useMatchupMatrix` tests for new move behavior.
+- Validation evidence:
+  - `npm run lint` -> pass
+  - `npm run test` -> pass (12 files, 78 tests)
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Verify the structured move picker with focused UI coverage.
+
+---
+
 ## 2026-03-24 - Remove Bottom Team Cycling Panel
 
 ### Objective

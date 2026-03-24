@@ -4,6 +4,7 @@ import BattleSelectorSection from './components/AppView/BattleSelectorSection'
 import TeamConfigurationSection from './components/AppView/TeamConfigurationSection'
 import TeamEditorPanel from './components/AppView/TeamEditorPanel'
 import MatchupContainer from './components/MatchupViewer/MatchupContainer'
+import { useMoveNameIndex } from './hooks/useMoveNameIndex'
 import { usePokemonNameIndex } from './hooks/usePokemonNameIndex'
 import { usePokemonSuggestions } from './hooks/usePokemonSuggestions'
 import { useTeamConfiguration } from './hooks/useTeamConfiguration'
@@ -49,6 +50,7 @@ export default function App() {
     version: selectedGame.version,
     onError: setError,
   })
+  const { moveNameIndex } = useMoveNameIndex({ onError: setError })
 
   useEffect(() => {
     localStorage.setItem('pmh_game_v1', selectedGame.version)
@@ -63,10 +65,15 @@ export default function App() {
 
   const {
     activeTeamSlot,
+    addTeamMove,
     prepareTeamEditor,
+    removeTeamMove,
     saveTeam,
     setActiveTeamSlot,
     teamDraft,
+    teamMembers,
+    teamMoveErrors,
+    teamMovesDraft,
     teamNames,
     teamSlotErrors,
     updateTeamSlot,
@@ -82,6 +89,10 @@ export default function App() {
   const { getSuggestions } = usePokemonSuggestions({
     maxSuggestions: MAX_SUGGESTIONS,
     pokemonNameIndex,
+  })
+  const { getSuggestions: getMoveSuggestions } = usePokemonSuggestions({
+    maxSuggestions: MAX_SUGGESTIONS,
+    pokemonNameIndex: moveNameIndex,
   })
 
   const opponentSuggestions = getSuggestions(normalizedOpponent)
@@ -146,10 +157,15 @@ export default function App() {
         {screen === 'team' ? (
           <TeamEditorPanel
             teamDraft={teamDraft}
+            teamMovesDraft={teamMovesDraft}
             teamSlotErrors={teamSlotErrors}
+            teamMoveErrors={teamMoveErrors}
             activeTeamSlot={activeTeamSlot}
             getSuggestions={getSuggestions}
+            getMoveSuggestions={getMoveSuggestions}
             onSlotChange={updateTeamSlot}
+            onAddMove={addTeamMove}
+            onRemoveMove={removeTeamMove}
             onSlotFocus={setActiveTeamSlot}
             onSlotBlur={(index) => {
               window.setTimeout(() => {
@@ -171,6 +187,7 @@ export default function App() {
           />
         ) : (
           <MatchupContainer
+            teamMembers={teamMembers}
             teamNames={teamNames}
             normalizedOpponent={normalizedOpponent}
             exactMatchFound={exactMatchFound}

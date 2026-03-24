@@ -28,7 +28,7 @@ export default function TeamConfigurationSection({
       />
 
       <p className={styles.configureHint}>
-        Save 1-6 Pokemon from the selected game Pokedex.
+        Save 1-6 Pokemon from the selected game Pokedex, plus optional moves.
       </p>
     </section>
   )

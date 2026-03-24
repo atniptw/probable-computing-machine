@@ -31,6 +31,62 @@ YYYY-MM-DD
 
 ---
 
+## DEC-0020
+
+### Date
+
+2026-03-24
+
+### Context
+
+- Team move editing initially shipped as a comma-separated text field, which pushed parsing and validation burden onto the user.
+- Product feedback required a lower-friction interaction for adding exact moves while preserving static-client constraints.
+
+### Decision
+
+- Replace comma-separated move entry with a structured add/remove move picker in the team editor.
+- Fetch and cache a global move-name index from PokéAPI for client-side autocomplete.
+- Keep move addition resilient by allowing manual entry when autocomplete loading fails.
+
+### Consequences
+
+- Positive: lower input error rate, clearer editing affordance, and better alignment with the underlying `moves: string[]` data model.
+- Trade-offs: adds one more cached dataset in the browser and slightly more editor state complexity.
+
+### Owner
+
+- Product + Frontend
+
+---
+
+## DEC-0019
+
+### Date
+
+2026-03-24
+
+### Context
+
+- Team editing previously captured only Pokemon names, so matchup offense output could not reflect the player's actual move choices.
+- User-requested capability required custom move input with low UI complexity and no backend.
+
+### Decision
+
+- Persist team configuration as member objects with `name` and optional `moves` (up to four moves per member).
+- Resolve move types dynamically via PokéAPI `move` endpoint (`getMoveType`) and cache move-type lookups in memory.
+- Keep fallback offense move templates for cases where no custom moves are configured or no configured moves resolve successfully.
+
+### Consequences
+
+- Positive: matchup output now tracks player-entered moves and better represents real team loadouts.
+- Trade-offs: adds extra network dependency for move-type resolution and introduces additional validation complexity in team editor state.
+
+### Owner
+
+- Frontend + Architect
+
+---
+
 ## DEC-0018
 
 ### Date

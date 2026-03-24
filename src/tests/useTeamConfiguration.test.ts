@@ -52,9 +52,15 @@ describe('useTeamConfiguration', () => {
 
   describe('initialisation', () => {
     it('reads saved team from localStorage on init', () => {
-      storage.setItem(TEAM_KEY, JSON.stringify(['charmander']))
+      storage.setItem(
+        TEAM_KEY,
+        JSON.stringify({
+          members: [{ name: 'charmander', moves: ['flamethrower'] }],
+        }),
+      )
       const { result } = renderHook(() => useTeamConfiguration(makeParams()))
       expect(result.current.teamNames).toEqual(['charmander'])
+      expect(result.current.teamMembers[0].moves).toEqual(['flamethrower'])
     })
 
     it('falls back to defaultTeam when localStorage is empty', () => {
@@ -74,10 +80,23 @@ describe('useTeamConfiguration', () => {
       expect(result.current.teamNames).toEqual(['pikachu'])
     })
 
-    it('initialises teamDraft as padded slots from saved team', () => {
+    it('supports legacy array-shaped team storage', () => {
       storage.setItem(TEAM_KEY, JSON.stringify(['charmander']))
       const { result } = renderHook(() => useTeamConfiguration(makeParams()))
+      expect(result.current.teamNames).toEqual(['charmander'])
+      expect(result.current.teamMembers[0].moves).toEqual([])
+    })
+
+    it('initialises teamDraft as padded slots from saved team', () => {
+      storage.setItem(
+        TEAM_KEY,
+        JSON.stringify({
+          members: [{ name: 'charmander', moves: ['ember'] }],
+        }),
+      )
+      const { result } = renderHook(() => useTeamConfiguration(makeParams()))
       expect(result.current.teamDraft).toEqual(['charmander', '', ''])
+      expect(result.current.teamMovesDraft).toEqual([['ember'], [], []])
     })
   })
 
@@ -138,6 +157,8 @@ describe('useTeamConfiguration', () => {
       )
       act(() => {
         result.current.updateTeamSlot(0, 'Pikachu') // normalised to 'pikachu'
+        result.current.addTeamMove(0, 'Thunderbolt')
+        result.current.addTeamMove(0, 'Volt Tackle')
       })
       let saved: boolean | undefined
       act(() => {
@@ -145,7 +166,11 @@ describe('useTeamConfiguration', () => {
       })
       expect(saved).toBe(true)
       expect(result.current.teamNames).toEqual(['pikachu'])
-      expect(storage.getItem(TEAM_KEY)).toBe(JSON.stringify(['pikachu']))
+      expect(storage.getItem(TEAM_KEY)).toBe(
+        JSON.stringify({
+          members: [{ name: 'pikachu', moves: ['thunderbolt', 'volt tackle'] }],
+        }),
+      )
       expect(onError).toHaveBeenLastCalledWith(null)
     })
 
@@ -160,6 +185,78 @@ describe('useTeamConfiguration', () => {
         result.current.saveTeam()
       })
       expect(result.current.teamNames).toEqual(['bulbasaur'])
+    })
+
+    it('rejects move lists with more than four moves', () => {
+      const onError = vi.fn()
+      const { result } = renderHook(() =>
+        useTeamConfiguration(makeParams({ defaultTeam: [], onError })),
+      )
+
+      act(() => {
+        result.current.updateTeamSlot(0, 'pikachu')
+      })
+      act(() => {
+        result.current.addTeamMove(0, 'thunderbolt')
+      })
+      act(() => {
+        result.current.addTeamMove(0, 'volt tackle')
+      })
+      act(() => {
+        result.current.addTeamMove(0, 'iron tail')
+      })
+      act(() => {
+        result.current.addTeamMove(0, 'quick attack')
+      })
+
+      let added = false
+      act(() => {
+        added = result.current.addTeamMove(0, 'surf')
+      })
+
+      expect(added).toBe(false)
+      expect(result.current.teamMoveErrors[0]).toBe(
+        'Use up to 4 moves per Pokemon.',
+      )
+    })
+
+    it('rejects move input when no pokemon is set for that slot', () => {
+      const { result } = renderHook(() =>
+        useTeamConfiguration(makeParams({ defaultTeam: [] })),
+      )
+
+      let added = false
+      act(() => {
+        added = result.current.addTeamMove(0, 'thunderbolt')
+      })
+
+      expect(added).toBe(false)
+      expect(result.current.teamMoveErrors[0]).toBe(
+        'Add a Pokemon in this slot before adding moves.',
+      )
+    })
+
+    it('rejects duplicate moves for the same slot', () => {
+      const { result } = renderHook(() =>
+        useTeamConfiguration(makeParams({ defaultTeam: [] })),
+      )
+
+      act(() => {
+        result.current.updateTeamSlot(0, 'pikachu')
+      })
+      act(() => {
+        result.current.addTeamMove(0, 'thunderbolt')
+      })
+
+      let added = false
+      act(() => {
+        added = result.current.addTeamMove(0, 'Thunderbolt')
+      })
+
+      expect(added).toBe(false)
+      expect(result.current.teamMoveErrors[0]).toBe(
+        'That move is already added.',
+      )
     })
   })
 
@@ -231,9 +328,11 @@ describe('useTeamConfiguration', () => {
         result.current.prepareTeamEditor()
       })
       expect(result.current.teamSlotErrors).toEqual([null, null, null])
+      expect(result.current.teamMoveErrors).toEqual([null, null, null])
       expect(onError).toHaveBeenLastCalledWith(null)
       // Draft should mirror the unchanged teamNames
       expect(result.current.teamDraft).toEqual(['pikachu', '', ''])
+      expect(result.current.teamMovesDraft).toEqual([[], [], []])
     })
   })
 })

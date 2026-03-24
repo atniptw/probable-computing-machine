@@ -193,6 +193,59 @@
   font-size: 0.75rem;
 }
 
+.moveChipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.moveChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid #d7dce0;
+  border-radius: 999px;
+  background: #f7fafc;
+  font-size: 0.84rem;
+}
+
+.moveChipButton {
+  border: none;
+  background: transparent;
+  color: #5f6b77;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.moveInputRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.secondaryButton {
+  min-width: 92px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid #d7dce0;
+  background: #f7fafc;
+  color: #1f2933;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 12px;
+}
+
+.secondaryButton:disabled {
+  color: #5f6b77;
+  cursor: not-allowed;
+}
+
 .primaryButton {
   margin-top: 12px;
   width: 100%;
