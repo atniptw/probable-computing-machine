@@ -30,6 +30,39 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-24 - Capture Testing Reliability Lessons in Docs and Skills
+
+### Objective
+
+- Document test reliability lessons and align project docs with current implementation state.
+
+### Decisions Made
+
+- Codify hook test stability guardrails in frontend role instructions and testing skills.
+- Expand coverage-gate expectations to include explicit unhandled-error checks.
+- Update README and development docs as soon as testing architecture changes are completed.
+
+### Completed
+
+- Updated `README.md` next actions to reflect post-coverage priorities.
+- Added a testing reliability section to `README.md`.
+- Updated `docs/DEVELOPMENT.md` with current test inventory, coverage thresholds, and troubleshooting notes.
+- Updated deployment workflow and Pages setup examples in `docs/DEVELOPMENT.md` to match current CI behavior.
+- Updated `.github/instructions/frontend.instructions.md` with hook-test and async-mock guardrails.
+- Updated `.github/skills/test-coverage-gate/SKILL.md` with stronger evidence and decision criteria.
+- Updated `.github/skills/polyglot-test-agent/SKILL.md` with mandatory post-generation validation checks.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Keep this guidance aligned as additional hook/component tests are added.
+- Consider adding a compact troubleshooting index in docs if recurring issues appear.
+
+---
+
 ## 2026-03-24 - Expand Hook Coverage and Stabilize Test Suite
 
 ### Objective

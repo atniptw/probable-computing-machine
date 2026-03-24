@@ -42,9 +42,15 @@ Port 5173 is automatically forwarded when opened in a devcontainer — VS Code w
 
 ## Next Immediate Actions
 
-1. Add hook-focused unit tests for `useTeamConfiguration` and `useMatchupResults` failure/reset paths.
-2. Continue shrinking `src/App.tsx` by extracting remaining screen-navigation orchestration when it improves clarity.
+1. Add focused tests for `src/components/AppView/*` to cover rendering contracts and error/empty states.
+2. Continue reducing orchestration complexity in `src/App.tsx` where extraction improves clarity.
 3. Evaluate mobile UX refinements for quick team edits during rapid battle lookups.
+
+## Testing Reliability Notes
+
+- Avoid inline arrays/objects/functions in hook test callbacks when they are effect dependencies. Unstable references can create rerender loops and hanging suites.
+- For async effect collaborators, mocks must always return promises. Returning `undefined` can produce unhandled errors that do not always fail individual assertions.
+- Treat unhandled Vitest errors as gate failures even if all assertions pass.
 
 ## Validation Commands
 

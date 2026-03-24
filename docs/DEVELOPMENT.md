@@ -62,6 +62,12 @@ probable-computing-machine/
 │       ├── games.test.ts
 │       ├── getPokemon.test.ts
 │       ├── getPokemonNameIndex.test.ts
+│       ├── pokeapi.errors.test.ts
+│       ├── useMatchupResults.test.ts
+│       ├── usePokemonNameIndex.test.ts
+│       ├── usePokemonSuggestions.test.ts
+│       ├── useTeamConfiguration.test.ts
+│       ├── useTeamPreview.test.ts
 │       └── ranking.test.ts
 ├── src/utils/
 │   └── format.ts
@@ -103,10 +109,8 @@ on:
     branches: [main]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -114,19 +118,31 @@ jobs:
           node-version: '18'
           cache: 'npm'
       - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run tsc
+      - run: npm run test:coverage
       - run: npm run build
-      - uses: peaceiris/actions-gh-pages@v3
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/deploy-pages@v4
 ```
 
 ## GitHub Pages One-Time Setup
 
 1. Go to repository **Settings → Pages**.
-2. Set **Source** to "Deploy from a branch".
-3. Set **Branch** to `gh-pages`, folder `/ (root)`.
-4. Save.
+2. Set **Source** to **GitHub Actions**.
+3. Confirm workflow permissions allow Pages deployment.
+4. Push to `main` (or run workflow manually).
 5. App will be live at: `https://atniptw.github.io/probable-computing-machine/`
 
 ## No Environment Variables Required
@@ -145,6 +161,28 @@ npm run test
 npm run test:coverage
 npm run e2e
 ```
+
+Coverage thresholds are enforced in `vite.config.ts` for included `src/data`, `src/services`, and `src/hooks` files:
+
+- statements: 70
+- branches: 80
+- functions: 70
+- lines: 70
+
+### Hook Test Pitfalls
+
+- Keep hook input props stable in `renderHook` callbacks. If an effect depends on a prop array/object/function and the test recreates it every render, it can cause infinite rerender loops.
+- Ensure async mocks used by `useEffect` paths return promises consistently.
+- Consider a run failed when Vitest reports unhandled errors, even when test assertions pass.
+
+## Troubleshooting: App Not Reachable Locally
+
+If the app starts but is not reachable from your browser:
+
+1. Run `npm run dev` and confirm the script includes `--host` in `package.json`.
+2. Confirm the devcontainer forwards port `5173` (and `4173` for preview).
+3. Confirm `vite.config.ts` uses `base: '/'` for `serve` and repository base only for production builds.
+4. Open `http://localhost:5173` directly after the server reports it is ready.
 
 ## Git Hooks
 
