@@ -33,9 +33,9 @@ Foundational project workspace for a new web app.
 
 ## Next Immediate Actions
 
-1. Break `src/App.tsx` into smaller runtime units before adding more UI behavior.
-2. Move state/effect coordination into focused hooks so `src/App.tsx` becomes a thin orchestration shell.
-3. Remove or archive legacy component directories that are no longer part of the active runtime.
+1. Add hook-focused unit tests for `useTeamConfiguration` and `useMatchupResults` failure/reset paths.
+2. Continue shrinking `src/App.tsx` by extracting remaining screen-navigation orchestration when it improves clarity.
+3. Evaluate mobile UX refinements for quick team edits during rapid battle lookups.
 
 ## Validation Commands
 

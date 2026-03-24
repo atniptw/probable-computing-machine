@@ -528,3 +528,32 @@ YYYY-MM-DD
 
 - Add focused unit tests for `useMatchupResults` error and reset paths.
 - Revisit whether `App` save-team validation can be moved into a dedicated hook without reducing clarity.
+
+---
+
+## 2026-03-24 - Extract Team Save Hook and Remove Legacy Components
+
+### Objective
+
+- Further shrink `src/App.tsx` by extracting save-team validation/persistence and execute final cleanup of unused legacy UI component directories.
+
+### Decisions Made
+
+- Added `useTeamConfiguration` as the dedicated boundary for team draft state, slot validation, and local storage persistence.
+- Deleted unused legacy component folders (`src/components/TeamInput`, `src/components/MatchupResults`) instead of archiving them.
+
+### Completed
+
+- Added `src/hooks/useTeamConfiguration.ts`.
+- Updated `src/App.tsx` to consume `useTeamConfiguration` and remove inline team save/edit logic.
+- Deleted legacy files from `src/components/TeamInput/` and `src/components/MatchupResults/`.
+- Updated `README.md`, `docs/COMPONENT_DESIGN.md`, `docs/DEVELOPMENT.md`, and `DECISIONS.md` (DEC-0018).
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Add unit tests covering `useTeamConfiguration` validation/persistence branches.
+- Add unit tests for `useMatchupResults` reset behavior when game/index conditions change.

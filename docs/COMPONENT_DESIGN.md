@@ -50,6 +50,20 @@ state: {
 }
 
 hooks: {
+  useTeamConfiguration: {
+    inputs: {
+      gameLabel: string,
+      nameIndexReady: boolean,
+      pokemonNameSet: Set<string>
+    },
+    outputs: {
+      teamNames: string[],
+      teamDraft: string[],
+      teamSlotErrors: (string | null)[],
+      activeTeamSlot: number | null,
+      saveTeam(): boolean
+    }
+  },
   usePokemonNameIndex: {
     inputs: { version: string, generation: number },
     outputs: { pokemonNameIndex: string[], nameIndexReady: boolean }
@@ -92,7 +106,3 @@ hooks: {
 - Secondary recommendations are collapsed by default behind “Show other options (X)”.
 - Team editor validates each non-empty slot against the selected game index and allows duplicates or fewer than 6 entries.
 - Type effectiveness map is generation-aware for key historical chart differences.
-
-## Legacy Note
-
-Legacy two-team components under `src/components/TeamInput` and `src/components/MatchupResults` are no longer part of the active runtime flow.

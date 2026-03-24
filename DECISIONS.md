@@ -483,7 +483,7 @@ YYYY-MM-DD
 ### Consequences
 
 - Positive: clearer user journey aligned with product intent and reduced confusion from legacy two-team documentation.
-- Trade-offs: users must complete a setup step before seeing matchup output; legacy components remain in repository until a follow-up cleanup.
+- Trade-offs: users must complete a setup step before seeing matchup output.
 
 ### Owner
 
@@ -511,6 +511,33 @@ YYYY-MM-DD
 
 - Positive: minimal implementation complexity, consistent suggestion behavior with opponent search, and no new dependency surface.
 - Trade-offs: native datalist behavior is browser-defined and offers less control than a custom accessible combobox.
+
+### Owner
+
+- Frontend + Architect
+
+---
+
+## DEC-0018
+
+### Date
+
+2026-03-24
+
+### Context
+
+- `App` still owned save-team validation, team draft state management, and persistence behavior.
+- Legacy component directories (`src/components/TeamInput`, `src/components/MatchupResults`) were no longer imported and increased maintenance noise.
+
+### Decision
+
+- Extract team editing, validation, and persistence into `useTeamConfiguration` under `src/hooks/`.
+- Remove legacy unused component directories from `src/components/` instead of archiving them.
+
+### Consequences
+
+- Positive: smaller `App` orchestration surface and reduced dead code burden.
+- Trade-offs: historical reference implementations are removed from source and can only be recovered from git history.
 
 ### Owner
 
