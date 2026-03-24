@@ -11,13 +11,17 @@ export default defineConfig(({ command }) => ({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json-summary'],
-      include: ['src/data/**/*.ts', 'src/services/**/*.ts'],
+      include: [
+        'src/data/**/*.ts',
+        'src/services/**/*.ts',
+        'src/hooks/**/*.ts',
+      ],
       exclude: ['node_modules/**'],
       thresholds: {
-        statements: 60,
-        branches: 70,
-        functions: 60,
-        lines: 60,
+        statements: 70,
+        branches: 80,
+        functions: 70,
+        lines: 70,
       },
     },
   },

@@ -30,6 +30,40 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-24 - Expand Hook Coverage and Stabilize Test Suite
+
+### Objective
+
+- Raise automated confidence before starting new feature work by adding focused hook and service tests.
+
+### Decisions Made
+
+- Include `src/hooks/**/*.ts` in coverage scope so quality gates reflect current app architecture.
+- Increase coverage thresholds to stronger baseline targets: 70 statements, 80 branches, 70 functions, 70 lines.
+- Keep hook test patterns dependency-safe by using stable props/mocks to avoid effect-loop false positives.
+
+### Completed
+
+- Added hook tests: `useTeamConfiguration`, `useMatchupResults`, `usePokemonSuggestions`, `usePokemonNameIndex`, `useTeamPreview`.
+- Added service error-path tests for `pokeapi`.
+- Fixed unhandled async mock issue in `usePokemonNameIndex` tests (`getTypeMap` always returns a promise).
+- Fixed infinite rerender loop in `useTeamPreview` tests caused by inline array literals in `renderHook` callbacks.
+- Updated `vite.config.ts` coverage include list and thresholds.
+- Ran validation checks:
+  - `npm run test:coverage` -> 70/70 tests passing, thresholds passing.
+  - `npm run lint` -> passing.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Commit the coverage/test hardening changes.
+- Optionally add a CI step that explicitly runs `npm run test:coverage` on PRs if not already enforced in all workflows.
+
+---
+
 ## 2026-03-16 - Setup Collaboration Foundation
 
 ### Objective
