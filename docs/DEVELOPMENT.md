@@ -46,9 +46,17 @@ probable-computing-machine/
 │   │   │   ├── SuggestionList.tsx
 │   │   │   ├── TeamConfigurationSection.tsx
 │   │   │   └── TeamEditorPanel.tsx
+│   │   └── MatchupViewer/
+│   │       ├── DefenseSection.tsx
+│   │       ├── MatchupContainer.tsx
+│   │       ├── MatchupViewer.module.css
+│   │       ├── OffenseSection.tsx
+│   │       ├── PokemonCard.tsx
+│   │       └── SummarySection.tsx
 │   ├── data/
 │   │   └── games.ts
 │   ├── hooks/
+│   │   ├── useMatchupMatrix.ts
 │   │   ├── useMatchupResults.ts
 │   │   ├── usePokemonNameIndex.ts
 │   │   ├── usePokemonSuggestions.ts
@@ -63,6 +71,7 @@ probable-computing-machine/
 │       ├── getPokemon.test.ts
 │       ├── getPokemonNameIndex.test.ts
 │       ├── pokeapi.errors.test.ts
+│       ├── useMatchupMatrix.test.ts
 │       ├── useMatchupResults.test.ts
 │       ├── usePokemonNameIndex.test.ts
 │       ├── usePokemonSuggestions.test.ts

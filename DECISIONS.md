@@ -31,6 +31,34 @@ YYYY-MM-DD
 
 ---
 
+## DEC-0018
+
+### Date
+
+2026-03-24
+
+### Context
+
+- The battle output was recommendation-oriented (`best/good/neutral/risky`) and did not match the new product requirement to answer only "Pokemon A vs Pokemon B."
+- Product scope explicitly excluded recommendation logic and battle decisioning, while still requiring live, game-aware data.
+
+### Decision
+
+- Replace the battle output panel with a descriptive matchup viewer composed of opponent card, player card, offense section, defense section, and summary section.
+- Add `useMatchupMatrix` for matchup rendering data and keep recommendation logic isolated in `ranking.ts` (not used by the new viewer path).
+- Implement team-member cycling in the viewer with desktop controls and mobile swipe while keeping opponent fixed.
+
+### Consequences
+
+- Positive: output now aligns with scope and provides fast, readable matchup context without recommendation bias.
+- Trade-offs: both legacy recommendation assets and new viewer assets coexist temporarily until cleanup is completed.
+
+### Owner
+
+- Product + Frontend + Architect
+
+---
+
 ## DEC-0001
 
 ### Date

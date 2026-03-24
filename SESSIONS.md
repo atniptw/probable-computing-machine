@@ -30,6 +30,42 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-24 - Implement Matchup Viewer UI Replacement
+
+### Objective
+
+- Replace recommendation-oriented battle output with a descriptive matchup viewer focused on "Pokemon A vs Pokemon B."
+
+### Decisions Made
+
+- Keep live generation-aware data flow via existing `pokeapi` contracts.
+- Introduce a dedicated `useMatchupMatrix` hook for descriptive offense/defense rendering.
+- Keep recommendation engine logic isolated and unused in the new viewer path.
+
+### Completed
+
+- Added new viewer components under `src/components/MatchupViewer/`:
+  - `MatchupContainer`, `PokemonCard`, `OffenseSection`, `DefenseSection`, `SummarySection`.
+- Added `src/hooks/useMatchupMatrix.ts` to fetch opponent/player data and compute grouped offense/defense sections.
+- Replaced battle render integration in `src/App.tsx` from `BattleResultsPanel` to `MatchupContainer`.
+- Added `src/tests/useMatchupMatrix.test.ts` covering grouping behavior, validation errors, and rate-limit handling.
+- Fixed TypeScript test typing drift in `src/tests/useMatchupResults.test.ts` (`screen` union typing).
+- Validation evidence:
+  - `npm run lint` -> pass
+  - `npm run tsc` -> pass
+  - `npm run test` -> pass (12 files, 74 tests)
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Add focused component/e2e coverage for swipe interactions and responsive layout behavior.
+- Remove or archive unused recommendation-only UI assets once product direction is finalized.
+
+---
+
 ## 2026-03-24 - Capture Testing Reliability Lessons in Docs and Skills
 
 ### Objective

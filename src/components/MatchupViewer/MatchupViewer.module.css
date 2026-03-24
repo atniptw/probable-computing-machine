@@ -1,0 +1,261 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.viewerCard {
+  border: 1px solid #d7dce0;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+  color: #1f2933;
+}
+
+.cycleControls {
+  display: none;
+  gap: 8px;
+}
+
+.cycleButton {
+  min-width: 40px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid #d7dce0;
+  background: #ffffff;
+  color: #1f2933;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.sideGrid {
+  margin-top: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.sideCard {
+  border: 1px solid #d7dce0;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.pokemonCard {
+  border: 1px solid #d7dce0;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pokemonMeta {
+  min-width: 0;
+}
+
+.cardLabel {
+  margin: 0;
+  color: #5f6b77;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pokemonName {
+  margin: 4px 0 0;
+  font-size: 1.06rem;
+  font-weight: 700;
+  color: #1f2933;
+  text-transform: capitalize;
+}
+
+.typeBadgeRow {
+  margin-top: 7px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.typeBadge {
+  border-radius: 999px;
+  border: 1px solid #d7dce0;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.spriteWrap {
+  width: 58px;
+  height: 58px;
+  border-radius: 10px;
+  border: 1px solid #d7dce0;
+  background: #f7f9fa;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
+.spriteWrap img {
+  width: 52px;
+  height: 52px;
+  image-rendering: pixelated;
+}
+
+.spriteFallback {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #4d5a67;
+}
+
+.sectionCard {
+  border: 1px solid #d7dce0;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 11px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #1f2933;
+}
+
+.sectionHint {
+  margin: 6px 0 0;
+  color: #5f6b77;
+  font-size: 0.78rem;
+}
+
+.group {
+  margin-top: 9px;
+}
+
+.groupLabel {
+  margin: 0;
+  color: #4a5562;
+  font-size: 0.77rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.moveList {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.moveRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #344150;
+}
+
+.moveName {
+  text-transform: none;
+}
+
+.moveIndicator {
+  font-size: 0.83rem;
+  color: #4d5a67;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.summaryText {
+  margin: 8px 0 0;
+  color: #344150;
+  font-size: 0.9rem;
+}
+
+.atGlanceLine {
+  margin: 8px 0 0;
+  color: #1f2933;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.compactToggle {
+  margin-top: 10px;
+  border: 1px solid #d7dce0;
+  background: #f7f9fa;
+  color: #1f2933;
+  border-radius: 8px;
+  min-height: 34px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.teamNav {
+  border-top: 1px solid #eef1f3;
+  padding-top: 10px;
+}
+
+.tabs {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.tab {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid #d7dce0;
+  background: #ffffff;
+  color: #1f2933;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.tabActive {
+  border-color: #1f2933;
+  background: #edf1f4;
+}
+
+.swipeHint {
+  margin: 8px 0 0;
+  color: #5f6b77;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .cycleControls {
+    display: inline-flex;
+  }
+
+  .sideGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

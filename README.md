@@ -14,7 +14,7 @@ Port 5173 is automatically forwarded when opened in a devcontainer — VS Code w
 ## Current Status
 
 - Stage: MVP battle UX implemented with game-specific Pokédex filtering
-- Product: Pokémon type matchup advisor (static web app)
+- Product: Pokémon matchup viewer (descriptive offense/defense UI, static web app)
 - Stack: React 18 + Vite, hosted on GitHub Pages
 - Collaboration cadence: continuous flow with explicit role handoffs
 
@@ -42,9 +42,9 @@ Port 5173 is automatically forwarded when opened in a devcontainer — VS Code w
 
 ## Next Immediate Actions
 
-1. Add focused tests for `src/components/AppView/*` to cover rendering contracts and error/empty states.
-2. Continue reducing orchestration complexity in `src/App.tsx` where extraction improves clarity.
-3. Evaluate mobile UX refinements for quick team edits during rapid battle lookups.
+1. Add focused tests for `src/components/MatchupViewer/*` covering swipe/cycle behavior and section rendering states.
+2. Remove or archive deprecated recommendation-only rendering assets if no longer part of product direction.
+3. Evaluate mobile UX refinements for faster in-battle team member cycling.
 
 ## Testing Reliability Notes
 

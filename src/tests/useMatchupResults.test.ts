@@ -33,22 +33,31 @@ vi.mock('../services/ranking', () => ({
 const DEFAULT_POKEMON_NAME_SET = new Set(['bulbasaur', 'pikachu'])
 const DEFAULT_TEAM_NAMES = ['bulbasaur']
 
-const VALID_PARAMS = {
+interface MatchupParams {
+  exactMatchFound: boolean
+  gameLabel: string
+  generation: number
+  nameIndexReady: boolean
+  normalizedOpponent: string
+  pokemonNameSet: Set<string>
+  screen: 'battle' | 'team'
+  teamNames: string[]
+}
+
+const VALID_PARAMS: MatchupParams = {
   exactMatchFound: true,
   gameLabel: 'Red/Blue',
   generation: 1,
   nameIndexReady: true,
   normalizedOpponent: 'pikachu',
   pokemonNameSet: DEFAULT_POKEMON_NAME_SET,
-  screen: 'battle' as const,
+  screen: 'battle',
   teamNames: DEFAULT_TEAM_NAMES,
 }
 
-function makeParams(
-  overrides: Partial<
-    typeof VALID_PARAMS & { onError: (m: string | null) => void }
-  > = {},
-) {
+type HookParams = MatchupParams & { onError: (m: string | null) => void }
+
+function makeParams(overrides: Partial<HookParams> = {}) {
   return { ...VALID_PARAMS, onError: vi.fn(), ...overrides }
 }
 

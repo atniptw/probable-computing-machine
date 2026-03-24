@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { DEFAULT_GAME_VERSION, getGameDefinition } from './data/games'
-import BattleResultsPanel from './components/AppView/BattleResultsPanel'
 import BattleSelectorSection from './components/AppView/BattleSelectorSection'
 import TeamConfigurationSection from './components/AppView/TeamConfigurationSection'
 import TeamEditorPanel from './components/AppView/TeamEditorPanel'
-import { useMatchupResults } from './hooks/useMatchupResults'
+import MatchupContainer from './components/MatchupViewer/MatchupContainer'
 import { usePokemonNameIndex } from './hooks/usePokemonNameIndex'
 import { usePokemonSuggestions } from './hooks/usePokemonSuggestions'
 import { useTeamConfiguration } from './hooks/useTeamConfiguration'
-import { useTeamPreview } from './hooks/useTeamPreview'
 import styles from './App.module.css'
 
 const EMERALD_DEFAULT_TEAM = [
@@ -81,36 +79,12 @@ export default function App() {
     teamSize: TEAM_SIZE,
   })
 
-  const { teamPreview } = useTeamPreview({
-    generation: selectedGame.generation,
-    teamNames,
-  })
-
   const { getSuggestions } = usePokemonSuggestions({
     maxSuggestions: MAX_SUGGESTIONS,
     pokemonNameIndex,
   })
 
   const opponentSuggestions = getSuggestions(normalizedOpponent)
-
-  const {
-    loading,
-    opponent,
-    rankedBuckets,
-    resetResults,
-    setShowOtherOptions,
-    showOtherOptions,
-  } = useMatchupResults({
-    exactMatchFound,
-    gameLabel: selectedGame.label,
-    generation: selectedGame.generation,
-    nameIndexReady,
-    normalizedOpponent,
-    onError: setError,
-    pokemonNameSet,
-    screen,
-    teamNames,
-  })
 
   function openTeamEditor(): void {
     prepareTeamEditor()
@@ -120,8 +94,6 @@ export default function App() {
   function handleGameChange(nextVersion: string): void {
     setSelectedGameVersion(nextVersion)
     setOpponentInput('')
-    resetResults()
-    setShowOtherOptions(false)
     setError(null)
   }
 
@@ -147,7 +119,6 @@ export default function App() {
           opponentInput={opponentInput}
           onOpponentInputChange={(value) => {
             setOpponentInput(value)
-            setShowOtherOptions(false)
           }}
           normalizedOpponent={normalizedOpponent}
           exactMatchFound={exactMatchFound}
@@ -199,19 +170,15 @@ export default function App() {
             saveDisabled={!nameIndexReady}
           />
         ) : (
-          <BattleResultsPanel
+          <MatchupContainer
             teamNames={teamNames}
             normalizedOpponent={normalizedOpponent}
-            loading={loading}
-            hasOpponent={opponent !== null}
-            rankedBuckets={rankedBuckets}
-            selectedGameLabel={selectedGame.label}
-            showOtherOptions={showOtherOptions}
-            onToggleOtherOptions={() =>
-              setShowOtherOptions((current) => !current)
-            }
-            teamPreview={teamPreview}
-            onEditTeam={openTeamEditor}
+            exactMatchFound={exactMatchFound}
+            nameIndexReady={nameIndexReady}
+            generation={selectedGame.generation}
+            gameLabel={selectedGame.label}
+            pokemonNameSet={pokemonNameSet}
+            onError={setError}
           />
         )}
       </main>
