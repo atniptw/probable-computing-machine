@@ -113,6 +113,33 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-24 - Align Playwright Smoke Test with Matchup Viewer UI
+
+### Objective
+
+- Resolve failing CI e2e smoke test after migration from recommendation UI to matchup viewer UI.
+
+### Decisions Made
+
+- Update smoke test assertions to target current matchup viewer structure and labels.
+- Use CI-specific entry path for Playwright (`/probable-computing-machine/`) to match Vite preview base path.
+
+### Completed
+
+- Updated `e2e/matchup-smoke.spec.ts` to assert matchup viewer headings/regions and team member cycling.
+- Replaced stale recommendation-flow assertions (`Best Choice`, grouped recommendation headings).
+- Added CI-safe navigation path logic in the test.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Re-run `Deploy to GitHub Pages` workflow and confirm the e2e step remains stable.
+
+---
+
 ## 2026-03-24 - Add Team Move Editing to Team Configuration
 
 ### Objective
