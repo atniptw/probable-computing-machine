@@ -1,19 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import {
-  getPokemon,
-  getTypeMap,
-  PokemonNotFoundError,
-  RateLimitError,
-} from './services/pokeapi'
-import {
-  rankTeamAgainstOpponent,
-  type RankedTeamBuckets,
-} from './services/ranking'
 import { DEFAULT_GAME_VERSION, getGameDefinition } from './data/games'
 import BattleResultsPanel from './components/AppView/BattleResultsPanel'
 import BattleSelectorSection from './components/AppView/BattleSelectorSection'
 import TeamConfigurationSection from './components/AppView/TeamConfigurationSection'
 import TeamEditorPanel from './components/AppView/TeamEditorPanel'
+import { useMatchupResults } from './hooks/useMatchupResults'
 import { usePokemonNameIndex } from './hooks/usePokemonNameIndex'
 import { usePokemonSuggestions } from './hooks/usePokemonSuggestions'
 import { useTeamPreview } from './hooks/useTeamPreview'
@@ -31,15 +22,6 @@ const TEAM_SIZE = 6
 const MAX_SUGGESTIONS = 20
 
 type Screen = 'battle' | 'team'
-
-function createEmptyRankedBuckets(): RankedTeamBuckets {
-  return {
-    best: [],
-    good: [],
-    neutral: [],
-    risky: [],
-  }
-}
 
 function readConfiguredTeam(): string[] {
   const raw = localStorage.getItem('pmh_team_v1')
@@ -86,14 +68,6 @@ export default function App() {
   )
   const [activeTeamSlot, setActiveTeamSlot] = useState<number | null>(null)
   const [opponentInput, setOpponentInput] = useState('')
-  const [opponent, setOpponent] = useState<Awaited<
-    ReturnType<typeof getPokemon>
-  > | null>(null)
-  const [rankedBuckets, setRankedBuckets] = useState<RankedTeamBuckets>(() =>
-    createEmptyRankedBuckets(),
-  )
-  const [showOtherOptions, setShowOtherOptions] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const selectedGame = useMemo(() => {
@@ -133,10 +107,24 @@ export default function App() {
 
   const opponentSuggestions = getSuggestions(normalizedOpponent)
 
-  function clearMatchupResults(): void {
-    setOpponent(null)
-    setRankedBuckets(createEmptyRankedBuckets())
-  }
+  const {
+    loading,
+    opponent,
+    rankedBuckets,
+    resetResults,
+    setShowOtherOptions,
+    showOtherOptions,
+  } = useMatchupResults({
+    exactMatchFound,
+    gameLabel: selectedGame.label,
+    generation: selectedGame.generation,
+    nameIndexReady,
+    normalizedOpponent,
+    onError: setError,
+    pokemonNameSet,
+    screen,
+    teamNames,
+  })
 
   function openTeamEditor(): void {
     setTeamDraft(toTeamSlots(teamNames))
@@ -144,18 +132,6 @@ export default function App() {
     setError(null)
     setScreen('team')
   }
-
-  useEffect(() => {
-    if (!pokemonNameIndex.length) return
-
-    const teamStillValid = teamNames.every((name) => pokemonNameSet.has(name))
-    if (!teamStillValid) {
-      clearMatchupResults()
-      setError(
-        `Your saved team has Pokémon outside the ${selectedGame.label} Pokédex. Tap Edit Team to fix it.`,
-      )
-    }
-  }, [pokemonNameIndex.length, pokemonNameSet, selectedGame.label, teamNames])
 
   function updateTeamSlot(index: number, value: string): void {
     setTeamDraft((current) => {
@@ -208,104 +184,10 @@ export default function App() {
     setActiveTeamSlot(null)
   }
 
-  useEffect(() => {
-    if (screen !== 'battle') {
-      setLoading(false)
-      return
-    }
-
-    if (!normalizedOpponent) {
-      clearMatchupResults()
-      setError(null)
-      return
-    }
-
-    if (!nameIndexReady) return
-
-    if (!exactMatchFound) {
-      clearMatchupResults()
-      setError(null)
-      return
-    }
-
-    if (!teamNames.length) {
-      clearMatchupResults()
-      setError(null)
-      return
-    }
-
-    const invalidSavedTeam = teamNames.some((name) => !pokemonNameSet.has(name))
-    if (invalidSavedTeam) {
-      clearMatchupResults()
-      setError(
-        `Your saved team has Pokémon outside the ${selectedGame.label} Pokédex.`,
-      )
-      return
-    }
-
-    let cancelled = false
-
-    async function run(): Promise<void> {
-      setLoading(true)
-      setError(null)
-      try {
-        const [typeMap, opponentPokemon, teamPokemon] = await Promise.all([
-          getTypeMap({ generation: selectedGame.generation }),
-          getPokemon(normalizedOpponent, {
-            generation: selectedGame.generation,
-          }),
-          Promise.all(
-            teamNames.map((name) =>
-              getPokemon(name, { generation: selectedGame.generation }),
-            ),
-          ),
-        ])
-
-        if (cancelled) return
-
-        const nextRanked = rankTeamAgainstOpponent(
-          teamPokemon,
-          opponentPokemon,
-          typeMap,
-        )
-
-        setOpponent(opponentPokemon)
-        setRankedBuckets(nextRanked)
-        setShowOtherOptions(false)
-      } catch (err) {
-        if (cancelled) return
-        if (err instanceof PokemonNotFoundError) {
-          setError('Pokémon not found. Please select a valid name.')
-        } else if (err instanceof RateLimitError) {
-          setError('Rate limit reached. Please wait a moment and try again.')
-        } else {
-          setError('Network error. Please check your connection and try again.')
-        }
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-
-    void run()
-
-    return () => {
-      cancelled = true
-    }
-  }, [
-    exactMatchFound,
-    nameIndexReady,
-    normalizedOpponent,
-    pokemonNameSet,
-    screen,
-    selectedGame.generation,
-    selectedGame.label,
-    teamNames,
-  ])
-
   function handleGameChange(nextVersion: string): void {
     setSelectedGameVersion(nextVersion)
     setOpponentInput('')
-    clearMatchupResults()
+    resetResults()
     setShowOtherOptions(false)
     setError(null)
   }

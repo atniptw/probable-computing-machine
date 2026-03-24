@@ -494,3 +494,37 @@ YYYY-MM-DD
 
 - Add targeted unit tests for hook contracts (name-index failure path and suggestion ordering).
 - Continue incremental reduction of `App` surface by extracting matchup execution flow when safe.
+
+---
+
+## 2026-03-24 - Extract Matchup Execution Hook
+
+### Objective
+
+- Continue the `App.tsx` decomposition by moving matchup execution and result lifecycle side effects into a dedicated hook.
+
+### Decisions Made
+
+- Encapsulate matchup validation and async execution in `useMatchupResults` while preserving existing top-level `App` event handlers.
+- Keep UI flow unchanged and preserve existing error messaging semantics.
+
+### Completed
+
+- Added `src/hooks/useMatchupResults.ts` to own matchup state (`opponent`, `rankedBuckets`, `loading`, `showOtherOptions`) and execution effects.
+- Updated `src/App.tsx` to consume `useMatchupResults` and remove the large inlined matchup effect block.
+- Updated `docs/COMPONENT_DESIGN.md`, `docs/DEVELOPMENT.md`, and `DECISIONS.md` (DEC-0017).
+- Verified with:
+  - `npm run format`
+  - `npm run lint`
+  - `npm run tsc`
+  - `npm run test -- --run`
+  - `npm run e2e -- --project=chromium`
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Add focused unit tests for `useMatchupResults` error and reset paths.
+- Revisit whether `App` save-team validation can be moved into a dedicated hook without reducing clarity.

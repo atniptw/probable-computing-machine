@@ -289,6 +289,33 @@ YYYY-MM-DD
 
 - Frontend + Architect
 
+---
+
+## DEC-0017
+
+### Date
+
+2026-03-24
+
+### Context
+
+- `App` still contained the full matchup execution effect, loading state, and result bucket lifecycle after initial hook extraction.
+- This logic mixed validation, async orchestration, and UI-specific state resets in one large effect block.
+
+### Decision
+
+- Extract matchup orchestration into `useMatchupResults` under `src/hooks/`.
+- Keep `App` responsible for top-level navigation/input handlers while consuming hook outputs (`opponent`, `rankedBuckets`, `loading`, `showOtherOptions`).
+
+### Consequences
+
+- Positive: centralizes matchup side-effects in one testable boundary and further reduces `App` complexity.
+- Trade-offs: error handling is now split across hook-driven matchup errors and `App`-initiated form/save validation paths.
+
+### Owner
+
+- Frontend + Architect
+
 ### Owner
 
 - Frontend + Architect

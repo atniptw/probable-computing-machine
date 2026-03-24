@@ -67,6 +67,7 @@ probable-computing-machine/
 │   ├── data/
 │   │   └── games.ts
 │   ├── hooks/
+│   │   ├── useMatchupResults.ts
 │   │   ├── usePokemonNameIndex.ts
 │   │   ├── usePokemonSuggestions.ts
 │   │   └── useTeamPreview.ts

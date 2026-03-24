@@ -61,6 +61,22 @@ hooks: {
   usePokemonSuggestions: {
     inputs: { pokemonNameIndex: string[], maxSuggestions: number },
     outputs: { getSuggestions(query: string): string[] }
+  },
+  useMatchupResults: {
+    inputs: {
+      screen: 'battle' | 'team',
+      normalizedOpponent: string,
+      teamNames: string[],
+      pokemonNameSet: Set<string>,
+      generation: number,
+      gameLabel: string
+    },
+    outputs: {
+      opponent: Pokemon | null,
+      rankedBuckets: RankedTeamBuckets,
+      loading: boolean,
+      showOtherOptions: boolean
+    }
   }
 }
 ```
