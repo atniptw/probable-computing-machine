@@ -26,7 +26,7 @@ App
 
 ## App Contract
 
-`App` is the runtime orchestrator and owns all state.
+`App` is the runtime orchestrator and now delegates data loading and suggestion logic to dedicated hooks.
 
 ```ts
 state: {
@@ -35,7 +35,6 @@ state: {
   teamDraft: string[6],
   teamSlotErrors: (string | null)[6],
   teamNames: string[],
-  teamPreview: Pokemon[],
   activeTeamSlot: number | null,
   opponentInput: string,
   opponent: Pokemon | null,
@@ -46,17 +45,30 @@ state: {
     risky: RankedTeamEntry[]
   },
   showOtherOptions: boolean,
-  pokemonNameIndex: string[],
-  nameIndexReady: boolean,
   loading: boolean,
   error: string | null
+}
+
+hooks: {
+  usePokemonNameIndex: {
+    inputs: { version: string, generation: number },
+    outputs: { pokemonNameIndex: string[], nameIndexReady: boolean }
+  },
+  useTeamPreview: {
+    inputs: { generation: number, teamNames: string[] },
+    outputs: { teamPreview: Pokemon[] }
+  },
+  usePokemonSuggestions: {
+    inputs: { pokemonNameIndex: string[], maxSuggestions: number },
+    outputs: { getSuggestions(query: string): string[] }
+  }
 }
 ```
 
 ## Primary Behaviors
 
 - App opens directly on the battle screen for in-fight speed.
-- App now delegates most render-only concerns to `src/components/AppView/*` while keeping state and side effects in `src/App.tsx`.
+- App now delegates render concerns to `src/components/AppView/*` and data-loading/suggestion concerns to `src/hooks/*`.
 - Game selector controls all autocomplete, validation, and matchup rules.
 - Opponent and team inputs only accept Pokémon from the selected game's Pokédex.
 - Opponent input uses local typeahead suggestions (button list), not datalist dropdown.

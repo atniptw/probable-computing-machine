@@ -458,3 +458,39 @@ YYYY-MM-DD
 ### Next Actions
 
 - Optional: add an e2e assertion specifically for team-slot autocomplete suggestions.
+
+---
+
+## 2026-03-24 - Extract App Data Loading Hooks
+
+### Objective
+
+- Reduce orchestration complexity in `src/App.tsx` by moving data-loading and suggestion logic into focused hooks.
+
+### Decisions Made
+
+- Keep matchup execution and user action handlers in `App`, but extract reusable effect/state blocks for name index loading, team preview loading, and typeahead suggestion logic.
+- Preserve runtime behavior while changing internal boundaries.
+
+### Completed
+
+- Added `src/hooks/usePokemonNameIndex.ts` for game-aware Pokédex index loading and generation warmup.
+- Added `src/hooks/useTeamPreview.ts` for asynchronous loading of configured team preview data.
+- Added `src/hooks/usePokemonSuggestions.ts` for prefix-first/contains fallback filtering with capped results.
+- Updated `src/App.tsx` to consume the new hooks and remove duplicated effect logic.
+- Updated `docs/COMPONENT_DESIGN.md`, `docs/DEVELOPMENT.md`, and `DECISIONS.md` (DEC-0016).
+- Verified with:
+  - `npm run format`
+  - `npm run lint`
+  - `npm run tsc`
+  - `npm run test -- --run`
+  - `npm run e2e -- --project=chromium`
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Add targeted unit tests for hook contracts (name-index failure path and suggestion ordering).
+- Continue incremental reduction of `App` surface by extracting matchup execution flow when safe.

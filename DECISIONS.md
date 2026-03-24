@@ -259,6 +259,36 @@ YYYY-MM-DD
 - Positive: recommendations are aligned with selected game roster and historical typing/rule context.
 - Trade-offs: additional API calls for game Pokédex metadata and increased service complexity.
 
+---
+
+## DEC-0016
+
+### Date
+
+2026-03-24
+
+### Context
+
+- `src/App.tsx` had become a mixed orchestrator for UI state, data loading effects, and suggestion algorithms.
+- Render decomposition (`AppView`) reduced JSX size, but effect-heavy logic in `App` remained difficult to reason about and test independently.
+
+### Decision
+
+- Extract stateful side-effect logic into focused hooks under `src/hooks/`:
+  - `usePokemonNameIndex` for game-aware name index loading and type-map warmup.
+  - `useTeamPreview` for async preview loading of saved team members.
+  - `usePokemonSuggestions` for reusable prefix-first suggestion filtering.
+- Keep `App` as the orchestration boundary for user actions and matchup execution while consuming hook outputs.
+
+### Consequences
+
+- Positive: clearer responsibility boundaries, smaller `App` surface, and improved testability for loading/suggestion logic.
+- Trade-offs: adds a new abstraction layer that requires keeping hook contracts synchronized with `App` behavior.
+
+### Owner
+
+- Frontend + Architect
+
 ### Owner
 
 - Frontend + Architect

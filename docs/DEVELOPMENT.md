@@ -46,18 +46,30 @@ probable-computing-machine/
 │   │   │   ├── SuggestionList.tsx
 │   │   │   ├── TeamConfigurationSection.tsx
 │   │   │   └── TeamEditorPanel.tsx
+│   │   ├── MatchupResults/
+│   │   │   ├── MatchupCell.module.css
+│   │   │   ├── MatchupCell.tsx
+│   │   │   ├── MatchupGrid.module.css
+│   │   │   ├── MatchupGrid.tsx
+│   │   │   ├── MatchupResults.module.css
+│   │   │   ├── MatchupResults.tsx
+│   │   │   ├── SummaryBar.module.css
+│   │   │   └── SummaryBar.tsx
 │   │   ├── TeamInput/
-│   │   │   ├── TeamInput.jsx
-│   │   │   ├── TeamSlots.jsx
-│   │   │   ├── PokemonSlot.jsx
-│   │   │   └── SubmitButton.jsx
-│   │   └── MatchupResults/
-│   │       ├── MatchupResults.jsx
-│   │       ├── MatchupGrid.jsx
-│   │       ├── MatchupCell.jsx
-│   │       └── SummaryBar.jsx
+│   │   │   ├── PokemonSlot.module.css
+│   │   │   ├── PokemonSlot.tsx
+│   │   │   ├── SubmitButton.module.css
+│   │   │   ├── SubmitButton.tsx
+│   │   │   ├── TeamInput.module.css
+│   │   │   ├── TeamInput.tsx
+│   │   │   ├── TeamSlots.module.css
+│   │   │   └── TeamSlots.tsx
 │   ├── data/
 │   │   └── games.ts
+│   ├── hooks/
+│   │   ├── usePokemonNameIndex.ts
+│   │   ├── usePokemonSuggestions.ts
+│   │   └── useTeamPreview.ts
 │   ├── services/
 │   │   ├── pokeapi.ts
 │   │   └── ranking.ts

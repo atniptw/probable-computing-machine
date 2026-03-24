@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  getPokemonNameIndex,
   getPokemon,
   getTypeMap,
   PokemonNotFoundError,
   RateLimitError,
-  type Pokemon,
 } from './services/pokeapi'
 import {
   rankTeamAgainstOpponent,
@@ -16,6 +14,9 @@ import BattleResultsPanel from './components/AppView/BattleResultsPanel'
 import BattleSelectorSection from './components/AppView/BattleSelectorSection'
 import TeamConfigurationSection from './components/AppView/TeamConfigurationSection'
 import TeamEditorPanel from './components/AppView/TeamEditorPanel'
+import { usePokemonNameIndex } from './hooks/usePokemonNameIndex'
+import { usePokemonSuggestions } from './hooks/usePokemonSuggestions'
+import { useTeamPreview } from './hooks/useTeamPreview'
 import styles from './App.module.css'
 
 const EMERALD_DEFAULT_TEAM = [
@@ -83,16 +84,15 @@ export default function App() {
   const [teamNames, setTeamNames] = useState<string[]>(() =>
     readConfiguredTeam(),
   )
-  const [teamPreview, setTeamPreview] = useState<Pokemon[]>([])
   const [activeTeamSlot, setActiveTeamSlot] = useState<number | null>(null)
   const [opponentInput, setOpponentInput] = useState('')
-  const [opponent, setOpponent] = useState<Pokemon | null>(null)
+  const [opponent, setOpponent] = useState<Awaited<
+    ReturnType<typeof getPokemon>
+  > | null>(null)
   const [rankedBuckets, setRankedBuckets] = useState<RankedTeamBuckets>(() =>
     createEmptyRankedBuckets(),
   )
   const [showOtherOptions, setShowOtherOptions] = useState(false)
-  const [pokemonNameIndex, setPokemonNameIndex] = useState<string[]>([])
-  const [nameIndexReady, setNameIndexReady] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -103,27 +103,17 @@ export default function App() {
     )
   }, [selectedGameVersion])
 
-  useEffect(() => {
-    setNameIndexReady(false)
-    setPokemonNameIndex([])
+  const { pokemonNameIndex, nameIndexReady } = usePokemonNameIndex({
+    generation: selectedGame.generation,
+    label: selectedGame.label,
+    version: selectedGame.version,
+    onError: setError,
+  })
 
-    void getTypeMap({ generation: selectedGame.generation }).catch(() => {
-      // Warm generation-specific cache to keep matchup updates snappy.
-    })
-
-    void getPokemonNameIndex(selectedGame.version)
-      .then((names) => {
-        setPokemonNameIndex(names)
-      })
-      .catch(() => {
-        setError(
-          `Unable to load ${selectedGame.label} Pokédex index. Please try again.`,
-        )
-      })
-      .finally(() => {
-        setNameIndexReady(true)
-      })
-  }, [selectedGame.generation, selectedGame.label, selectedGame.version])
+  const { teamPreview } = useTeamPreview({
+    generation: selectedGame.generation,
+    teamNames,
+  })
 
   useEffect(() => {
     localStorage.setItem('pmh_game_v1', selectedGame.version)
@@ -136,30 +126,10 @@ export default function App() {
   )
   const exactMatchFound = pokemonNameSet.has(normalizedOpponent)
 
-  const defaultSuggestions = useMemo(
-    () => pokemonNameIndex.slice(0, MAX_SUGGESTIONS),
-    [pokemonNameIndex],
-  )
-
-  function getSuggestions(query: string): string[] {
-    if (!pokemonNameIndex.length) return []
-
-    const normalizedQuery = query.trim().toLowerCase()
-    if (!normalizedQuery) return defaultSuggestions
-
-    const prefixMatches: string[] = []
-    const containsMatches: string[] = []
-
-    for (const name of pokemonNameIndex) {
-      if (name.startsWith(normalizedQuery)) {
-        prefixMatches.push(name)
-        continue
-      }
-      if (name.includes(normalizedQuery)) containsMatches.push(name)
-    }
-
-    return [...prefixMatches, ...containsMatches].slice(0, MAX_SUGGESTIONS)
-  }
+  const { getSuggestions } = usePokemonSuggestions({
+    maxSuggestions: MAX_SUGGESTIONS,
+    pokemonNameIndex,
+  })
 
   const opponentSuggestions = getSuggestions(normalizedOpponent)
 
@@ -174,39 +144,6 @@ export default function App() {
     setError(null)
     setScreen('team')
   }
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function loadTeamPreview(): Promise<void> {
-      if (!teamNames.length) {
-        setTeamPreview([])
-        return
-      }
-
-      const results = await Promise.allSettled(
-        teamNames.map((name) =>
-          getPokemon(name, { generation: selectedGame.generation }),
-        ),
-      )
-      if (cancelled) return
-
-      const nextPreview = results
-        .filter(
-          (result): result is PromiseFulfilledResult<Pokemon> =>
-            result.status === 'fulfilled',
-        )
-        .map((result) => result.value)
-
-      setTeamPreview(nextPreview)
-    }
-
-    void loadTeamPreview()
-
-    return () => {
-      cancelled = true
-    }
-  }, [selectedGame.generation, teamNames])
 
   useEffect(() => {
     if (!pokemonNameIndex.length) return
