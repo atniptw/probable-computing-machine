@@ -39,6 +39,13 @@ probable-computing-machine/
 │   ├── App.tsx
 │   ├── App.module.css
 │   ├── components/
+│   │   ├── AppView/
+│   │   │   ├── BattleResultsPanel.tsx
+│   │   │   ├── BattleSelectorSection.tsx
+│   │   │   ├── GameVersionSelect.tsx
+│   │   │   ├── SuggestionList.tsx
+│   │   │   ├── TeamConfigurationSection.tsx
+│   │   │   └── TeamEditorPanel.tsx
 │   │   ├── TeamInput/
 │   │   │   ├── TeamInput.jsx
 │   │   │   ├── TeamSlots.jsx
@@ -56,9 +63,12 @@ probable-computing-machine/
 │   │   └── ranking.ts
 │   └── tests/
 │       ├── calcEffectiveness.test.ts
+│       ├── games.test.ts
 │       ├── getPokemon.test.ts
 │       ├── getPokemonNameIndex.test.ts
 │       └── ranking.test.ts
+├── src/utils/
+│   └── format.ts
 ├── public/
 ├── docs/
 ├── .github/

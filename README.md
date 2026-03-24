@@ -34,8 +34,8 @@ Foundational project workspace for a new web app.
 ## Next Immediate Actions
 
 1. Break `src/App.tsx` into smaller runtime units before adding more UI behavior.
-2. Expand regression coverage beyond the smoke path for autocomplete, team editing, and failure states.
-3. Harden Pok\u00e9API/cache boundaries and stale-data handling ahead of further feature work.
+2. Move state/effect coordination into focused hooks so `src/App.tsx` becomes a thin orchestration shell.
+3. Remove or archive legacy component directories that are no longer part of the active runtime.
 
 ## Validation Commands
 

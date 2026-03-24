@@ -294,6 +294,33 @@ YYYY-MM-DD
 
 ---
 
+## DEC-0015
+
+### Date
+
+2026-03-24
+
+### Context
+
+- `src/App.tsx` still owned all render sections, state, and side effects after the validation-tooling baseline landed.
+- The repo needed structural progress without taking on a full hook/state rewrite in the same change.
+
+### Decision
+
+- Decompose `src/App.tsx` incrementally by extracting render-layer sections first into `src/components/AppView/*`.
+- Keep state ownership and side effects in `src/App.tsx` for this slice, then move coordination into hooks in a later pass.
+
+### Consequences
+
+- Positive: lower-risk refactor with unchanged user behavior and clearer UI boundaries.
+- Trade-offs: `src/App.tsx` is smaller and easier to read, but it still owns too much state and effect logic.
+
+### Owner
+
+- Architect + Frontend
+
+---
+
 ## DEC-0008
 
 ### Date

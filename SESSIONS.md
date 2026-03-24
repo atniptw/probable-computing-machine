@@ -289,6 +289,36 @@ YYYY-MM-DD
 
 - Run the new validation suite locally and fix any issues introduced by the stricter tooling.
 - Start decomposing `src/App.tsx` once the repo is green under the new gates.
+
+---
+
+## 2026-03-24 - Extract App Render Sections
+
+### Objective
+
+- Reduce `src/App.tsx` render-layer complexity without changing the current state model.
+
+### Decisions Made
+
+- Extract render-only sections first into `src/components/AppView/*` before moving state and effects into hooks.
+- Centralize empty matchup bucket creation to remove repeated reset literals in `src/App.tsx`.
+
+### Completed
+
+- Added `BattleSelectorSection`, `TeamConfigurationSection`, `TeamEditorPanel`, `BattleResultsPanel`, `GameVersionSelect`, and `SuggestionList` under `src/components/AppView/`.
+- Added `src/utils/format.ts` and removed duplicated display formatting logic from `src/App.tsx`.
+- Replaced repeated matchup reset object literals in `src/App.tsx` with a shared helper.
+- Updated component and development docs to reflect the active runtime structure.
+- Verified `npm run lint`, `npm run format:check`, `npm run tsc`, `npm run test`, and `npm run e2e`.
+
+### Blockers
+
+- `src/App.tsx` still owns the main state and effect orchestration; the next meaningful reduction requires hook extraction.
+
+### Next Actions
+
+- Extract opponent lookup, team persistence, and matchup execution into focused hooks.
+- Decide whether to delete or archive legacy components under `src/components/TeamInput` and `src/components/MatchupResults`.
 - Updated docs in `README.md`, `docs/COMPONENT_DESIGN.md`, `docs/USER_GUIDE.md`, and `docs/DATA_FLOW.md`.
 
 ### Blockers

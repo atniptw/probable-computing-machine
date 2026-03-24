@@ -6,17 +6,22 @@
 App
 ├── Header
 │   └── EditTeamButton (battle screen only)
-├── GameSelector
-├── OpponentAutocompleteInput (battle screen)
-├── PrimaryRecommendationCard (battle screen)
-├── ExpandableMatchupList (battle screen)
-│   ├── Also Good
-│   ├── Neutral
-│   └── Risky
-├── TeamPreviewBar (battle screen)
-└── Team Configuration Screen
-    ├── TeamSlotInput × 6
-    └── SaveTeamButton
+├── BattleSelectorSection (battle screen)
+│   ├── GameVersionSelect
+│   └── SuggestionList (opponent, conditional)
+├── TeamConfigurationSection (team screen header)
+│   └── GameVersionSelect
+├── BattleResultsPanel (battle screen)
+│   ├── PrimaryRecommendationCard
+│   ├── ExpandableMatchupList
+│   │   ├── Also Good
+│   │   ├── Neutral
+│   │   └── Risky
+│   └── TeamPreviewBar
+└── TeamEditorPanel (team screen body)
+  ├── TeamSlotInput × 6
+  ├── SuggestionList (team slot, conditional)
+  └── SaveTeamButton
 ```
 
 ## App Contract
@@ -51,6 +56,7 @@ state: {
 ## Primary Behaviors
 
 - App opens directly on the battle screen for in-fight speed.
+- App now delegates most render-only concerns to `src/components/AppView/*` while keeping state and side effects in `src/App.tsx`.
 - Game selector controls all autocomplete, validation, and matchup rules.
 - Opponent and team inputs only accept Pokémon from the selected game's Pokédex.
 - Opponent input uses local typeahead suggestions (button list), not datalist dropdown.
