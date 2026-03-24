@@ -63,6 +63,31 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-24 - Close Move Autocomplete Hook Coverage Gap
+
+### Objective
+
+- Remove the remaining zero-coverage gap for the move autocomplete hook introduced by the structured move picker change.
+
+### Decisions Made
+
+- Add focused hook tests around loading, success, and failure states instead of broader UI tests for this pass.
+
+### Completed
+
+- Added `src/tests/useMoveNameIndex.test.ts` covering pending, resolved, and rejected `getMoveNameIndex` flows.
+- Re-ran coverage to verify the hook no longer sits at zero coverage.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Add component or e2e coverage for autocomplete selection behavior if UI regressions appear.
+
+---
+
 ## 2026-03-24 - Add Team Move Editing to Team Configuration
 
 ### Objective
