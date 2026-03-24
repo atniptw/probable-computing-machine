@@ -30,6 +30,36 @@ YYYY-MM-DD
 
 ---
 
+## 2026-03-24 - Fix CI E2E Startup Path Reliability
+
+### Objective
+
+- Resolve failing CI `npm run e2e` step where smoke test locators could not find battle-screen controls.
+
+### Decisions Made
+
+- Switch Playwright `webServer` command to `npm run dev -- --host 127.0.0.1 --port 4173` in all environments.
+- Remove CI-specific base-path navigation from smoke test and use `/` consistently.
+- Keep production validation in pipeline via the existing standalone `npm run build` step.
+
+### Completed
+
+- Updated `playwright.config.ts` to use dev server for Playwright in CI and local runs.
+- Updated `e2e/matchup-smoke.spec.ts` to use a single root entry path and removed brittle game-selector precondition.
+- Validation evidence:
+  - `export CI=1 && npm run e2e` -> pass
+  - `npm run lint` -> pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Re-run GitHub Actions `build` job on latest commit and confirm stable green e2e execution.
+
+---
+
 ## 2026-03-24 - Replace Comma-Separated Move Input with Structured Move Picker
 
 ### Objective

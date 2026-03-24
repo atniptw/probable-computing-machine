@@ -31,6 +31,33 @@ YYYY-MM-DD
 
 ---
 
+## DEC-0021
+
+### Date
+
+2026-03-24
+
+### Context
+
+- CI e2e runs were failing because the app did not mount under Playwright when using `vite preview` with the repository base path.
+- The deployed build path (`/probable-computing-machine/`) remained valid for production, but preview-mode asset resolution in CI caused flaky or empty-page smoke runs.
+
+### Decision
+
+- Run Playwright e2e against `vite dev` in both local and CI environments.
+- Keep the smoke spec entry path as `/` to avoid environment-conditional navigation in tests.
+
+### Consequences
+
+- Positive: stable e2e startup path and fewer CI-only path regressions.
+- Trade-offs: e2e validates runtime behavior on dev server instead of preview server, while production bundling remains validated by the separate `npm run build` step.
+
+### Owner
+
+- DevOps + QA + Frontend
+
+---
+
 ## DEC-0020
 
 ### Date

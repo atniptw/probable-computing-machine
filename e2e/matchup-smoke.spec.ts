@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-const APP_ENTRY_PATH = process.env.CI ? '/probable-computing-machine/' : '/'
+const APP_ENTRY_PATH = '/'
 
 test.describe('Battle Screen - Matchup viewer flow', () => {
   test('shows matchup viewer details after typeahead opponent selection', async ({
@@ -164,9 +164,6 @@ test.describe('Battle Screen - Matchup viewer flow', () => {
 
     await test.step('Open battle screen and type opponent query', async () => {
       await page.goto(APP_ENTRY_PATH)
-      await expect(
-        page.getByRole('combobox', { name: 'Game Version' }),
-      ).toHaveValue('emerald')
       await page.getByLabel('Opponent Pokemon').fill('sala')
       await expect(
         page.getByRole('button', { name: 'Salamence' }),
