@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { getEffectivenessReason, rankTeamAgainstOpponent } from '../services/ranking'
+import {
+  getEffectivenessReason,
+  rankTeamAgainstOpponent,
+} from '../services/ranking'
 import type { Pokemon, TypeRelations } from '../services/pokeapi'
 
-function buildTypeMap(entries: [string, Partial<TypeRelations>][]): Map<string, TypeRelations> {
+function buildTypeMap(
+  entries: [string, Partial<TypeRelations>][],
+): Map<string, TypeRelations> {
   const map = new Map<string, TypeRelations>()
   for (const [typeName, relations] of entries) {
     map.set(typeName, {
@@ -23,10 +28,38 @@ function pokemon(name: string, types: string[]): Pokemon {
 }
 
 const typeMap = buildTypeMap([
-  ['electric', { doubleDamageTo: ['water', 'flying'], halfDamageTo: ['electric', 'grass', 'dragon'], noDamageTo: ['ground'] }],
-  ['ground', { doubleDamageTo: ['electric'], halfDamageTo: ['grass'], noDamageTo: ['flying'] }],
-  ['grass', { doubleDamageTo: ['water', 'ground'], halfDamageTo: ['fire', 'grass'], noDamageTo: [] }],
-  ['water', { doubleDamageTo: ['ground', 'fire'], halfDamageTo: ['water', 'grass'], noDamageTo: [] }],
+  [
+    'electric',
+    {
+      doubleDamageTo: ['water', 'flying'],
+      halfDamageTo: ['electric', 'grass', 'dragon'],
+      noDamageTo: ['ground'],
+    },
+  ],
+  [
+    'ground',
+    {
+      doubleDamageTo: ['electric'],
+      halfDamageTo: ['grass'],
+      noDamageTo: ['flying'],
+    },
+  ],
+  [
+    'grass',
+    {
+      doubleDamageTo: ['water', 'ground'],
+      halfDamageTo: ['fire', 'grass'],
+      noDamageTo: [],
+    },
+  ],
+  [
+    'water',
+    {
+      doubleDamageTo: ['ground', 'fire'],
+      halfDamageTo: ['water', 'grass'],
+      noDamageTo: [],
+    },
+  ],
 ])
 
 describe('getEffectivenessReason', () => {
@@ -62,8 +95,12 @@ describe('rankTeamAgainstOpponent', () => {
 
     expect(ranked.best).toHaveLength(1)
     expect(ranked.best[0]?.pokemon.name).toBe('swampert')
-    expect(ranked.good.map((entry) => entry.pokemon.name)).toEqual(['manectric'])
-    expect(ranked.neutral.map((entry) => entry.pokemon.name)).toEqual(['charizard'])
+    expect(ranked.good.map((entry) => entry.pokemon.name)).toEqual([
+      'manectric',
+    ])
+    expect(ranked.neutral.map((entry) => entry.pokemon.name)).toEqual([
+      'charizard',
+    ])
     expect(ranked.risky.map((entry) => entry.pokemon.name)).toEqual(['lanturn'])
   })
 

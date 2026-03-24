@@ -7,8 +7,16 @@ import {
   RateLimitError,
   type Pokemon,
 } from './services/pokeapi'
-import { rankTeamAgainstOpponent, type RankedTeamBuckets, type RankedTeamEntry } from './services/ranking'
-import { DEFAULT_GAME_VERSION, SUPPORTED_GAMES, getGameDefinition } from './data/games'
+import {
+  rankTeamAgainstOpponent,
+  type RankedTeamBuckets,
+  type RankedTeamEntry,
+} from './services/ranking'
+import {
+  DEFAULT_GAME_VERSION,
+  SUPPORTED_GAMES,
+  getGameDefinition,
+} from './data/games'
 import styles from './App.module.css'
 
 const EMERALD_DEFAULT_TEAM = [
@@ -58,16 +66,29 @@ function toTitleCase(value: string): string {
 }
 
 export default function App() {
-  const [selectedGameVersion, setSelectedGameVersion] = useState<string>(() => readSelectedGame())
+  const [selectedGameVersion, setSelectedGameVersion] = useState<string>(() =>
+    readSelectedGame(),
+  )
   const [screen, setScreen] = useState<Screen>('battle')
-  const [teamDraft, setTeamDraft] = useState<string[]>(() => toTeamSlots(readConfiguredTeam()))
-  const [teamSlotErrors, setTeamSlotErrors] = useState<(string | null)[]>(() => Array.from({ length: TEAM_SIZE }, () => null))
-  const [teamNames, setTeamNames] = useState<string[]>(() => readConfiguredTeam())
+  const [teamDraft, setTeamDraft] = useState<string[]>(() =>
+    toTeamSlots(readConfiguredTeam()),
+  )
+  const [teamSlotErrors, setTeamSlotErrors] = useState<(string | null)[]>(() =>
+    Array.from({ length: TEAM_SIZE }, () => null),
+  )
+  const [teamNames, setTeamNames] = useState<string[]>(() =>
+    readConfiguredTeam(),
+  )
   const [teamPreview, setTeamPreview] = useState<Pokemon[]>([])
   const [activeTeamSlot, setActiveTeamSlot] = useState<number | null>(null)
   const [opponentInput, setOpponentInput] = useState('')
   const [opponent, setOpponent] = useState<Pokemon | null>(null)
-  const [rankedBuckets, setRankedBuckets] = useState<RankedTeamBuckets>({ best: [], good: [], neutral: [], risky: [] })
+  const [rankedBuckets, setRankedBuckets] = useState<RankedTeamBuckets>({
+    best: [],
+    good: [],
+    neutral: [],
+    risky: [],
+  })
   const [showOtherOptions, setShowOtherOptions] = useState(false)
   const [pokemonNameIndex, setPokemonNameIndex] = useState<string[]>([])
   const [nameIndexReady, setNameIndexReady] = useState(false)
@@ -75,7 +96,10 @@ export default function App() {
   const [error, setError] = useState<string | null>(null)
 
   const selectedGame = useMemo(() => {
-    return getGameDefinition(selectedGameVersion) ?? getGameDefinition(DEFAULT_GAME_VERSION)!
+    return (
+      getGameDefinition(selectedGameVersion) ??
+      getGameDefinition(DEFAULT_GAME_VERSION)!
+    )
   }, [selectedGameVersion])
 
   useEffect(() => {
@@ -91,7 +115,9 @@ export default function App() {
         setPokemonNameIndex(names)
       })
       .catch(() => {
-        setError(`Unable to load ${selectedGame.label} Pokédex index. Please try again.`)
+        setError(
+          `Unable to load ${selectedGame.label} Pokédex index. Please try again.`,
+        )
       })
       .finally(() => {
         setNameIndexReady(true)
@@ -103,7 +129,10 @@ export default function App() {
   }, [selectedGame.version])
 
   const normalizedOpponent = opponentInput.trim().toLowerCase()
-  const pokemonNameSet = useMemo(() => new Set(pokemonNameIndex), [pokemonNameIndex])
+  const pokemonNameSet = useMemo(
+    () => new Set(pokemonNameIndex),
+    [pokemonNameIndex],
+  )
   const exactMatchFound = pokemonNameSet.has(normalizedOpponent)
 
   const defaultSuggestions = useMemo(
@@ -111,7 +140,10 @@ export default function App() {
     [pokemonNameIndex],
   )
 
-  const otherOptionCount = rankedBuckets.good.length + rankedBuckets.neutral.length + rankedBuckets.risky.length
+  const otherOptionCount =
+    rankedBuckets.good.length +
+    rankedBuckets.neutral.length +
+    rankedBuckets.risky.length
   const primaryRecommendation = rankedBuckets.best[0] ?? null
 
   function getSuggestions(query: string): string[] {
@@ -146,12 +178,17 @@ export default function App() {
       }
 
       const results = await Promise.allSettled(
-        teamNames.map((name) => getPokemon(name, { generation: selectedGame.generation })),
+        teamNames.map((name) =>
+          getPokemon(name, { generation: selectedGame.generation }),
+        ),
       )
       if (cancelled) return
 
       const nextPreview = results
-        .filter((result): result is PromiseFulfilledResult<Pokemon> => result.status === 'fulfilled')
+        .filter(
+          (result): result is PromiseFulfilledResult<Pokemon> =>
+            result.status === 'fulfilled',
+        )
         .map((result) => result.value)
 
       setTeamPreview(nextPreview)
@@ -171,7 +208,9 @@ export default function App() {
     if (!teamStillValid) {
       setOpponent(null)
       setRankedBuckets({ best: [], good: [], neutral: [], risky: [] })
-      setError(`Your saved team has Pokémon outside the ${selectedGame.label} Pokédex. Tap Edit Team to fix it.`)
+      setError(
+        `Your saved team has Pokémon outside the ${selectedGame.label} Pokédex. Tap Edit Team to fix it.`,
+      )
     }
   }, [pokemonNameIndex.length, pokemonNameSet, selectedGame.label, teamNames])
 
@@ -192,14 +231,17 @@ export default function App() {
 
   function saveTeam(): void {
     if (!nameIndexReady) {
-      setError('Pokédex index is still loading. Please wait a moment and try again.')
+      setError(
+        'Pokédex index is still loading. Please wait a moment and try again.',
+      )
       return
     }
 
     const normalized = teamDraft.map((slot) => slot.trim().toLowerCase())
     const nextErrors = normalized.map((name) => {
       if (!name) return null
-      if (!pokemonNameSet.has(name)) return `Not available in ${selectedGame.label}.`
+      if (!pokemonNameSet.has(name))
+        return `Not available in ${selectedGame.label}.`
       return null
     })
 
@@ -256,7 +298,9 @@ export default function App() {
     if (invalidSavedTeam) {
       setOpponent(null)
       setRankedBuckets({ best: [], good: [], neutral: [], risky: [] })
-      setError(`Your saved team has Pokémon outside the ${selectedGame.label} Pokédex.`)
+      setError(
+        `Your saved team has Pokémon outside the ${selectedGame.label} Pokédex.`,
+      )
       return
     }
 
@@ -268,13 +312,23 @@ export default function App() {
       try {
         const [typeMap, opponentPokemon, teamPokemon] = await Promise.all([
           getTypeMap({ generation: selectedGame.generation }),
-          getPokemon(normalizedOpponent, { generation: selectedGame.generation }),
-          Promise.all(teamNames.map((name) => getPokemon(name, { generation: selectedGame.generation }))),
+          getPokemon(normalizedOpponent, {
+            generation: selectedGame.generation,
+          }),
+          Promise.all(
+            teamNames.map((name) =>
+              getPokemon(name, { generation: selectedGame.generation }),
+            ),
+          ),
         ])
 
         if (cancelled) return
 
-        const nextRanked = rankTeamAgainstOpponent(teamPokemon, opponentPokemon, typeMap)
+        const nextRanked = rankTeamAgainstOpponent(
+          teamPokemon,
+          opponentPokemon,
+          typeMap,
+        )
 
         setOpponent(opponentPokemon)
         setRankedBuckets(nextRanked)
@@ -298,7 +352,16 @@ export default function App() {
     return () => {
       cancelled = true
     }
-  }, [exactMatchFound, nameIndexReady, normalizedOpponent, pokemonNameSet, screen, selectedGame.generation, selectedGame.label, teamNames])
+  }, [
+    exactMatchFound,
+    nameIndexReady,
+    normalizedOpponent,
+    pokemonNameSet,
+    screen,
+    selectedGame.generation,
+    selectedGame.label,
+    teamNames,
+  ])
 
   function handleGameChange(nextVersion: string): void {
     setSelectedGameVersion(nextVersion)
@@ -327,12 +390,22 @@ export default function App() {
     return '🔴'
   }
 
-  function renderMatchupCard(entry: RankedTeamEntry, tone: 'good' | 'neutral' | 'risky'): JSX.Element {
+  function renderMatchupCard(
+    entry: RankedTeamEntry,
+    tone: 'good' | 'neutral' | 'risky',
+  ): JSX.Element {
     return (
-      <article className={`${styles.matchupCard} ${styles[tone]}`} key={entry.pokemon.name}>
+      <article
+        className={`${styles.matchupCard} ${styles[tone]}`}
+        key={entry.pokemon.name}
+      >
         <div className={styles.matchupCardHeader}>
-          <span className={styles.toneLabel}>{toneIcon(tone)} {tone === 'good' ? 'Also Good' : toTitleCase(tone)}</span>
-          <strong className={styles.pokemonName}>{toTitleCase(entry.pokemon.name)}</strong>
+          <span className={styles.toneLabel}>
+            {toneIcon(tone)} {tone === 'good' ? 'Also Good' : toTitleCase(tone)}
+          </span>
+          <strong className={styles.pokemonName}>
+            {toTitleCase(entry.pokemon.name)}
+          </strong>
         </div>
         {renderTypeBadges(entry.pokemon.types)}
         <p className={styles.reasonText}>{entry.reason}</p>
@@ -363,7 +436,9 @@ export default function App() {
       {screen === 'battle' ? (
         <section className={styles.selectorSection}>
           <div className={styles.gameSelectorRow}>
-            <label htmlFor="game-version" className={styles.selectorLabel}>Game</label>
+            <label htmlFor="game-version" className={styles.selectorLabel}>
+              Game
+            </label>
             <select
               id="game-version"
               className={styles.gameSelector}
@@ -372,7 +447,9 @@ export default function App() {
               aria-label="Game Version"
             >
               {SUPPORTED_GAMES.map((game) => (
-                <option key={game.version} value={game.version}>{game.label}</option>
+                <option key={game.version} value={game.version}>
+                  {game.label}
+                </option>
               ))}
             </select>
           </div>
@@ -391,20 +468,26 @@ export default function App() {
               aria-label="Opponent Pokemon"
             />
           </label>
-          {!!normalizedOpponent && !exactMatchFound && opponentSuggestions.length > 0 && (
-            <div className={styles.suggestionList} role="listbox" aria-label="Opponent suggestions">
-              {opponentSuggestions.map((name) => (
-                <button
-                  key={name}
-                  type="button"
-                  className={styles.suggestionItem}
-                  onClick={() => setOpponentInput(name)}
-                >
-                  {toTitleCase(name)}
-                </button>
-              ))}
-            </div>
-          )}
+          {!!normalizedOpponent &&
+            !exactMatchFound &&
+            opponentSuggestions.length > 0 && (
+              <div
+                className={styles.suggestionList}
+                role="listbox"
+                aria-label="Opponent suggestions"
+              >
+                {opponentSuggestions.map((name) => (
+                  <button
+                    key={name}
+                    type="button"
+                    className={styles.suggestionItem}
+                    onClick={() => setOpponentInput(name)}
+                  >
+                    {toTitleCase(name)}
+                  </button>
+                ))}
+              </div>
+            )}
         </section>
       ) : (
         <section className={styles.selectorSection}>
@@ -422,7 +505,9 @@ export default function App() {
             </button>
           </div>
           <div className={styles.gameSelectorRow}>
-            <label htmlFor="game-version-team" className={styles.selectorLabel}>Game</label>
+            <label htmlFor="game-version-team" className={styles.selectorLabel}>
+              Game
+            </label>
             <select
               id="game-version-team"
               className={styles.gameSelector}
@@ -431,11 +516,15 @@ export default function App() {
               aria-label="Game Version"
             >
               {SUPPORTED_GAMES.map((game) => (
-                <option key={game.version} value={game.version}>{game.label}</option>
+                <option key={game.version} value={game.version}>
+                  {game.label}
+                </option>
               ))}
             </select>
           </div>
-          <p className={styles.configureHint}>Save 1–6 Pokémon from the selected game Pokédex.</p>
+          <p className={styles.configureHint}>
+            Save 1–6 Pokémon from the selected game Pokédex.
+          </p>
         </section>
       )}
 
@@ -451,7 +540,9 @@ export default function App() {
             <div className={styles.configureGrid}>
               {teamDraft.map((slot, index) => (
                 <div className={styles.teamSlot} key={`team-slot-${index}`}>
-                  <label htmlFor={`team-slot-${index}`}>Team Slot {index + 1}</label>
+                  <label htmlFor={`team-slot-${index}`}>
+                    Team Slot {index + 1}
+                  </label>
                   <input
                     id={`team-slot-${index}`}
                     className={`${styles.teamInput} ${teamSlotErrors[index] ? styles.teamInputError : ''}`}
@@ -460,31 +551,41 @@ export default function App() {
                     onFocus={() => setActiveTeamSlot(index)}
                     onBlur={() => {
                       window.setTimeout(() => {
-                        setActiveTeamSlot((current) => (current === index ? null : current))
+                        setActiveTeamSlot((current) =>
+                          current === index ? null : current,
+                        )
                       }, 120)
                     }}
                     placeholder={`Pokemon ${index + 1}`}
                     aria-label={`Team Slot ${index + 1}`}
                   />
-                  {activeTeamSlot === index && !!slot.trim() && getSuggestions(slot).length > 0 && (
-                    <div className={styles.suggestionList} role="listbox" aria-label={`Suggestions for team slot ${index + 1}`}>
-                      {getSuggestions(slot).map((name) => (
-                        <button
-                          type="button"
-                          key={`${name}-${index}`}
-                          className={styles.suggestionItem}
-                          onClick={() => {
-                            updateTeamSlot(index, name)
-                            setActiveTeamSlot(null)
-                          }}
-                        >
-                          {toTitleCase(name)}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  {activeTeamSlot === index &&
+                    !!slot.trim() &&
+                    getSuggestions(slot).length > 0 && (
+                      <div
+                        className={styles.suggestionList}
+                        role="listbox"
+                        aria-label={`Suggestions for team slot ${index + 1}`}
+                      >
+                        {getSuggestions(slot).map((name) => (
+                          <button
+                            type="button"
+                            key={`${name}-${index}`}
+                            className={styles.suggestionItem}
+                            onClick={() => {
+                              updateTeamSlot(index, name)
+                              setActiveTeamSlot(null)
+                            }}
+                          >
+                            {toTitleCase(name)}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   {teamSlotErrors[index] && (
-                    <span className={styles.fieldError} role="alert">{teamSlotErrors[index]}</span>
+                    <span className={styles.fieldError} role="alert">
+                      {teamSlotErrors[index]}
+                    </span>
                   )}
                 </div>
               ))}
@@ -502,66 +603,94 @@ export default function App() {
         ) : (
           <>
             {!teamNames.length && (
-              <p className={styles.empty}>Tap Edit Team to add Pokémon before checking matchups.</p>
+              <p className={styles.empty}>
+                Tap Edit Team to add Pokémon before checking matchups.
+              </p>
             )}
 
             {!!teamNames.length && !normalizedOpponent && (
-              <p className={styles.empty}>Select an opponent to see your best choice instantly.</p>
+              <p className={styles.empty}>
+                Select an opponent to see your best choice instantly.
+              </p>
             )}
 
             {!!teamNames.length && !!normalizedOpponent && loading && (
               <p className={styles.empty}>Calculating matchups...</p>
             )}
 
-            {!!teamNames.length && !!opponent && !loading && !!primaryRecommendation && (
-              <>
-                <article className={styles.primaryRecommendationCard}>
-                  <div className={styles.primaryLabel}>🟢 Best Choice</div>
-                  <h2 className={styles.primaryName}>{toTitleCase(primaryRecommendation.pokemon.name)}</h2>
-                  {renderTypeBadges(primaryRecommendation.pokemon.types)}
-                  <p className={styles.reasonText}>{primaryRecommendation.reason}</p>
-                  <p className={styles.effectivenessNote}>Based on {selectedGame.label} type effectiveness rules</p>
-                </article>
+            {!!teamNames.length &&
+              !!opponent &&
+              !loading &&
+              !!primaryRecommendation && (
+                <>
+                  <article className={styles.primaryRecommendationCard}>
+                    <div className={styles.primaryLabel}>🟢 Best Choice</div>
+                    <h2 className={styles.primaryName}>
+                      {toTitleCase(primaryRecommendation.pokemon.name)}
+                    </h2>
+                    {renderTypeBadges(primaryRecommendation.pokemon.types)}
+                    <p className={styles.reasonText}>
+                      {primaryRecommendation.reason}
+                    </p>
+                    <p className={styles.effectivenessNote}>
+                      Based on {selectedGame.label} type effectiveness rules
+                    </p>
+                  </article>
 
-                {otherOptionCount > 0 && (
-                  <section className={styles.expandableList}>
-                    <button
-                      type="button"
-                      className={styles.expandButton}
-                      onClick={() => setShowOtherOptions((current) => !current)}
-                      aria-expanded={showOtherOptions}
-                    >
-                      Show other options ({otherOptionCount}) {showOtherOptions ? '▴' : '▾'}
-                    </button>
+                  {otherOptionCount > 0 && (
+                    <section className={styles.expandableList}>
+                      <button
+                        type="button"
+                        className={styles.expandButton}
+                        onClick={() =>
+                          setShowOtherOptions((current) => !current)
+                        }
+                        aria-expanded={showOtherOptions}
+                      >
+                        Show other options ({otherOptionCount}){' '}
+                        {showOtherOptions ? '▴' : '▾'}
+                      </button>
 
-                    {showOtherOptions && (
-                      <div className={styles.otherResults}>
-                        {!!rankedBuckets.good.length && (
-                          <section className={styles.group}>
-                            <h3 className={styles.groupTitle}>Also Good</h3>
-                            <div className={styles.cards}>{rankedBuckets.good.map((entry) => renderMatchupCard(entry, 'good'))}</div>
-                          </section>
-                        )}
+                      {showOtherOptions && (
+                        <div className={styles.otherResults}>
+                          {!!rankedBuckets.good.length && (
+                            <section className={styles.group}>
+                              <h3 className={styles.groupTitle}>Also Good</h3>
+                              <div className={styles.cards}>
+                                {rankedBuckets.good.map((entry) =>
+                                  renderMatchupCard(entry, 'good'),
+                                )}
+                              </div>
+                            </section>
+                          )}
 
-                        {!!rankedBuckets.neutral.length && (
-                          <section className={styles.group}>
-                            <h3 className={styles.groupTitle}>Neutral</h3>
-                            <div className={styles.cards}>{rankedBuckets.neutral.map((entry) => renderMatchupCard(entry, 'neutral'))}</div>
-                          </section>
-                        )}
+                          {!!rankedBuckets.neutral.length && (
+                            <section className={styles.group}>
+                              <h3 className={styles.groupTitle}>Neutral</h3>
+                              <div className={styles.cards}>
+                                {rankedBuckets.neutral.map((entry) =>
+                                  renderMatchupCard(entry, 'neutral'),
+                                )}
+                              </div>
+                            </section>
+                          )}
 
-                        {!!rankedBuckets.risky.length && (
-                          <section className={styles.group}>
-                            <h3 className={styles.groupTitle}>Risky</h3>
-                            <div className={styles.cards}>{rankedBuckets.risky.map((entry) => renderMatchupCard(entry, 'risky'))}</div>
-                          </section>
-                        )}
-                      </div>
-                    )}
-                  </section>
-                )}
-              </>
-            )}
+                          {!!rankedBuckets.risky.length && (
+                            <section className={styles.group}>
+                              <h3 className={styles.groupTitle}>Risky</h3>
+                              <div className={styles.cards}>
+                                {rankedBuckets.risky.map((entry) =>
+                                  renderMatchupCard(entry, 'risky'),
+                                )}
+                              </div>
+                            </section>
+                          )}
+                        </div>
+                      )}
+                    </section>
+                  )}
+                </>
+              )}
 
             {!!teamNames.length && (
               <button
@@ -575,8 +704,15 @@ export default function App() {
                 <div className={styles.teamPreviewLabel}>Team</div>
                 <div className={styles.teamPreviewTrack}>
                   {teamPreview.map((pokemon) => (
-                    <span className={styles.teamPreviewChip} key={`preview-${pokemon.name}`}>
-                      {pokemon.sprite ? <img src={pokemon.sprite} alt="" /> : <span>{toTitleCase(pokemon.name).charAt(0)}</span>}
+                    <span
+                      className={styles.teamPreviewChip}
+                      key={`preview-${pokemon.name}`}
+                    >
+                      {pokemon.sprite ? (
+                        <img src={pokemon.sprite} alt="" />
+                      ) : (
+                        <span>{toTitleCase(pokemon.name).charAt(0)}</span>
+                      )}
                     </span>
                   ))}
                 </div>

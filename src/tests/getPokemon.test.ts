@@ -4,7 +4,7 @@ class MockStorage {
   private store = new Map<string, string>()
 
   getItem(key: string): string | null {
-    return this.store.has(key) ? this.store.get(key) ?? null : null
+    return this.store.has(key) ? (this.store.get(key) ?? null) : null
   }
 
   setItem(key: string, value: string): void {

@@ -8,7 +8,13 @@ interface PokemonSlotProps {
   disabled: boolean
 }
 
-export default function PokemonSlot({ value, onChange, error, placeholder, disabled }: PokemonSlotProps) {
+export default function PokemonSlot({
+  value,
+  onChange,
+  error,
+  placeholder,
+  disabled,
+}: PokemonSlotProps) {
   return (
     <div className={styles.slot}>
       <input

@@ -33,6 +33,17 @@ Foundational project workspace for a new web app.
 
 ## Next Immediate Actions
 
-1. Validate mobile ergonomics on additional device sizes.
-2. Add acceptance scenarios for team editing edge cases.
-3. Plan vNext ranking inputs (moves, abilities, stats).
+1. Break `src/App.tsx` into smaller runtime units before adding more UI behavior.
+2. Expand regression coverage beyond the smoke path for autocomplete, team editing, and failure states.
+3. Harden Pok\u00e9API/cache boundaries and stale-data handling ahead of further feature work.
+
+## Validation Commands
+
+```bash
+npm run lint
+npm run format:check
+npm run tsc
+npm run test:coverage
+npm run build
+npm run e2e
+```

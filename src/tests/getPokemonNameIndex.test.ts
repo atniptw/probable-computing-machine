@@ -4,7 +4,7 @@ class MockStorage {
   private store = new Map<string, string>()
 
   getItem(key: string): string | null {
-    return this.store.has(key) ? this.store.get(key) ?? null : null
+    return this.store.has(key) ? (this.store.get(key) ?? null) : null
   }
 
   setItem(key: string, value: string): void {
@@ -49,15 +49,24 @@ describe('getPokemonNameIndex', () => {
 
     expect(names).toEqual(['pikachu', 'eevee'])
     expect(fetchMock).toHaveBeenCalledTimes(2)
-    expect(fetchMock).toHaveBeenNthCalledWith(1, 'https://pokeapi.co/api/v2/pokemon?limit=1')
-    expect(fetchMock).toHaveBeenNthCalledWith(2, 'https://pokeapi.co/api/v2/pokemon?limit=2')
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      'https://pokeapi.co/api/v2/pokemon?limit=1',
+    )
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      'https://pokeapi.co/api/v2/pokemon?limit=2',
+    )
     expect(storage.getItem('pkm_names_v2_all')).toBeTruthy()
   })
 
   it('uses fresh cached index without fetching', async () => {
     const storage = new MockStorage()
     const expires = Date.now() + 60_000
-    storage.setItem('pkm_names_v2_all', JSON.stringify({ names: ['bulbasaur'], expires }))
+    storage.setItem(
+      'pkm_names_v2_all',
+      JSON.stringify({ names: ['bulbasaur'], expires }),
+    )
     vi.stubGlobal('localStorage', storage)
 
     const fetchMock = vi.fn()
@@ -73,7 +82,10 @@ describe('getPokemonNameIndex', () => {
   it('falls back to stale cache on network failure', async () => {
     const storage = new MockStorage()
     const expires = Date.now() - 60_000
-    storage.setItem('pkm_names_v2_all', JSON.stringify({ names: ['chikorita'], expires }))
+    storage.setItem(
+      'pkm_names_v2_all',
+      JSON.stringify({ names: ['chikorita'], expires }),
+    )
     vi.stubGlobal('localStorage', storage)
 
     const fetchMock = vi.fn(async () => {
@@ -94,10 +106,10 @@ describe('getPokemonNameIndex', () => {
 
     const fetchMock = vi.fn(async (url: string) => {
       if (url.endsWith('limit=1')) {
-        return new Response(
-          JSON.stringify({ count: 2, results: [] }),
-          { status: 200, headers: { 'Content-Type': 'application/json' } },
-        )
+        return new Response(JSON.stringify({ count: 2, results: [] }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
       }
 
       return new Response(
@@ -114,7 +126,10 @@ describe('getPokemonNameIndex', () => {
     vi.stubGlobal('fetch', fetchMock)
 
     const { getPokemonNameIndex } = await import('../services/pokeapi')
-    const [first, second] = await Promise.all([getPokemonNameIndex(), getPokemonNameIndex()])
+    const [first, second] = await Promise.all([
+      getPokemonNameIndex(),
+      getPokemonNameIndex(),
+    ])
 
     expect(first).toEqual(['pikachu', 'eevee'])
     expect(second).toEqual(['pikachu', 'eevee'])

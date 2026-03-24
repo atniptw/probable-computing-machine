@@ -191,7 +191,10 @@ function generationFromName(name: string): number | null {
   return generationNameMap[name] ?? null
 }
 
-function resolveTypesForGeneration(json: PokeApiPokemonResponse, generation?: number): string[] {
+function resolveTypesForGeneration(
+  json: PokeApiPokemonResponse,
+  generation?: number,
+): string[] {
   if (!generation || !json.past_types.length) {
     return normalizePokemonTypes(json.types)
   }
@@ -201,7 +204,10 @@ function resolveTypesForGeneration(json: PokeApiPokemonResponse, generation?: nu
       generation: generationFromName(entry.generation.name),
       types: entry.types,
     }))
-    .filter((entry): entry is { generation: number; types: PokeApiTypeEntry[] } => entry.generation !== null)
+    .filter(
+      (entry): entry is { generation: number; types: PokeApiTypeEntry[] } =>
+        entry.generation !== null,
+    )
     .filter((entry) => generation <= entry.generation)
     .sort((left, right) => left.generation - right.generation)[0]
 
@@ -209,7 +215,10 @@ function resolveTypesForGeneration(json: PokeApiPokemonResponse, generation?: nu
   return normalizePokemonTypes(candidate.types)
 }
 
-export async function getPokemon(name: string, options?: PokemonQueryOptions): Promise<Pokemon> {
+export async function getPokemon(
+  name: string,
+  options?: PokemonQueryOptions,
+): Promise<Pokemon> {
   const normalizedName = name.toLowerCase().trim()
   const generationKey = options?.generation ?? 0
   const key = `${CACHE_PREFIX}${normalizedName}_g${generationKey}`
@@ -239,7 +248,10 @@ export async function getPokemon(name: string, options?: PokemonQueryOptions): P
       sprite: json.sprites.front_default,
     }
 
-    localStorage.setItem(key, JSON.stringify({ data, expires: Date.now() + CACHE_TTL_MS }))
+    localStorage.setItem(
+      key,
+      JSON.stringify({ data, expires: Date.now() + CACHE_TTL_MS }),
+    )
     return data
   })()
 
@@ -258,16 +270,23 @@ async function fetchPokemonNameIndexFromApi(): Promise<string[]> {
   if (!countRes.ok) throw new NetworkError()
   const countJson = (await countRes.json()) as PokeApiPokemonListResponse
 
-  const safeLimit = Math.max(1, Math.min(countJson.count || 1, NAME_INDEX_LIMIT))
+  const safeLimit = Math.max(
+    1,
+    Math.min(countJson.count || 1, NAME_INDEX_LIMIT),
+  )
 
   const listRes = await fetchWithRetry(`${BASE_URL}/pokemon?limit=${safeLimit}`)
   if (!listRes.ok) throw new NetworkError()
 
   const listJson = (await listRes.json()) as PokeApiPokemonListResponse
-  return listJson.results.map((entry) => entry.name.toLowerCase()).filter(Boolean)
+  return listJson.results
+    .map((entry) => entry.name.toLowerCase())
+    .filter(Boolean)
 }
 
-async function getGameVersionContext(version: string): Promise<GameVersionContext> {
+async function getGameVersionContext(
+  version: string,
+): Promise<GameVersionContext> {
   if (gameContextCache.has(version)) {
     return gameContextCache.get(version) as GameVersionContext
   }
@@ -276,13 +295,18 @@ async function getGameVersionContext(version: string): Promise<GameVersionContex
   if (inFlight) return inFlight
 
   const request = (async () => {
-    const versionRes = await fetchWithRetry(`${BASE_URL}/version/${encodeURIComponent(version)}`)
+    const versionRes = await fetchWithRetry(
+      `${BASE_URL}/version/${encodeURIComponent(version)}`,
+    )
     if (!versionRes.ok) throw new NetworkError()
     const versionJson = (await versionRes.json()) as PokeApiVersionResponse
 
-    const versionGroupRes = await fetchWithRetry(`${BASE_URL}/version-group/${versionJson.version_group.name}`)
+    const versionGroupRes = await fetchWithRetry(
+      `${BASE_URL}/version-group/${versionJson.version_group.name}`,
+    )
     if (!versionGroupRes.ok) throw new NetworkError()
-    const versionGroupJson = (await versionGroupRes.json()) as PokeApiVersionGroupResponse
+    const versionGroupJson =
+      (await versionGroupRes.json()) as PokeApiVersionGroupResponse
 
     const generation = generationFromName(versionGroupJson.generation.name)
     const pokedex = versionGroupJson.pokedexes[0]?.name
@@ -310,9 +334,13 @@ async function getGameVersionContext(version: string): Promise<GameVersionContex
   }
 }
 
-async function fetchPokemonNameIndexForVersion(version: string): Promise<string[]> {
+async function fetchPokemonNameIndexForVersion(
+  version: string,
+): Promise<string[]> {
   const context = await getGameVersionContext(version)
-  const pokedexRes = await fetchWithRetry(`${BASE_URL}/pokedex/${context.pokedex}`)
+  const pokedexRes = await fetchWithRetry(
+    `${BASE_URL}/pokedex/${context.pokedex}`,
+  )
   if (!pokedexRes.ok) throw new NetworkError()
 
   const pokedexJson = (await pokedexRes.json()) as PokeApiPokedexResponse
@@ -337,10 +365,7 @@ export async function getPokemonNameIndex(version?: string): Promise<string[]> {
   if (cachedRaw) {
     try {
       cached = JSON.parse(cachedRaw) as CachedPokemonNameIndex
-      if (
-        !Array.isArray(cached.names)
-        || typeof cached.expires !== 'number'
-      ) {
+      if (!Array.isArray(cached.names) || typeof cached.expires !== 'number') {
         cached = null
       }
     } catch {
@@ -386,7 +411,9 @@ export async function getPokemonNameIndex(version?: string): Promise<string[]> {
 
 // --- getTypeMap ---
 
-function cloneTypeMap(source: Map<string, TypeRelations>): Map<string, TypeRelations> {
+function cloneTypeMap(
+  source: Map<string, TypeRelations>,
+): Map<string, TypeRelations> {
   return new Map(
     [...source.entries()].map(([typeName, relations]) => [
       typeName,
@@ -402,33 +429,58 @@ function cloneTypeMap(source: Map<string, TypeRelations>): Map<string, TypeRelat
 function removeType(map: Map<string, TypeRelations>, typeName: string): void {
   map.delete(typeName)
   for (const relations of map.values()) {
-    relations.doubleDamageTo = relations.doubleDamageTo.filter((name) => name !== typeName)
-    relations.halfDamageTo = relations.halfDamageTo.filter((name) => name !== typeName)
-    relations.noDamageTo = relations.noDamageTo.filter((name) => name !== typeName)
+    relations.doubleDamageTo = relations.doubleDamageTo.filter(
+      (name) => name !== typeName,
+    )
+    relations.halfDamageTo = relations.halfDamageTo.filter(
+      (name) => name !== typeName,
+    )
+    relations.noDamageTo = relations.noDamageTo.filter(
+      (name) => name !== typeName,
+    )
   }
 }
 
-function ensureHalfDamageTo(map: Map<string, TypeRelations>, attackerType: string, defenderType: string): void {
+function ensureHalfDamageTo(
+  map: Map<string, TypeRelations>,
+  attackerType: string,
+  defenderType: string,
+): void {
   const relations = map.get(attackerType)
   if (!relations) return
   if (!relations.halfDamageTo.includes(defenderType)) {
     relations.halfDamageTo.push(defenderType)
   }
-  relations.doubleDamageTo = relations.doubleDamageTo.filter((name) => name !== defenderType)
-  relations.noDamageTo = relations.noDamageTo.filter((name) => name !== defenderType)
+  relations.doubleDamageTo = relations.doubleDamageTo.filter(
+    (name) => name !== defenderType,
+  )
+  relations.noDamageTo = relations.noDamageTo.filter(
+    (name) => name !== defenderType,
+  )
 }
 
-function ensureNoDamageTo(map: Map<string, TypeRelations>, attackerType: string, defenderType: string): void {
+function ensureNoDamageTo(
+  map: Map<string, TypeRelations>,
+  attackerType: string,
+  defenderType: string,
+): void {
   const relations = map.get(attackerType)
   if (!relations) return
   if (!relations.noDamageTo.includes(defenderType)) {
     relations.noDamageTo.push(defenderType)
   }
-  relations.doubleDamageTo = relations.doubleDamageTo.filter((name) => name !== defenderType)
-  relations.halfDamageTo = relations.halfDamageTo.filter((name) => name !== defenderType)
+  relations.doubleDamageTo = relations.doubleDamageTo.filter(
+    (name) => name !== defenderType,
+  )
+  relations.halfDamageTo = relations.halfDamageTo.filter(
+    (name) => name !== defenderType,
+  )
 }
 
-function applyGenerationTypeRules(map: Map<string, TypeRelations>, generation: number): void {
+function applyGenerationTypeRules(
+  map: Map<string, TypeRelations>,
+  generation: number,
+): void {
   if (generation < 6) {
     removeType(map, 'fairy')
     ensureHalfDamageTo(map, 'ghost', 'steel')
@@ -442,7 +494,9 @@ function applyGenerationTypeRules(map: Map<string, TypeRelations>, generation: n
 
     const iceRelations = map.get('ice')
     if (iceRelations) {
-      iceRelations.halfDamageTo = iceRelations.halfDamageTo.filter((type) => type !== 'fire')
+      iceRelations.halfDamageTo = iceRelations.halfDamageTo.filter(
+        (type) => type !== 'fire',
+      )
     }
   }
 }
@@ -475,13 +529,15 @@ async function buildBaseTypeMap(): Promise<Map<string, TypeRelations>> {
   return baseMap
 }
 
-export async function getTypeMap(options?: TypeMapOptions): Promise<Map<string, TypeRelations>> {
+export async function getTypeMap(
+  options?: TypeMapOptions,
+): Promise<Map<string, TypeRelations>> {
   const generation = options?.generation ?? 9
 
   const cached = typeMapCache.get(generation)
   if (cached) return cached
 
-  const baseTypeMap = typeMapCache.get(9) ?? await buildBaseTypeMap()
+  const baseTypeMap = typeMapCache.get(9) ?? (await buildBaseTypeMap())
   if (!typeMapCache.has(9)) {
     typeMapCache.set(9, baseTypeMap)
   }
@@ -550,7 +606,9 @@ export async function computeMatchups(
   const summary: MatchupSummary = {
     superEffective: matrix.filter((e) => e.youVsThem === '2x').length,
     neutral: matrix.filter((e) => e.youVsThem === '1x').length,
-    notVeryEffective: matrix.filter((e) => e.youVsThem === '0.5x' || e.youVsThem === '0x').length,
+    notVeryEffective: matrix.filter(
+      (e) => e.youVsThem === '0.5x' || e.youVsThem === '0x',
+    ).length,
   }
 
   return { yourTeam: yourPokemon, opponentTeam: theirPokemon, matrix, summary }

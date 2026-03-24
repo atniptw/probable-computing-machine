@@ -1,4 +1,9 @@
-import { calcEffectiveness, type Effectiveness, type Pokemon, type TypeRelations } from './pokeapi'
+import {
+  calcEffectiveness,
+  type Effectiveness,
+  type Pokemon,
+  type TypeRelations,
+} from './pokeapi'
 
 export interface RankedTeamEntry {
   pokemon: Pokemon
@@ -60,7 +65,10 @@ function typeBadge(typeName: string): string {
   return typeEmojiMap[typeName] ?? ''
 }
 
-export function getEffectivenessReason(defenseMod: number, attackerType: string): string {
+export function getEffectivenessReason(
+  defenseMod: number,
+  attackerType: string,
+): string {
   const formattedType = formatTypeName(attackerType)
   const emoji = typeBadge(attackerType)
   const typeToken = emoji ? `${formattedType} ${emoji}` : formattedType
@@ -78,8 +86,16 @@ export function rankTeamAgainstOpponent(
 ): RankedTeamBuckets {
   const rankedEntries = team
     .map((pokemon): RankedTeamEntry => {
-      const attackMod = calcEffectiveness(pokemon.types, opponent.types, typeMap)
-      const defenseMod = calcEffectiveness(opponent.types, pokemon.types, typeMap)
+      const attackMod = calcEffectiveness(
+        pokemon.types,
+        opponent.types,
+        typeMap,
+      )
+      const defenseMod = calcEffectiveness(
+        opponent.types,
+        pokemon.types,
+        typeMap,
+      )
       const priority = typePriority(defenseMod)
       return {
         pokemon,
@@ -87,14 +103,20 @@ export function rankTeamAgainstOpponent(
         defenseMod,
         attackLabel: modifierLabel(attackMod),
         defenseLabel: modifierLabel(defenseMod),
-        reason: getEffectivenessReason(defenseMod, opponent.types[0] ?? 'normal'),
+        reason: getEffectivenessReason(
+          defenseMod,
+          opponent.types[0] ?? 'normal',
+        ),
         priority,
       }
     })
     .sort((left, right) => {
-      if (right.priority !== left.priority) return right.priority - left.priority
-      if (right.attackMod !== left.attackMod) return right.attackMod - left.attackMod
-      if (left.defenseMod !== right.defenseMod) return left.defenseMod - right.defenseMod
+      if (right.priority !== left.priority)
+        return right.priority - left.priority
+      if (right.attackMod !== left.attackMod)
+        return right.attackMod - left.attackMod
+      if (left.defenseMod !== right.defenseMod)
+        return left.defenseMod - right.defenseMod
       return left.pokemon.name.localeCompare(right.pokemon.name)
     })
 

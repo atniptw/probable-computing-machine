@@ -17,10 +17,16 @@ export default function MatchupCell({ entry }: MatchupCellProps) {
   if (!entry) return <td />
   return (
     <td className={styles.cell}>
-      <span className={`${styles.badge} ${LABEL_CLASS[entry.youVsThem] ?? ''}`} title="You → Them">
+      <span
+        className={`${styles.badge} ${LABEL_CLASS[entry.youVsThem] ?? ''}`}
+        title="You → Them"
+      >
         {entry.youVsThem}
       </span>
-      <span className={`${styles.badge} ${LABEL_CLASS[entry.themVsYou] ?? ''} ${styles.inverse}`} title="Them → You">
+      <span
+        className={`${styles.badge} ${LABEL_CLASS[entry.themVsYou] ?? ''} ${styles.inverse}`}
+        title="Them → You"
+      >
         {entry.themVsYou}
       </span>
     </td>

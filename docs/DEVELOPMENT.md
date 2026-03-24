@@ -10,7 +10,6 @@
 
 ```bash
 # From the repository root
-npm create vite@latest . -- --template react
 npm install
 ```
 
@@ -36,8 +35,8 @@ npm run preview
 ```
 probable-computing-machine/
 ├── src/
-│   ├── main.jsx
-│   ├── App.jsx
+│   ├── main.tsx
+│   ├── App.tsx
 │   ├── App.module.css
 │   ├── components/
 │   │   ├── TeamInput/
@@ -50,27 +49,38 @@ probable-computing-machine/
 │   │       ├── MatchupGrid.jsx
 │   │       ├── MatchupCell.jsx
 │   │       └── SummaryBar.jsx
-│   └── services/
-│       └── pokeapi.js
+│   ├── data/
+│   │   └── games.ts
+│   ├── services/
+│   │   ├── pokeapi.ts
+│   │   └── ranking.ts
+│   └── tests/
+│       ├── calcEffectiveness.test.ts
+│       ├── getPokemon.test.ts
+│       ├── getPokemonNameIndex.test.ts
+│       └── ranking.test.ts
 ├── public/
 ├── docs/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml
-├── vite.config.js
+│       ├── deploy.yml
+│       └── gate-evidence.yml
+├── vite.config.ts
+├── eslint.config.js
+├── .prettierrc.json
 └── package.json
 ```
 
 ## Vite Config (Required for GitHub Pages)
 
-```js
-// vite.config.js
+```ts
+// vite.config.ts
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/probable-computing-machine/'
+  base: '/probable-computing-machine/',
 })
 ```
 
@@ -119,9 +129,17 @@ PokéAPI is a public API with no API key.
 
 ## Tests
 
-Unit tests are planned using Vitest, focused on `calcEffectiveness()` and `computeMatchups()` logic.
+Unit tests run with Vitest and coverage is part of the expected validation flow. End-to-end tests run with Playwright.
 
 ```bash
-# When configured:
+npm run lint
+npm run format:check
+npm run tsc
 npm run test
+npm run test:coverage
+npm run e2e
 ```
+
+## Git Hooks
+
+`npm install` runs the `prepare` script to register Husky hooks. The current pre-commit hook runs `lint-staged` so changed TypeScript, CSS, JSON, YAML, and Markdown files are formatted before commit, and staged TypeScript files are linted automatically.

@@ -24,8 +24,10 @@ jobs:
           node-version: '18'
           cache: 'npm'
       - run: npm ci
-      - run: npm test
+      - run: npm run lint
+      - run: npm run format:check
       - run: npm run tsc
+      - run: npm run test:coverage
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e

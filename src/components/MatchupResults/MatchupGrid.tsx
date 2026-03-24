@@ -9,7 +9,11 @@ interface MatchupGridProps {
   opponentTeam: Pokemon[]
 }
 
-export default function MatchupGrid({ matrix, yourTeam, opponentTeam }: MatchupGridProps) {
+export default function MatchupGrid({
+  matrix,
+  yourTeam,
+  opponentTeam,
+}: MatchupGridProps) {
   return (
     <div className={styles.wrapper}>
       <table className={styles.table}>
@@ -33,7 +37,9 @@ export default function MatchupGrid({ matrix, yourTeam, opponentTeam }: MatchupG
               </th>
               {opponentTeam.map((theirs) => {
                 const entry = matrix.find(
-                  (e) => e.yours.name === yours.name && e.theirs.name === theirs.name,
+                  (e) =>
+                    e.yours.name === yours.name &&
+                    e.theirs.name === theirs.name,
                 )
                 return <MatchupCell key={theirs.name} entry={entry} />
               })}

@@ -9,7 +9,13 @@ interface TeamSlotsProps {
   disabled: boolean
 }
 
-export default function TeamSlots({ label, slots, slotErrors, onChange, disabled }: TeamSlotsProps) {
+export default function TeamSlots({
+  label,
+  slots,
+  slotErrors,
+  onChange,
+  disabled,
+}: TeamSlotsProps) {
   return (
     <div className={styles.group}>
       <h2 className={styles.label}>{label}</h2>

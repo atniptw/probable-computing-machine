@@ -10,23 +10,23 @@ YYYY-MM-DD
 
 ### Objective
 
-- 
+- TBD
 
 ### Decisions Made
 
-- 
+- TBD
 
 ### Completed
 
-- 
+- TBD
 
 ### Blockers
 
-- 
+- TBD
 
 ### Next Actions
 
-- 
+- TBD
 
 ---
 
@@ -258,6 +258,37 @@ YYYY-MM-DD
 - Added unit tests in `src/tests/ranking.test.ts`.
 - Updated Playwright smoke test in `e2e/matchup-smoke.spec.ts` to validate new typeahead + primary recommendation flow.
 - Verified `npm run tsc`, `npm run test`, and `npm run e2e -- e2e/matchup-smoke.spec.ts --project=chromium`.
+
+---
+
+## 2026-03-24 - Add Foundation Validation Tooling
+
+### Objective
+
+- Establish enforced local and CI quality gates before deeper architecture refactoring.
+
+### Decisions Made
+
+- Adopt ESLint 9 flat config, Prettier, Husky, and lint-staged as the baseline developer validation toolchain.
+- Move Vitest to a jsdom environment and require coverage reporting in CI with initial service-layer thresholds.
+- Run lint, format check, typecheck, and coverage before build and Playwright validation in the deploy workflow.
+
+### Completed
+
+- Added linting, formatting, Husky, and lint-staged dependencies plus repo configuration.
+- Added validation scripts to `package.json` and coverage thresholds to `vite.config.ts`.
+- Updated `.github/workflows/deploy.yml` to run lint, format check, typecheck, and coverage before build and E2E.
+- Extended `.github/dependabot.yml` to monitor npm dependencies.
+- Updated `README.md` and `docs/DEVELOPMENT.md` to match the current toolchain and validation flow.
+
+### Blockers
+
+- None yet; next risk is whether new lint rules expose code issues that need cleanup during the architecture pass.
+
+### Next Actions
+
+- Run the new validation suite locally and fix any issues introduced by the stricter tooling.
+- Start decomposing `src/App.tsx` once the repo is green under the new gates.
 - Updated docs in `README.md`, `docs/COMPONENT_DESIGN.md`, `docs/USER_GUIDE.md`, and `docs/DATA_FLOW.md`.
 
 ### Blockers
@@ -287,20 +318,20 @@ YYYY-MM-DD
 
 - Added game catalog in `src/data/games.ts`.
 - Extended `src/services/pokeapi.ts` with:
-	- game version context resolver,
-	- game-scoped `getPokemonNameIndex(version)`,
-	- generation-aware `getPokemon(name, { generation })`,
-	- generation-aware `getTypeMap({ generation })` with historical overrides.
+  - game version context resolver,
+  - game-scoped `getPokemonNameIndex(version)`,
+  - generation-aware `getPokemon(name, { generation })`,
+  - generation-aware `getTypeMap({ generation })` with historical overrides.
 - Updated `src/App.tsx` to include game selector, selected-game persistence, and selected-game validation for opponent/team entries.
 - Added selector styling in `src/App.module.css`.
 - Updated tests:
-	- `src/tests/getPokemonNameIndex.test.ts`
-	- `src/tests/getPokemon.test.ts`
-	- `e2e/matchup-smoke.spec.ts`
+  - `src/tests/getPokemonNameIndex.test.ts`
+  - `src/tests/getPokemon.test.ts`
+  - `e2e/matchup-smoke.spec.ts`
 - Verified:
-	- `npm run tsc`
-	- `npm run test`
-	- `npm run e2e -- e2e/matchup-smoke.spec.ts --project=chromium`
+  - `npm run tsc`
+  - `npm run test`
+  - `npm run e2e -- e2e/matchup-smoke.spec.ts --project=chromium`
 
 ### Blockers
 

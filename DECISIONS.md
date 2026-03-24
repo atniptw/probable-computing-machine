@@ -14,11 +14,11 @@ YYYY-MM-DD
 
 ### Context
 
-- 
+- TBD
 
 ### Decision
 
-- 
+- TBD
 
 ### Consequences
 
@@ -27,7 +27,7 @@ YYYY-MM-DD
 
 ### Owner
 
-- 
+- TBD
 
 ---
 
@@ -247,12 +247,12 @@ YYYY-MM-DD
 
 - Add a user-selectable game version in the UI and persist it locally (`pmh_game_v1`).
 - Build Pokémon autocomplete/validation from selected game Pokédex using PokéAPI chain:
-	- `/version/{version}`
-	- `/version-group/{version_group}`
-	- `/pokedex/{pokedex}`
+  - `/version/{version}`
+  - `/version-group/{version_group}`
+  - `/pokedex/{pokedex}`
 - Apply generation-aware rule handling in services:
-	- use `past_types` when resolving Pokémon typing for older generations,
-	- apply key generation type-chart overrides (Fairy removal pre-Gen 6, Dark/Steel removal pre-Gen 2, key historical relation adjustments).
+  - use `past_types` when resolving Pokémon typing for older generations,
+  - apply key generation type-chart overrides (Fairy removal pre-Gen 6, Dark/Steel removal pre-Gen 2, key historical relation adjustments).
 
 ### Consequences
 
@@ -262,6 +262,35 @@ YYYY-MM-DD
 ### Owner
 
 - Frontend + Architect
+
+---
+
+## DEC-0014
+
+### Date
+
+2026-03-24
+
+### Context
+
+- The repository had tests and deployment automation, but no enforced local or CI quality gates for linting, formatting, or coverage.
+- Documentation still described outdated setup and file structure, which increased drift risk during planned foundation refactors.
+- The next phase of work requires faster feedback loops before breaking `src/App.tsx` into smaller runtime boundaries.
+
+### Decision
+
+- Standardize on ESLint 9 flat config, Prettier, Husky, and lint-staged for local validation.
+- Treat coverage as part of the default CI signal via `npm run test:coverage` with initial service-layer thresholds.
+- Upgrade the GitHub Pages workflow so lint, format, typecheck, and coverage checks run before build and E2E execution.
+
+### Consequences
+
+- Positive: foundation refactors get faster feedback and lower regression risk.
+- Trade-offs: local setup becomes stricter and contributors will hit validation failures earlier.
+
+### Owner
+
+- Architect + DevOps + Frontend
 
 ---
 

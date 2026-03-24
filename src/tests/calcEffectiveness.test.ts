@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { calcEffectiveness, type TypeRelations } from '../services/pokeapi'
 
-function buildTypeMap(entries: [string, Partial<TypeRelations>][]): Map<string, TypeRelations> {
+function buildTypeMap(
+  entries: [string, Partial<TypeRelations>][],
+): Map<string, TypeRelations> {
   const map = new Map<string, TypeRelations>()
   for (const [type, relations] of entries) {
     map.set(type, {
@@ -14,12 +16,62 @@ function buildTypeMap(entries: [string, Partial<TypeRelations>][]): Map<string, 
 }
 
 const typeMap = buildTypeMap([
-  ['electric', { doubleDamageTo: ['water', 'flying'], halfDamageTo: ['electric', 'grass'], noDamageTo: ['ground'] }],
-  ['water',    { doubleDamageTo: ['fire', 'ground', 'rock'], halfDamageTo: ['water', 'grass', 'dragon'], noDamageTo: [] }],
-  ['fire',     { doubleDamageTo: ['grass', 'ice', 'bug', 'steel'], halfDamageTo: ['fire', 'water', 'rock', 'dragon'], noDamageTo: [] }],
-  ['grass',    { doubleDamageTo: ['water', 'ground', 'rock'], halfDamageTo: ['fire', 'grass', 'poison', 'flying', 'bug', 'dragon', 'steel'], noDamageTo: [] }],
-  ['normal',   { doubleDamageTo: [], halfDamageTo: ['rock', 'steel'], noDamageTo: ['ghost'] }],
-  ['ground',   { doubleDamageTo: ['fire', 'electric', 'poison', 'rock', 'steel'], halfDamageTo: ['grass', 'bug'], noDamageTo: ['flying'] }],
+  [
+    'electric',
+    {
+      doubleDamageTo: ['water', 'flying'],
+      halfDamageTo: ['electric', 'grass'],
+      noDamageTo: ['ground'],
+    },
+  ],
+  [
+    'water',
+    {
+      doubleDamageTo: ['fire', 'ground', 'rock'],
+      halfDamageTo: ['water', 'grass', 'dragon'],
+      noDamageTo: [],
+    },
+  ],
+  [
+    'fire',
+    {
+      doubleDamageTo: ['grass', 'ice', 'bug', 'steel'],
+      halfDamageTo: ['fire', 'water', 'rock', 'dragon'],
+      noDamageTo: [],
+    },
+  ],
+  [
+    'grass',
+    {
+      doubleDamageTo: ['water', 'ground', 'rock'],
+      halfDamageTo: [
+        'fire',
+        'grass',
+        'poison',
+        'flying',
+        'bug',
+        'dragon',
+        'steel',
+      ],
+      noDamageTo: [],
+    },
+  ],
+  [
+    'normal',
+    {
+      doubleDamageTo: [],
+      halfDamageTo: ['rock', 'steel'],
+      noDamageTo: ['ghost'],
+    },
+  ],
+  [
+    'ground',
+    {
+      doubleDamageTo: ['fire', 'electric', 'poison', 'rock', 'steel'],
+      halfDamageTo: ['grass', 'bug'],
+      noDamageTo: ['flying'],
+    },
+  ],
 ])
 
 describe('calcEffectiveness', () => {
@@ -46,7 +98,9 @@ describe('calcEffectiveness', () => {
 
   it('stacks modifiers for dual-type defender', () => {
     // electric vs water/flying: water=2x, flying=2x → 4x
-    expect(calcEffectiveness(['electric'], ['water', 'flying'], typeMap)).toBe(4)
+    expect(calcEffectiveness(['electric'], ['water', 'flying'], typeMap)).toBe(
+      4,
+    )
   })
 
   it('immunity overrides super effective (fire vs normal/ghost = 0)', () => {
