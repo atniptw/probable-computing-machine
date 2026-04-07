@@ -1,9 +1,3 @@
----
-agent: ask
-model: GPT-5.3-Codex
-description: "Use when evaluating release readiness and rollback safety."
----
-
 Produce a release readiness report with:
 
 1. Build and test status summary.

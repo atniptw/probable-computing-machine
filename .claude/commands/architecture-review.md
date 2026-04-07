@@ -1,9 +1,3 @@
----
-agent: ask
-model: GPT-5.3-Codex
-description: "Use when reviewing architecture and contracts before implementation."
----
-
 Review the proposed change and respond with:
 
 1. Boundary impact.
