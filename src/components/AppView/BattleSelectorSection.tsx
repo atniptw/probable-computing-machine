@@ -1,10 +1,18 @@
+import type { BattleMode } from '../../App'
 import styles from '../../App.module.css'
+import { getGymById } from '../../data/gyms/emerald'
 import GameVersionSelect from './GameVersionSelect'
+import GymLeaderSelector from './GymLeaderSelector'
+import GymTeamPanel from './GymTeamPanel'
 import SuggestionList from './SuggestionList'
 
 interface BattleSelectorSectionProps {
   selectedGameVersion: string
   onGameChange: (nextVersion: string) => void
+  battleMode: BattleMode
+  onBattleModeChange: (mode: BattleMode) => void
+  selectedGymId: string | null
+  onGymSelect: (gymId: string) => void
   opponentInput: string
   onOpponentInputChange: (value: string) => void
   normalizedOpponent: string
@@ -16,6 +24,10 @@ interface BattleSelectorSectionProps {
 export default function BattleSelectorSection({
   selectedGameVersion,
   onGameChange,
+  battleMode,
+  onBattleModeChange,
+  selectedGymId,
+  onGymSelect,
   opponentInput,
   onOpponentInputChange,
   normalizedOpponent,
@@ -23,6 +35,10 @@ export default function BattleSelectorSection({
   opponentSuggestions,
   onSuggestionSelect,
 }: BattleSelectorSectionProps) {
+  const selectedGym = selectedGymId
+    ? getGymById(selectedGameVersion, selectedGymId)
+    : null
+
   return (
     <section className={styles.selectorSection}>
       <GameVersionSelect
@@ -31,27 +47,64 @@ export default function BattleSelectorSection({
         onChange={onGameChange}
       />
 
-      <div className={styles.selectorLabel}>Opponent</div>
-      <label className={styles.selectorRow} htmlFor="opponent-input">
-        <input
-          id="opponent-input"
-          className={styles.selectorInput}
-          value={opponentInput}
-          onChange={(event) => onOpponentInputChange(event.target.value)}
-          placeholder="Type 2-3 letters"
-          aria-label="Opponent Pokemon"
-        />
-      </label>
+      <div className={styles.modeToggle}>
+        <button
+          type="button"
+          className={`${styles.modeToggleBtn}${battleMode === 'free' ? ` ${styles.modeToggleBtnActive}` : ''}`}
+          onClick={() => onBattleModeChange('free')}
+        >
+          Free Battle
+        </button>
+        <button
+          type="button"
+          className={`${styles.modeToggleBtn}${battleMode === 'gym' ? ` ${styles.modeToggleBtnActive}` : ''}`}
+          onClick={() => onBattleModeChange('gym')}
+        >
+          Gym Leader
+        </button>
+      </div>
 
-      {!!normalizedOpponent &&
-        !exactMatchFound &&
-        opponentSuggestions.length > 0 && (
-          <SuggestionList
-            ariaLabel="Opponent suggestions"
-            suggestions={opponentSuggestions}
-            onSelect={onSuggestionSelect}
+      {battleMode === 'free' ? (
+        <>
+          <div className={styles.selectorLabel}>Opponent</div>
+          <label className={styles.selectorRow} htmlFor="opponent-input">
+            <input
+              id="opponent-input"
+              className={styles.selectorInput}
+              value={opponentInput}
+              onChange={(event) => onOpponentInputChange(event.target.value)}
+              placeholder="Type 2-3 letters"
+              aria-label="Opponent Pokemon"
+            />
+          </label>
+
+          {!!normalizedOpponent &&
+            !exactMatchFound &&
+            opponentSuggestions.length > 0 && (
+              <SuggestionList
+                ariaLabel="Opponent suggestions"
+                suggestions={opponentSuggestions}
+                onSelect={onSuggestionSelect}
+              />
+            )}
+        </>
+      ) : (
+        <>
+          <div className={styles.selectorLabel}>Gym</div>
+          <GymLeaderSelector
+            gameVersion={selectedGameVersion}
+            selectedGymId={selectedGymId}
+            onSelect={onGymSelect}
           />
-        )}
+          {selectedGym && (
+            <GymTeamPanel
+              gymLeader={selectedGym}
+              selectedOpponent={normalizedOpponent}
+              onPokemonSelect={onOpponentInputChange}
+            />
+          )}
+        </>
+      )}
     </section>
   )
 }

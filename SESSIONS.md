@@ -30,6 +30,42 @@ YYYY-MM-DD
 
 ---
 
+## 2026-04-07 - Add Gym Leader Battle Mode
+
+### Objective
+
+- Add a "Gym Leader" battle mode for Pokémon Emerald so users can select a gym leader and tap a team member to trigger a matchup without typing.
+
+### Decisions Made
+
+- Gym Pokémon names stored in PokéAPI-normalized format (lowercase, hyphenated) so they resolve through the existing matchup hook without additional transformation.
+- Gym selection is ephemeral (not persisted to localStorage) — the use case is per-session battle prep.
+- No new decision entry in `DECISIONS.md` — the architecture extends cleanly with no trade-offs requiring formal documentation.
+
+### Completed
+
+- Added `src/data/gyms/emerald.ts` with all 8 Emerald gym leaders, badge order, type, and full team rosters.
+- Added `src/components/AppView/GymLeaderSelector.tsx` — gym list picker with badge number and type badge.
+- Added `src/components/AppView/GymTeamPanel.tsx` — tappable team roster with level labels and selection state.
+- Extended `BattleSelectorSection` with Free Battle / Gym Leader mode toggle and conditional render.
+- Updated `App.tsx` with `battleMode` and `selectedGymId` state; reset logic wired into game-change and mode-change handlers.
+- Added all supporting CSS in `App.module.css`.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 86 tests, 14 files, pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Add `src/tests/gyms.test.ts` covering `getGymById`, `getGymsForGame`, and roster shape (QA follow-up from sign-off).
+- Monitor CI e2e run on this PR for Playwright stability.
+
+---
+
 ## 2026-03-24 - Fix CI E2E Startup Path Reliability
 
 ### Objective

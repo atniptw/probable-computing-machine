@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { DEFAULT_GAME_VERSION, getGameDefinition } from './data/games'
 import BattleSelectorSection from './components/AppView/BattleSelectorSection'
+
+export type BattleMode = 'free' | 'gym'
 import TeamConfigurationSection from './components/AppView/TeamConfigurationSection'
 import TeamEditorPanel from './components/AppView/TeamEditorPanel'
 import MatchupContainer from './components/MatchupViewer/MatchupContainer'
@@ -36,6 +38,8 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>('battle')
   const [opponentInput, setOpponentInput] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [battleMode, setBattleMode] = useState<BattleMode>('free')
+  const [selectedGymId, setSelectedGymId] = useState<string | null>(null)
 
   const selectedGame = useMemo(() => {
     return (
@@ -104,8 +108,16 @@ export default function App() {
 
   function handleGameChange(nextVersion: string): void {
     setSelectedGameVersion(nextVersion)
+    setBattleMode('free')
+    setSelectedGymId(null)
     setOpponentInput('')
     setError(null)
+  }
+
+  function handleBattleModeChange(mode: BattleMode): void {
+    setBattleMode(mode)
+    setOpponentInput('')
+    setSelectedGymId(null)
   }
 
   return (
@@ -127,10 +139,12 @@ export default function App() {
         <BattleSelectorSection
           selectedGameVersion={selectedGame.version}
           onGameChange={handleGameChange}
+          battleMode={battleMode}
+          onBattleModeChange={handleBattleModeChange}
+          selectedGymId={selectedGymId}
+          onGymSelect={setSelectedGymId}
           opponentInput={opponentInput}
-          onOpponentInputChange={(value) => {
-            setOpponentInput(value)
-          }}
+          onOpponentInputChange={setOpponentInput}
           normalizedOpponent={normalizedOpponent}
           exactMatchFound={exactMatchFound}
           opponentSuggestions={opponentSuggestions}
