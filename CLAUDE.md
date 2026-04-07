@@ -264,3 +264,82 @@ Update documentation in the same commit as code changes. Never commit code chang
 - Use clear, concise language with working code examples.
 - Keep docs close to code when possible.
 - Review documentation accuracy in code reviews.
+
+---
+
+## Autonomous Loop Sequence
+
+When working on a feature autonomously from intake to shipped PR, follow this sequence without waiting for human check-ins at each step:
+
+1. **Feature Intake** — Run `/feature-intake`. Do not begin implementation until acceptance criteria exist.
+2. **Architecture Review (conditional)** — Run `/architecture-review` if the change touches new hooks/services, data contracts (PokéAPI shapes, localStorage keys), new component boundaries, or cross-role dependencies. Skip for isolated bug fixes or doc-only changes.
+3. **Implementation** — Implement in role order: Backend/Frontend → QA (tests) → Docs. Apply gate rules from the Role Instructions section at each phase.
+4. **Verification** — Before creating a PR, all of the following must pass locally:
+   ```
+   npm run lint
+   npm run tsc
+   npm run test
+   ```
+   For changes touching UI behavior, also run `npx playwright test --project=chromium`.
+   Do not proceed to PR creation if any check fails.
+5. **Update Logs** — Append a session entry to `SESSIONS.md`. If a trade-off was made, append a `DEC-XXXX` entry to `DECISIONS.md` (use the next sequential ID). If no trade-off was made, prepare to state "no new decision" in the PR body.
+6. **Create PR** — Run `/pr`.
+
+---
+
+## PR Body Template
+
+Use this exact template when creating pull requests. `gate-evidence.yml` enforces exact section names and checkbox wording — do not rename headers or reword checkboxes.
+
+```
+## Summary
+
+- [1–3 bullets: what changed and why]
+
+## Acceptance Criteria
+
+- [Link to acceptance criteria source: issue, session entry, or feature brief]
+- [Each criterion and its pass/fail status]
+
+## Decision Log
+
+- [DEC-XXXX reference OR: "no new decision — [brief rationale]"]
+
+## QA Evidence
+
+- Tests run: npm run lint, npm run tsc, npm run test
+- Results: [pass counts or summary]
+- Risks: [known gaps or deferred coverage]
+
+## Docs Impact
+
+- [Files updated, or: "no docs impact — [reason]"]
+
+## Release and Rollback
+
+- Deployment impact: [what changes in the deployed GitHub Pages build]
+- Rollback plan: Revert the merge commit on main; GitHub Actions redeploys the previous build automatically.
+
+## Required Checks
+
+- [x] I linked acceptance criteria.
+- [x] I linked decision evidence or justified none.
+- [x] I provided QA evidence.
+- [x] I described docs impact.
+- [x] I documented rollback considerations.
+```
+
+**Critical:** All five checkboxes must be `[x]`. Unchecked `[ ]` boxes fail gate-evidence CI. Each checkbox line ends with a period.
+
+---
+
+## Task Tracking Within a Session
+
+For features spanning more than two implementation steps, use TaskCreate to track progress:
+
+- Create a task at session start summarizing the feature goal.
+- Update to `in_progress` when beginning each major phase.
+- Update to `completed` when the PR is open and CI is green.
+- Remove stale tasks at session end.
+
+Skip task tracking for single-step bug fixes or doc-only changes.

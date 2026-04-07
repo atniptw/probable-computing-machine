@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/atnip/projects/probable-computing-machine && npm run lint && npm run tsc"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/atnip/projects/probable-computing-machine && npm run test"
+          }
+        ]
+      }
+    ]
+  }
+}
