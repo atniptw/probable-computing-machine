@@ -2,7 +2,7 @@ You are an architecture fitness sensor for this repository. Compare the live cod
 
 ## Step 1 — Read the documented architecture
 
-Read `docs/COMPONENT_DESIGN.md` and extract two lists:
+Read `docs/COMPONENT_DESIGN.md` and extract three lists:
 
 - **Documented components**: every named component in the Runtime Component Tree section (skip inline JSX notes and `×N` multiplicity markers).
 - **Documented hooks**: every hook name in the App Contract hooks section.
@@ -27,10 +27,10 @@ Extract base names (without path or extension) from the results.
 For each component and hook file found in Step 2, check whether it is imported by any non-test source file:
 
 ```
-grep -r "import.*from.*<filename>" src --include="*.ts" --include="*.tsx" | grep -v "\.test\."
+grep -r "import.*from.*BASENAME" src --include="*.ts" --include="*.tsx" | grep -v "\.test\."
 ```
 
-Flag any file with zero non-test imports as a **dormant candidate**.
+Replace `BASENAME` with the base name of the file being checked (e.g. `BattleResultsPanel`). Flag any file with zero non-test import matches as a **dormant candidate**.
 
 ## Step 4 — Compare and report
 
