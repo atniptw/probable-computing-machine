@@ -19,6 +19,7 @@ This file defines shared, always-on behavior for Claude in this repository.
 - Session update in `SESSIONS.md`.
 - Decision entry in `DECISIONS.md` when trade-offs were made. New entries go at the **top** of the file using the next sequential ID (max existing ID + 1). Verify the ID is unique before committing.
 - Validation evidence (tests, QA notes, or release checks).
+- When a commit closes a GitHub issue, include `Closes #N` in the commit message body. GitHub auto-closes the issue on push to main — do not also close it manually with `gh issue close`.
 
 ## Role Handoff Contract
 
