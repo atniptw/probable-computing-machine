@@ -29,11 +29,11 @@
 
 ### Blockers
 
-- None.
+- Playwright could not run initially due to missing `libnspr4.so` on WSL2. Fixed with `sudo npx playwright install-deps chromium`.
 
 ### Next Actions
 
-- Code review and push for issue #20.
+- None. Issue #20 closed.
 
 ---
 
