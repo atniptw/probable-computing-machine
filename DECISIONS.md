@@ -2,6 +2,34 @@
 
 ---
 
+## DEC-0023
+
+### Date
+
+2026-04-08
+
+### Title
+
+Set functions coverage floor to 68% (temporary) when expanding scope to include components
+
+### Context
+
+Adding `src/components/**/*.tsx` to the coverage scope dropped the aggregate functions coverage from ~83% (data/services/hooks only) to 69.56%. Component event handlers and render sub-functions are not fully reachable in Wave 2.3 unit tests. Rather than exclude components again, the functions floor is set to 68 — tight to the current actual (69.56%) to maintain signal — and explicitly treated as a temporary minimum pending Wave 3+ test additions.
+
+### Decision
+
+Set `functions` threshold to 68 (temporarily below the prior 70, close to actual 69.56%). All other thresholds raised: `statements` 70→75, `lines` 70→75, `branches` unchanged at 80. The 68 floor will be raised back above 70 once untested component functions (BattleResultsPanel, TeamConfigurationSection, TeamEditorPanel internals) receive coverage in a future wave.
+
+### Remediation Target
+
+Issue #13+ (Wave 3): add tests for uncovered component functions and raise the functions threshold back to ≥70.
+
+### Owner
+
+QA
+
+---
+
 ## DEC-0022
 
 ### Date

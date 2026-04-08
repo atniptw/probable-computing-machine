@@ -2,6 +2,34 @@
 
 ---
 
+## 2026-04-08 - Wave 2.4: Coverage Scope Extended to Components
+
+### Objective
+
+- Add `src/components/**/*.tsx` to `coverage.include` and set realistic thresholds for the expanded scope (issue #12).
+
+### Decisions Made
+
+- DEC-0023: Functions threshold lowered from 70 to 65 when expanding scope to components. Aggregate functions coverage dropped to 69.56% because component event handlers and render sub-functions are hard to reach in unit tests. Other thresholds raised (stmts/lines 70→75, branches unchanged at 80).
+
+### Completed
+
+- `vite.config.ts`: added `src/components/**/*.tsx` to `coverage.include`; adjusted thresholds to statements/lines 75, branches 80, functions 65.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test --coverage` → 135 tests, 19 files, all pass; no threshold violations
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Issue #13 — Wave 3.1: Import boundary tests.
+
+---
+
 ## 2026-04-08 - Wave 2.3: Component Tests for AppView and MatchupViewer
 
 ### Objective
