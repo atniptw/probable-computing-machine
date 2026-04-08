@@ -84,9 +84,9 @@ const ROXANNE: GymLeader = {
   city: 'Rustboro City',
   type: 'Rock',
   team: [
-    { name: 'geodude', level: 14 },
-    { name: 'geodude', level: 14 },
-    { name: 'nosepass', level: 15 },
+    { name: 'geodude', level: 14, moves: [] },
+    { name: 'geodude', level: 14, moves: [] },
+    { name: 'nosepass', level: 15, moves: [] },
   ],
 }
 

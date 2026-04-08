@@ -205,6 +205,58 @@ describe('useMatchupMatrix', () => {
     })
   })
 
+  it('uses opponentMoves for defense when provided (gym mode)', async () => {
+    vi.mocked(getMoveType).mockImplementation(async (moveName) => {
+      if (moveName === 'rock-throw') return 'rock'
+      if (moveName === 'tackle') return 'normal'
+      return 'normal'
+    })
+
+    const onError = vi.fn()
+    const params = makeParams({
+      onError,
+      // Gyarados opponent, but give it rock-type gym moves instead of water/flying
+      opponentMoves: ['rock-throw', 'tackle'],
+    })
+
+    const { result } = renderHook(() => useMatchupMatrix(params))
+
+    await waitFor(() => expect(result.current.matchup).not.toBe(null))
+
+    // Defense should reflect the provided moves, not type-inferred Gyarados moves
+    const allDefenseNames = [
+      ...result.current.matchup!.defense.dangerous,
+      ...result.current.matchup!.defense.neutral,
+      ...result.current.matchup!.defense.resisted,
+    ].map((m) => m.name)
+
+    expect(allDefenseNames).toContain('Rock Throw')
+    expect(allDefenseNames).toContain('Tackle')
+    // Type-inferred moves like Surf/Hydro Pump should NOT appear
+    expect(allDefenseNames).not.toContain('Surf')
+    expect(allDefenseNames).not.toContain('Hydro Pump')
+  })
+
+  it('falls back to type inference when opponentMoves is empty (free battle)', async () => {
+    const onError = vi.fn()
+    const params = makeParams({ onError, opponentMoves: [] })
+
+    const { result } = renderHook(() => useMatchupMatrix(params))
+
+    await waitFor(() => expect(result.current.matchup).not.toBe(null))
+
+    // Gyarados is water/flying — type inference should include water and flying moves
+    const allDefenseNames = [
+      ...result.current.matchup!.defense.dangerous,
+      ...result.current.matchup!.defense.neutral,
+      ...result.current.matchup!.defense.resisted,
+    ].map((m) => m.name)
+
+    expect(allDefenseNames.length).toBeGreaterThan(0)
+    // Earthquake is in COMMON_COVERAGE_THREATS and should appear
+    expect(allDefenseNames).toContain('Earthquake')
+  })
+
   it('surfaces rate-limit errors', async () => {
     const onError = vi.fn()
     vi.mocked(getPokemon).mockRejectedValue(new RateLimitError())

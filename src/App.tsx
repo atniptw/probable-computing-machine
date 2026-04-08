@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { DEFAULT_GAME_VERSION, getGameDefinition } from './data/games'
+import { getGymById } from './data/gyms/emerald'
 import BattleSelectorSection from './components/AppView/BattleSelectorSection'
 
 export type BattleMode = 'free' | 'gym'
@@ -66,6 +67,13 @@ export default function App() {
     [pokemonNameIndex],
   )
   const exactMatchFound = pokemonNameSet.has(normalizedOpponent)
+
+  const opponentMoves = useMemo(() => {
+    if (battleMode !== 'gym' || !selectedGymId || !normalizedOpponent) return []
+    const gym = getGymById(selectedGameVersion, selectedGymId)
+    const gymPokemon = gym?.team.find((p) => p.name === normalizedOpponent)
+    return gymPokemon?.moves ?? []
+  }, [battleMode, selectedGymId, normalizedOpponent, selectedGameVersion])
 
   const {
     activeTeamSlot,
@@ -209,6 +217,7 @@ export default function App() {
             generation={selectedGame.generation}
             gameLabel={selectedGame.label}
             pokemonNameSet={pokemonNameSet}
+            opponentMoves={opponentMoves}
             onError={setError}
           />
         )}

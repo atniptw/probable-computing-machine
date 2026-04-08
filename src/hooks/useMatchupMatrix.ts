@@ -48,6 +48,7 @@ interface UseMatchupMatrixParams {
   nameIndexReady: boolean
   normalizedOpponent: string
   onError: (message: string | null) => void
+  opponentMoves?: string[]
   pokemonNameSet: Set<string>
   selectedTeamIndex: number
   teamMembers: TeamMemberConfig[]
@@ -253,6 +254,7 @@ export function useMatchupMatrix({
   nameIndexReady,
   normalizedOpponent,
   onError,
+  opponentMoves,
   pokemonNameSet,
   selectedTeamIndex,
   teamMembers,
@@ -314,11 +316,21 @@ export function useMatchupMatrix({
           getPokemon(selectedTeamName, { generation }),
         ])
 
-        const configuredMoves = selectedTeamMember
-          ? await resolveConfiguredMoves(selectedTeamMember.moves)
-          : []
+        const [configuredMoves, resolvedOpponentMoves] = await Promise.all([
+          selectedTeamMember
+            ? resolveConfiguredMoves(selectedTeamMember.moves)
+            : Promise.resolve([]),
+          opponentMoves && opponentMoves.length > 0
+            ? resolveConfiguredMoves(opponentMoves)
+            : Promise.resolve([]),
+        ])
 
         if (cancelled) return
+
+        const defenseSourceMoves =
+          resolvedOpponentMoves.length > 0
+            ? resolvedOpponentMoves
+            : buildDefenseMoves(opponentPokemon.types)
 
         const offenseMoves = sortMovesByMultiplier(
           buildOffenseMoves(playerPokemon.types, configuredMoves).map(
@@ -334,7 +346,7 @@ export function useMatchupMatrix({
         )
 
         const defenseMoves = sortMovesByMultiplier(
-          buildDefenseMoves(opponentPokemon.types).map((move) => ({
+          defenseSourceMoves.map((move) => ({
             name: move.name,
             multiplier: calcEffectiveness(
               [move.type],
@@ -386,6 +398,7 @@ export function useMatchupMatrix({
     nameIndexReady,
     normalizedOpponent,
     onError,
+    opponentMoves,
     pokemonNameSet,
     selectedTeamMember,
     selectedTeamName,

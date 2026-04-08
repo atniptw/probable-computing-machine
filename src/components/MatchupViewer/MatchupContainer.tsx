@@ -15,6 +15,7 @@ interface MatchupContainerProps {
   nameIndexReady: boolean
   normalizedOpponent: string
   onError: (message: string | null) => void
+  opponentMoves?: string[]
   pokemonNameSet: Set<string>
   teamMembers: TeamMemberConfig[]
   teamNames: string[]
@@ -34,6 +35,7 @@ export default function MatchupContainer({
   nameIndexReady,
   normalizedOpponent,
   onError,
+  opponentMoves,
   pokemonNameSet,
   teamMembers,
   teamNames,
@@ -50,6 +52,7 @@ export default function MatchupContainer({
     nameIndexReady,
     normalizedOpponent,
     onError,
+    opponentMoves,
     pokemonNameSet,
     selectedTeamIndex,
     teamMembers,

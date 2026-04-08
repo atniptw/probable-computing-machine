@@ -1,6 +1,7 @@
 export interface GymPokemon {
   name: string // PokéAPI name: lowercase, hyphenated
   level: number
+  moves: string[] // PokéAPI move names: lowercase, hyphenated
 }
 
 export interface GymLeader {
@@ -22,9 +23,21 @@ export const EMERALD_GYMS: GymLeader[] = [
     city: 'Rustboro City',
     type: 'Rock',
     team: [
-      { name: 'geodude', level: 14 },
-      { name: 'geodude', level: 14 },
-      { name: 'nosepass', level: 15 },
+      {
+        name: 'geodude',
+        level: 14,
+        moves: ['tackle', 'defense-curl', 'mud-sport', 'rock-throw'],
+      },
+      {
+        name: 'geodude',
+        level: 14,
+        moves: ['tackle', 'defense-curl', 'mud-sport', 'rock-throw'],
+      },
+      {
+        name: 'nosepass',
+        level: 15,
+        moves: ['tackle', 'harden', 'rock-throw', 'block'],
+      },
     ],
   },
   {
@@ -35,9 +48,21 @@ export const EMERALD_GYMS: GymLeader[] = [
     city: 'Dewford Town',
     type: 'Fighting',
     team: [
-      { name: 'machop', level: 17 },
-      { name: 'meditite', level: 17 },
-      { name: 'makuhita', level: 19 },
+      {
+        name: 'machop',
+        level: 17,
+        moves: ['low-kick', 'leer', 'focus-energy', 'karate-chop'],
+      },
+      {
+        name: 'meditite',
+        level: 17,
+        moves: ['bide', 'meditate', 'confusion', 'detect'],
+      },
+      {
+        name: 'makuhita',
+        level: 19,
+        moves: ['arm-thrust', 'fake-out', 'vital-throw', 'whirlwind'],
+      },
     ],
   },
   {
@@ -48,10 +73,26 @@ export const EMERALD_GYMS: GymLeader[] = [
     city: 'Mauville City',
     type: 'Electric',
     team: [
-      { name: 'voltorb', level: 20 },
-      { name: 'electrike', level: 20 },
-      { name: 'magneton', level: 22 },
-      { name: 'manectric', level: 24 },
+      {
+        name: 'voltorb',
+        level: 20,
+        moves: ['charge', 'spark', 'rollout', 'screech'],
+      },
+      {
+        name: 'electrike',
+        level: 20,
+        moves: ['leer', 'howl', 'spark', 'quick-attack'],
+      },
+      {
+        name: 'magneton',
+        level: 22,
+        moves: ['metal-sound', 'supersonic', 'thunder-wave', 'spark'],
+      },
+      {
+        name: 'manectric',
+        level: 24,
+        moves: ['leer', 'howl', 'spark', 'quick-attack'],
+      },
     ],
   },
   {
@@ -62,10 +103,26 @@ export const EMERALD_GYMS: GymLeader[] = [
     city: 'Lavaridge Town',
     type: 'Fire',
     team: [
-      { name: 'numel', level: 26 },
-      { name: 'slugma', level: 26 },
-      { name: 'camerupt', level: 28 },
-      { name: 'torkoal', level: 29 },
+      {
+        name: 'numel',
+        level: 26,
+        moves: ['ember', 'magnitude', 'focus-energy', 'tackle'],
+      },
+      {
+        name: 'slugma',
+        level: 26,
+        moves: ['smog', 'ember', 'rock-throw', 'harden'],
+      },
+      {
+        name: 'camerupt',
+        level: 28,
+        moves: ['ember', 'magnitude', 'focus-energy', 'amnesia'],
+      },
+      {
+        name: 'torkoal',
+        level: 29,
+        moves: ['body-slam', 'protect', 'flamethrower', 'attract'],
+      },
     ],
   },
   {
@@ -76,10 +133,26 @@ export const EMERALD_GYMS: GymLeader[] = [
     city: 'Petalburg City',
     type: 'Normal',
     team: [
-      { name: 'spinda', level: 27 },
-      { name: 'vigoroth', level: 27 },
-      { name: 'linoone', level: 29 },
-      { name: 'slaking', level: 31 },
+      {
+        name: 'spinda',
+        level: 27,
+        moves: ['teeter-dance', 'psybeam', 'facade', 'encore'],
+      },
+      {
+        name: 'vigoroth',
+        level: 27,
+        moves: ['slash', 'encore', 'uproar', 'facade'],
+      },
+      {
+        name: 'linoone',
+        level: 29,
+        moves: ['headbutt', 'belly-drum', 'facade', 'slash'],
+      },
+      {
+        name: 'slaking',
+        level: 31,
+        moves: ['yawn', 'encore', 'facade', 'swagger'],
+      },
     ],
   },
   {
@@ -90,11 +163,31 @@ export const EMERALD_GYMS: GymLeader[] = [
     city: 'Fortree City',
     type: 'Flying',
     team: [
-      { name: 'swablu', level: 29 },
-      { name: 'tropius', level: 29 },
-      { name: 'pelipper', level: 30 },
-      { name: 'skarmory', level: 31 },
-      { name: 'altaria', level: 33 },
+      {
+        name: 'swablu',
+        level: 29,
+        moves: ['peck', 'astonish', 'sing', 'fury-attack'],
+      },
+      {
+        name: 'tropius',
+        level: 29,
+        moves: ['magical-leaf', 'stomp', 'sweet-scent', 'whirlwind'],
+      },
+      {
+        name: 'pelipper',
+        level: 30,
+        moves: ['water-gun', 'supersonic', 'wing-attack', 'protect'],
+      },
+      {
+        name: 'skarmory',
+        level: 31,
+        moves: ['fury-attack', 'feint-attack', 'aerial-ace', 'steel-wing'],
+      },
+      {
+        name: 'altaria',
+        level: 33,
+        moves: ['dragonbreath', 'take-down', 'aerial-ace', 'dragon-dance'],
+      },
     ],
   },
   {
@@ -105,8 +198,16 @@ export const EMERALD_GYMS: GymLeader[] = [
     city: 'Mossdeep City',
     type: 'Psychic',
     team: [
-      { name: 'solrock', level: 42 },
-      { name: 'lunatone', level: 42 },
+      {
+        name: 'solrock',
+        level: 42,
+        moves: ['light-screen', 'psywave', 'rock-slide', 'solar-beam'],
+      },
+      {
+        name: 'lunatone',
+        level: 42,
+        moves: ['reflect', 'psywave', 'ice-beam', 'calm-mind'],
+      },
     ],
   },
   {
@@ -117,11 +218,31 @@ export const EMERALD_GYMS: GymLeader[] = [
     city: 'Sootopolis City',
     type: 'Water',
     team: [
-      { name: 'luvdisc', level: 41 },
-      { name: 'whiscash', level: 41 },
-      { name: 'sealeo', level: 43 },
-      { name: 'crawdaunt', level: 43 },
-      { name: 'kingdra', level: 46 },
+      {
+        name: 'luvdisc',
+        level: 41,
+        moves: ['charm', 'water-pulse', 'attract', 'sweet-kiss'],
+      },
+      {
+        name: 'whiscash',
+        level: 41,
+        moves: ['tickle', 'water-pulse', 'amnesia', 'earthquake'],
+      },
+      {
+        name: 'sealeo',
+        level: 43,
+        moves: ['water-pulse', 'body-slam', 'aurora-beam', 'ice-ball'],
+      },
+      {
+        name: 'crawdaunt',
+        level: 43,
+        moves: ['taunt', 'water-pulse', 'crabhammer', 'swords-dance'],
+      },
+      {
+        name: 'kingdra',
+        level: 46,
+        moves: ['smokescreen', 'water-pulse', 'dragon-dance', 'double-team'],
+      },
     ],
   },
 ]

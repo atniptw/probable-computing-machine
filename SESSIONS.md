@@ -2,6 +2,41 @@
 
 ---
 
+## 2026-04-08 - Wave 5.1: Gym Leader Known Movesets in Defense Section
+
+### Objective
+
+- Use canonical Emerald gym leader movesets in the defense section instead of generic type inference (issue #20).
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry.
+- Reused the existing `resolveConfiguredMoves` function for opponent move resolution — same async PokéAPI lookup path used for player configured moves.
+- Free battle mode unchanged: empty `opponentMoves` falls through to `buildDefenseMoves(opponentPokemon.types)`.
+
+### Completed
+
+- `src/data/gyms/emerald.ts` — `moves: string[]` added to `GymPokemon` interface; all 8 gym leaders populated with canonical Emerald movesets.
+- `src/App.tsx` — `opponentMoves` useMemo derives gym Pokémon moves when `battleMode === 'gym'`; passed to `MatchupContainer`.
+- `src/components/MatchupViewer/MatchupContainer.tsx` — `opponentMoves?: string[]` prop accepted and forwarded to `useMatchupMatrix`.
+- `src/hooks/useMatchupMatrix.ts` — resolves opponent moves in parallel with player moves; uses them in place of `buildDefenseMoves` when non-empty.
+- `src/tests/useMatchupMatrix.test.ts` — 2 new tests: gym mode uses provided moves (not type inference), free battle falls back to type inference.
+- `src/tests/gymComponents.test.tsx` — fixture updated to include required `moves: []` field.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 143 tests, 20 files, all pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Code review and push for issue #20.
+
+---
+
 ## 2026-04-08 - Wave 4.4: Remove Dormant Assets
 
 ### Objective
