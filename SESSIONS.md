@@ -2,6 +2,39 @@
 
 ---
 
+## 2026-04-08 - Wave 3.1: Import Boundary Tests
+
+### Objective
+
+- Add architecture fitness tests enforcing layer separation between hooks, data, and services (issue #13).
+
+### Decisions Made
+
+- Implemented as a Vitest test file (Node environment) rather than an ESLint rule — no `eslint-plugin-import` available, and the test approach integrates cleanly with existing CI (`npm run test`).
+- Added `@types/node` dev dependency to support `node:fs`, `node:path`, `node:url` imports in the boundary test.
+
+### Completed
+
+- `src/tests/importBoundaries.test.ts` — 3 tests walking each layer's files and asserting no forbidden imports:
+  - `hooks/` → not importing from `components/`
+  - `data/` → not importing from `hooks/` or `services/`
+  - `services/` → not importing from `hooks/` or `components/`
+- Violations produce a human-readable message: `src/hooks/useX.ts: imports from components (../components/Foo)`.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 138 tests, 20 files, all pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Issue #14 — Wave 3.2: PokéAPI contract tests.
+
+---
+
 ## 2026-04-08 - Wave 2.4: Coverage Scope Extended to Components
 
 ### Objective
