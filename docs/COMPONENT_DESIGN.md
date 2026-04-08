@@ -4,93 +4,60 @@
 
 ```
 App
-├── Header
-│   └── EditTeamButton (battle screen only)
+├── header (inline JSX — no separate component)
+│   └── "Edit Team" button (inline, battle screen only)
 ├── BattleSelectorSection (battle screen)
 │   ├── GameVersionSelect
-│   └── SuggestionList (opponent, conditional)
+│   ├── GymLeaderSelector (gym mode only)
+│   ├── GymTeamPanel (gym mode + gym selected)
+│   └── SuggestionList (free mode, conditional)
 ├── TeamConfigurationSection (team screen header)
 │   └── GameVersionSelect
-├── BattleResultsPanel (battle screen)
-│   ├── PrimaryRecommendationCard
-│   ├── ExpandableMatchupList
-│   │   ├── Also Good
-│   │   ├── Neutral
-│   │   └── Risky
-│   └── TeamPreviewBar
-└── TeamEditorPanel (team screen body)
-  ├── TeamSlotInput × 6
-  ├── SuggestionList (team slot, conditional)
-  └── SaveTeamButton
+├── MatchupContainer (battle screen, main pane)
+│   ├── PokemonCard (opponent + active team member)
+│   ├── OffenseSection
+│   └── DefenseSection
+└── TeamEditorPanel (team screen, main pane)
+    └── SuggestionList × 2 (slot + move autocomplete)
 ```
 
 ## App Contract
 
-`App` is the runtime orchestrator and now delegates data loading and suggestion logic to dedicated hooks.
+`App` is the runtime orchestrator. It delegates data loading and suggestion logic to hooks and render sections to `src/components/AppView/*` and `src/components/MatchupViewer/*`.
 
 ```ts
 state: {
   selectedGameVersion: string,
   screen: 'battle' | 'team',
-  teamDraft: string[6],
-  teamSlotErrors: (string | null)[6],
-  teamNames: string[],
-  activeTeamSlot: number | null,
   opponentInput: string,
-  opponent: Pokemon | null,
-  rankedBuckets: {
-    best: RankedTeamEntry[],
-    good: RankedTeamEntry[],
-    neutral: RankedTeamEntry[],
-    risky: RankedTeamEntry[]
-  },
-  showOtherOptions: boolean,
-  loading: boolean,
-  error: string | null
+  error: string | null,
+  battleMode: 'free' | 'gym',
+  selectedGymId: string | null,
 }
 
 hooks: {
-  useTeamConfiguration: {
-    inputs: {
-      gameLabel: string,
-      nameIndexReady: boolean,
-      pokemonNameSet: Set<string>
-    },
-    outputs: {
-      teamNames: string[],
-      teamDraft: string[],
-      teamSlotErrors: (string | null)[],
-      activeTeamSlot: number | null,
-      saveTeam(): boolean
-    }
-  },
   usePokemonNameIndex: {
-    inputs: { version: string, generation: number },
+    inputs: { generation: number, label: string, version: string, onError },
     outputs: { pokemonNameIndex: string[], nameIndexReady: boolean }
   },
-  useTeamPreview: {
-    inputs: { generation: number, teamNames: string[] },
-    outputs: { teamPreview: Pokemon[] }
+  useMoveNameIndex: {
+    inputs: { onError },
+    outputs: { moveNameIndex: string[] }
+  },
+  useTeamConfiguration: {
+    inputs: { defaultTeam, gameLabel, nameIndexReady, onError, pokemonNameSet, teamSize },
+    outputs: { teamNames, teamDraft, teamMembers, teamMovesDraft, teamSlotErrors, teamMoveErrors,
+               activeTeamSlot, saveTeam, updateTeamSlot, addTeamMove, removeTeamMove,
+               setActiveTeamSlot, prepareTeamEditor }
   },
   usePokemonSuggestions: {
     inputs: { pokemonNameIndex: string[], maxSuggestions: number },
     outputs: { getSuggestions(query: string): string[] }
   },
-  useMatchupResults: {
-    inputs: {
-      screen: 'battle' | 'team',
-      normalizedOpponent: string,
-      teamNames: string[],
-      pokemonNameSet: Set<string>,
-      generation: number,
-      gameLabel: string
-    },
-    outputs: {
-      opponent: Pokemon | null,
-      rankedBuckets: RankedTeamBuckets,
-      loading: boolean,
-      showOtherOptions: boolean
-    }
+  useMatchupMatrix: {
+    // consumed internally by MatchupContainer, not App directly
+    inputs: { teamMembers, normalizedOpponent, exactMatchFound, generation, gameLabel, pokemonNameSet, onError },
+    outputs: { matrix, activeIndex, setActiveIndex, loading }
   }
 }
 ```
@@ -98,11 +65,41 @@ hooks: {
 ## Primary Behaviors
 
 - App opens directly on the battle screen for in-fight speed.
-- App now delegates render concerns to `src/components/AppView/*` and data-loading/suggestion concerns to `src/hooks/*`.
+- `BattleSelectorSection` toggles between free-battle (typeahead opponent search) and gym-leader mode (`GymLeaderSelector` → `GymTeamPanel`).
+- `MatchupContainer` handles team-member cycling (desktop prev/next buttons + mobile swipe).
+- `TeamEditorPanel` supports up to 4 moves per slot with add/remove chip interface; slot and move autocomplete provided by `SuggestionList`.
 - Game selector controls all autocomplete, validation, and matchup rules.
-- Opponent and team inputs only accept Pokémon from the selected game's Pokédex.
-- Opponent input uses local typeahead suggestions (button list), not datalist dropdown.
-- Ranking is bucketed as `best`, `good`, `neutral`, `risky`; `best` always contains one primary recommendation.
-- Secondary recommendations are collapsed by default behind “Show other options (X)”.
-- Team editor validates each non-empty slot against the selected game index and allows duplicates or fewer than 6 entries.
 - Type effectiveness map is generation-aware for key historical chart differences.
+- Ranking uses `best`, `good`, `neutral`, `risky` buckets.
+
+## Dormant Assets
+
+Files that exist in `src/` but are **not on the active render path**. These are candidates for removal in a future clean-up pass.
+
+| File                                            | Reason dormant                                                        |
+| ----------------------------------------------- | --------------------------------------------------------------------- |
+| `src/components/AppView/BattleResultsPanel.tsx` | Superseded by `MatchupViewer/MatchupContainer`; not imported anywhere |
+| `src/hooks/useTeamPreview.ts`                   | Not imported in any production component; tested but unused           |
+| `src/hooks/useMatchupResults.ts`                | Not imported in any production component; tested but unused           |
+
+---
+
+## Drift Detection and Resolution
+
+### Running the drift check
+
+Invoke `/architecture-drift` to compare this file against the live codebase. The skill will report:
+
+- **Missing from docs** — components or hooks present in `src/` but not listed here
+- **Stale in docs** — components or hooks listed here but no longer present in `src/`
+- **Dormant candidates** — files identified as unused by static import analysis
+
+### Resolving drift
+
+1. If `src/` has grown beyond what is documented: update this file's component tree and hooks list, then commit alongside the feature that introduced the change.
+2. If this file documents something that no longer exists: remove the stale entry and note it in `SESSIONS.md`.
+3. If an asset is dormant for more than one milestone: open a clean-up issue and remove it.
+
+### Cadence
+
+Run `/architecture-drift` at the start of each Wave (before beginning implementation) and again before the final push of the Wave.

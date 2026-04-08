@@ -2,6 +2,38 @@
 
 ---
 
+## 2026-04-08 - Wave 4.2: Architecture Drift Detection
+
+### Objective
+
+- Create repeatable architecture drift check comparing live codebase to `docs/COMPONENT_DESIGN.md` (issue #17).
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry.
+- Brought `docs/COMPONENT_DESIGN.md` up to date with current reality before writing the skill: removed stale components (`BattleResultsPanel` subtree, `TeamSlotInput`, `SaveTeamButton`, `TeamPreviewBar`), added missing components (`GymLeaderSelector`, `GymTeamPanel`, `MatchupContainer`, `PokemonCard`, `OffenseSection`, `DefenseSection`), added missing hooks (`useMatchupMatrix`, `useMoveNameIndex`), added Dormant Assets table for files present in `src/` but not on the active render path.
+- Drift check implemented as a manual skill rather than an automated test, matching the issue note ("can start as a manual checklist").
+
+### Completed
+
+- `docs/COMPONENT_DESIGN.md` — fully updated to reflect current runtime component tree, App Contract state, active hooks, and dormant asset inventory; includes Drift Detection and Resolution section with cadence guidance.
+- `.claude/commands/architecture-drift.md` — new skill that compares `src/components/` and `src/hooks/` against documented lists and reports missing, stale, and dormant candidates with a CLEAN / DRIFT DETECTED verdict.
+- `CLAUDE.md` — added `/architecture-drift` to the Workflows skill list.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 154 tests, 22 files, all pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Issue #18 (if exists) or review backlog for next wave.
+
+---
+
 ## 2026-04-08 - Wave 4.1: Formalize Reviewer Agent as a Skill
 
 ### Objective
