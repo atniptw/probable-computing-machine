@@ -40,9 +40,10 @@ probable-computing-machine/
 │   ├── App.module.css
 │   ├── components/
 │   │   ├── AppView/
-│   │   │   ├── BattleResultsPanel.tsx
 │   │   │   ├── BattleSelectorSection.tsx
 │   │   │   ├── GameVersionSelect.tsx
+│   │   │   ├── GymLeaderSelector.tsx
+│   │   │   ├── GymTeamPanel.tsx
 │   │   │   ├── SuggestionList.tsx
 │   │   │   ├── TeamConfigurationSection.tsx
 │   │   │   └── TeamEditorPanel.tsx
@@ -51,33 +52,40 @@ probable-computing-machine/
 │   │       ├── MatchupContainer.tsx
 │   │       ├── MatchupViewer.module.css
 │   │       ├── OffenseSection.tsx
-│   │       ├── PokemonCard.tsx
-│   │       └── SummarySection.tsx
+│   │       └── PokemonCard.tsx
 │   ├── data/
-│   │   └── games.ts
+│   │   ├── games.ts
+│   │   └── gyms/
+│   │       └── emerald.ts
 │   ├── hooks/
 │   │   ├── useMatchupMatrix.ts
-│   │   ├── useMatchupResults.ts
+│   │   ├── useMoveNameIndex.ts
 │   │   ├── usePokemonNameIndex.ts
 │   │   ├── usePokemonSuggestions.ts
-│   │   ├── useTeamConfiguration.ts
-│   │   └── useTeamPreview.ts
+│   │   └── useTeamConfiguration.ts
 │   ├── services/
 │   │   ├── pokeapi.ts
 │   │   └── ranking.ts
 │   └── tests/
+│       ├── battleSelectorSection.test.tsx
 │       ├── calcEffectiveness.test.ts
 │       ├── games.test.ts
+│       ├── generationTypeRules.test.ts
+│       ├── getMoveNameIndex.test.ts
 │       ├── getPokemon.test.ts
 │       ├── getPokemonNameIndex.test.ts
+│       ├── gymComponents.test.tsx
+│       ├── gyms.test.ts
+│       ├── importBoundaries.test.ts
+│       ├── matchupContainer.test.tsx
+│       ├── pokeapi.contract.test.ts
 │       ├── pokeapi.errors.test.ts
+│       ├── ranking.test.ts
+│       ├── teamEditorPanel.test.tsx
 │       ├── useMatchupMatrix.test.ts
-│       ├── useMatchupResults.test.ts
 │       ├── usePokemonNameIndex.test.ts
 │       ├── usePokemonSuggestions.test.ts
-│       ├── useTeamConfiguration.test.ts
-│       ├── useTeamPreview.test.ts
-│       └── ranking.test.ts
+│       └── useTeamConfiguration.test.ts
 ├── src/utils/
 │   └── format.ts
 ├── public/
@@ -171,12 +179,12 @@ npm run test:coverage
 npm run e2e
 ```
 
-Coverage thresholds are enforced in `vite.config.ts` for included `src/data`, `src/services`, and `src/hooks` files:
+Coverage thresholds are enforced in `vite.config.ts` for `src/data`, `src/services`, `src/hooks`, and `src/components` files:
 
-- statements: 70
+- statements: 75
 - branches: 80
 - functions: 70
-- lines: 70
+- lines: 75
 
 ### Hook Test Pitfalls
 
