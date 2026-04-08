@@ -30,13 +30,20 @@ Run all of the following. Do not proceed to Step 5 if any fails.
 npm run lint
 npm run tsc
 npm run test
-```
-
-For changes touching UI behavior, also run:
-
-```
 npx playwright test --project=chromium
 ```
+
+## Step 4.5 — Manual app review (UI changes only)
+
+If the change affects any visible UI behavior, run the dev server and ask the user to review before continuing:
+
+```
+npm run dev
+```
+
+Tell the user what to verify (which screen, which interaction). Wait for explicit confirmation before proceeding to Step 5.
+
+Skip this step only for changes with no user-visible effect (pure logic, data, or test changes).
 
 ## Step 5 — Update logs
 
