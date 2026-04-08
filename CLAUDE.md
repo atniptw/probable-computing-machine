@@ -88,6 +88,7 @@ Use commands in `.claude/commands/` for repeatable workflows:
 
 - `/feature-intake` — turn a request into a feature brief with acceptance criteria
 - `/architecture-review` — review architecture and contracts before implementation
+- `/review` — structured code review: bugs, contract violations, a11y, security, verdict
 - `/release-readiness` — evaluate release readiness and rollback safety
 - `/qa-signoff` — generate QA validation and release sign-off results
 

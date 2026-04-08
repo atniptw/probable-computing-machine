@@ -2,6 +2,38 @@
 
 ---
 
+## 2026-04-08 - Wave 4.1: Formalize Reviewer Agent as a Skill
+
+### Objective
+
+- Create `/review` skill with a structured template for code review (issue #16).
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry.
+- Skill template structured into five sections: bugs, contract violations, a11y, security, AC check — each with blocking/minor classification and a final ship/fix-first verdict.
+- Step 6 in `work-issue.md` updated to invoke `/review` instead of the ad-hoc general-purpose agent prompt, ensuring consistent criteria every run.
+
+### Completed
+
+- `.claude/commands/review.md` — new skill with structured review template covering all four required categories and explicit verdict format.
+- `CLAUDE.md` — added `/review` to the Workflows skill list.
+- `.claude/commands/work-issue.md` — Step 6 updated to reference `/review`.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 154 tests, 22 files, all pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Issue #17 — Wave 4.2: Architecture drift detection.
+
+---
+
 ## 2026-04-08 - Wave 3.3: Generation-Aware Type Chart Regression Tests
 
 ### Objective

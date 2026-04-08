@@ -42,13 +42,11 @@ If a trade-off was made, add a `DEC-XXXX` entry to the top of `DECISIONS.md` usi
 
 ## Step 6 — Code review
 
-Launch a `general-purpose` agent as reviewer. Provide the full diff since `origin/main`:
+Run `/review` passing the full diff since `origin/main`:
 
 ```
 git diff origin/main..HEAD
 ```
-
-Instruct the reviewer to: identify bugs or logic errors, flag broken acceptance criteria, check for security issues, classify each finding as **blocking** or **minor**, and return a verdict of **ship** or **fix first**.
 
 Resolve all blocking findings and re-run Step 4 before proceeding.
 
