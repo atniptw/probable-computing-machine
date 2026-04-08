@@ -2,6 +2,36 @@
 
 ---
 
+## 2026-04-08 - Wave 4.3: Wire /architecture-drift into work-issue Cycle
+
+### Objective
+
+- Make architecture drift detection mandatory at the start of every issue cycle (issue #18).
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry.
+- Implemented both options from the issue notes: detection (Step 1.5 in `work-issue.md`) and prevention (new CLAUDE.md docs rule line for `COMPONENT_DESIGN.md`).
+
+### Completed
+
+- `.claude/commands/work-issue.md` — added Step 1.5: run `/architecture-drift` before implementation and resolve any `DRIFT DETECTED` findings first.
+- `CLAUDE.md` — added explicit rule: "New components or hooks are added or removed → update `docs/COMPONENT_DESIGN.md` component tree and hooks list."
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 154 tests, 22 files, all pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Issue #19 — Wave 4.4: Remove dormant assets.
+
+---
+
 ## 2026-04-08 - Wave 4.2: Architecture Drift Detection
 
 ### Objective

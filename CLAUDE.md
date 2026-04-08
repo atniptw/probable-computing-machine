@@ -127,6 +127,7 @@ Update documentation in the same commit as code changes. Never commit code chang
 **Always update when:**
 
 - New features or capabilities are added → update README.md Features section.
+- New components or hooks are added or removed → update `docs/COMPONENT_DESIGN.md` component tree and hooks list.
 - APIs, interfaces, or contracts change → update `docs/` accordingly.
 - Breaking changes occur → document what changed, provide before/after examples.
 - Configuration or environment variables change → update examples and README.md.

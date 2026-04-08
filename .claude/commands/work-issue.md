@@ -8,6 +8,10 @@ gh issue view [ARGUMENTS]
 
 Summarize: title, acceptance criteria, notes. If no acceptance criteria exist, stop and run `/feature-intake` before continuing.
 
+## Step 1.5 — Architecture drift check
+
+Run `/architecture-drift`. If the verdict is `DRIFT DETECTED`, resolve all findings (update `docs/COMPONENT_DESIGN.md` to match the live codebase) and commit the fix before proceeding to Step 2. Do not carry pre-existing drift into the implementation.
+
 ## Step 2 — Architecture review (conditional)
 
 Run `/architecture-review` if the change touches any of: new hooks or services, PokéAPI data contracts, localStorage keys, new component boundaries, or cross-role dependencies.
