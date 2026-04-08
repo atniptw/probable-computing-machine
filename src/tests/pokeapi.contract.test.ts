@@ -122,7 +122,8 @@ describe('Contract: GET /pokemon?limit → string[]', () => {
   })
 
   it('maps count field and results[].name to a lowercase string array', async () => {
-    // Two-step shape from API_SPEC.md: first call returns count, second returns results
+    // Two-step shape from API_SPEC.md: first call returns count, second returns results.
+    // Routes on exact limit= value to verify the two-step count-then-fetch pattern.
     vi.stubGlobal(
       'fetch',
       vi.fn(async (url: string) => {
@@ -132,13 +133,19 @@ describe('Contract: GET /pokemon?limit → string[]', () => {
             results: [{ name: 'bulbasaur', url: '' }],
           })
         }
-        return jsonResponse({
-          count: 2,
-          results: [
-            { name: 'Bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
-            { name: 'Ivysaur', url: 'https://pokeapi.co/api/v2/pokemon/2/' },
-          ],
-        })
+        if ((url as string).endsWith('limit=2')) {
+          return jsonResponse({
+            count: 2,
+            results: [
+              {
+                name: 'Bulbasaur',
+                url: 'https://pokeapi.co/api/v2/pokemon/1/',
+              },
+              { name: 'Ivysaur', url: 'https://pokeapi.co/api/v2/pokemon/2/' },
+            ],
+          })
+        }
+        throw new Error(`Unexpected fetch URL: ${url}`)
       }),
     )
 
@@ -189,14 +196,10 @@ describe('Contract: GET /type → TypeRelations', () => {
     const electric = typeMap.get('electric')
 
     expect(electric).toBeDefined()
-    // Verifies double_damage_to → doubleDamageTo mapping
-    expect(electric!.doubleDamageTo).toContain('water')
-    expect(electric!.doubleDamageTo).toContain('flying')
-    // Verifies half_damage_to → halfDamageTo mapping
-    expect(electric!.halfDamageTo).toContain('electric')
-    expect(electric!.halfDamageTo).toContain('grass')
-    // Verifies no_damage_to → noDamageTo mapping
-    expect(electric!.noDamageTo).toContain('ground')
+    // Exact-match assertions verify both field-name mapping and no accidental extras
+    expect(electric!.doubleDamageTo).toEqual(['water', 'flying'])
+    expect(electric!.halfDamageTo).toEqual(['electric', 'grass', 'dragon'])
+    expect(electric!.noDamageTo).toEqual(['ground'])
   })
 
   it('excludes unknown and shadow pseudo-types from the type map', async () => {

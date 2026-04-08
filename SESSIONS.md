@@ -2,6 +2,41 @@
 
 ---
 
+## 2026-04-08 - Wave 3.2: PokéAPI Contract Tests
+
+### Objective
+
+- Add contract tests verifying PokéAPI response shapes are correctly parsed to internal TypeScript interfaces (issue #14).
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry.
+- Contract tests use stub fixtures matching `docs/API_SPEC.md` exactly — no live network calls.
+- Focused on gaps: `getTypeMap` and `getMoveType` had no contract tests; `getPokemon` and `getPokemonNameIndex` had behavioral tests but not explicit field-mapping assertions.
+- Existing `getPokemonNameIndex.test.ts` behavioral tests not duplicated — contract file only adds shape-verification tests.
+
+### Completed
+
+- `src/tests/pokeapi.contract.test.ts` — 7 tests covering all 4 acceptance criteria:
+  - `getPokemon`: name, slot-ordered types, sprite mapping; past_types generation nesting
+  - `getPokemonNameIndex`: count + results[].name → string[] mapping
+  - `getTypeMap`: snake_case damage_relations → camelCase TypeRelations; unknown/shadow exclusion
+  - `getMoveType`: type.name → string mapping
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 145 tests, 21 files, all pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Issue #15 — Wave 3.3: Generation-aware type chart explicit tests.
+
+---
+
 ## 2026-04-08 - Wave 3.1: Import Boundary Tests
 
 ### Objective
