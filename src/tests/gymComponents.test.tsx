@@ -12,7 +12,7 @@ describe('GymLeaderSelector', () => {
 
   afterEach(() => {
     cleanup()
-    onSelect.mockClear()
+    onSelect.mockReset()
   })
 
   it('renders all 8 gym leaders with names and type labels for Emerald', () => {
@@ -24,11 +24,10 @@ describe('GymLeaderSelector', () => {
       />,
     )
     expect(screen.getAllByRole('button')).toHaveLength(8)
-    expect(screen.getByRole('button', { name: /Roxanne/i })).toBeTruthy()
-    expect(screen.getByRole('button', { name: /Juan/i })).toBeTruthy()
-    // Type labels are rendered inside the buttons
-    expect(screen.getByText('Rock')).toBeTruthy()
-    expect(screen.getByText('Water')).toBeTruthy()
+    expect(screen.getByRole('button', { name: /Roxanne/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Juan/i })).toBeInTheDocument()
+    expect(screen.getByText('Rock')).toBeInTheDocument()
+    expect(screen.getByText('Water')).toBeInTheDocument()
   })
 
   it('calls onSelect with the correct gym ID when a leader is clicked', () => {
@@ -56,10 +55,7 @@ describe('GymLeaderSelector', () => {
       .getAllByRole('button')
       .filter((b) => b.getAttribute('aria-pressed') === 'true')
     expect(pressed).toHaveLength(1)
-    expect(pressed[0]).toHaveProperty(
-      'textContent',
-      expect.stringContaining('Brawly'),
-    )
+    expect(pressed[0].textContent).toContain('Brawly')
   })
 
   it('renders the empty-state message for a game with no gym data', () => {
@@ -72,13 +68,14 @@ describe('GymLeaderSelector', () => {
     )
     expect(
       screen.getByText('No gym data available for this game yet.'),
-    ).toBeTruthy()
+    ).toBeInTheDocument()
     expect(screen.queryAllByRole('button')).toHaveLength(0)
   })
 })
 
 // ─── GymTeamPanel ─────────────────────────────────────────────────────────────
 
+// Mirrors Roxanne's real Emerald team (two geodudes + nosepass).
 const ROXANNE: GymLeader = {
   id: 'roxanne',
   name: 'Roxanne',
@@ -87,6 +84,7 @@ const ROXANNE: GymLeader = {
   city: 'Rustboro City',
   type: 'Rock',
   team: [
+    { name: 'geodude', level: 14 },
     { name: 'geodude', level: 14 },
     { name: 'nosepass', level: 15 },
   ],
@@ -97,10 +95,10 @@ describe('GymTeamPanel', () => {
 
   afterEach(() => {
     cleanup()
-    onPokemonSelect.mockClear()
+    onPokemonSelect.mockReset()
   })
 
-  it('calls onPokemonSelect with the Pokémon name when a team button is clicked', () => {
+  it('calls onPokemonSelect with the Pokémon name when a unique team button is clicked', () => {
     render(
       <GymTeamPanel
         gymLeader={ROXANNE}
@@ -111,5 +109,21 @@ describe('GymTeamPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: /nosepass/i }))
     expect(onPokemonSelect).toHaveBeenCalledOnce()
     expect(onPokemonSelect).toHaveBeenCalledWith('nosepass')
+  })
+
+  it('calls onPokemonSelect when one of multiple same-named Pokémon is clicked', () => {
+    render(
+      <GymTeamPanel
+        gymLeader={ROXANNE}
+        selectedOpponent=""
+        onPokemonSelect={onPokemonSelect}
+      />,
+    )
+    // Two geodudes — click the first one
+    const geodudeButtons = screen.getAllByRole('button', { name: /geodude/i })
+    expect(geodudeButtons).toHaveLength(2)
+    fireEvent.click(geodudeButtons[0])
+    expect(onPokemonSelect).toHaveBeenCalledOnce()
+    expect(onPokemonSelect).toHaveBeenCalledWith('geodude')
   })
 })
