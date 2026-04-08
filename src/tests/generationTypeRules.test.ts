@@ -98,7 +98,7 @@ const BASE_URL = 'https://pokeapi.co/api/v2'
 
 function typeFixtureFetch() {
   return vi.fn(async (url: string) => {
-    if (url.includes('type?limit')) {
+    if (url === `${BASE_URL}/type?limit=100`) {
       return new Response(
         JSON.stringify({
           results: TYPE_LIST.map((name) => ({ name, url: '' })),
