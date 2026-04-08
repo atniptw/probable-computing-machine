@@ -1,32 +1,34 @@
 # Sessions Log
 
-Append-only log for preserving continuity across long-running work.
+---
 
-## Session Entry Template
-
-### Date
-
-YYYY-MM-DD
+## 2026-04-07 - Wave 1.1: Add Gym Data Unit Tests
 
 ### Objective
 
-- TBD
+- Add `src/tests/gyms.test.ts` to close the QA gap logged when the gym leader feature shipped.
 
 ### Decisions Made
 
-- TBD
+- No trade-offs requiring a DECISIONS.md entry — straightforward test file against stable static data.
 
 ### Completed
 
-- TBD
+- Added `src/tests/gyms.test.ts` (18 tests) covering `getGymsForGame`, `getGymById`, and full roster shape for all 8 Emerald gym leaders.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 104 tests, 15 files, pass
+- Closes GitHub issue atniptw/probable-computing-machine#6.
 
 ### Blockers
 
-- TBD
+- None.
 
 ### Next Actions
 
-- TBD
+- Wave 1.2: Add unit tests to pre-commit hook.
+- Wave 1.3: Fix accessibility gaps on gym buttons.
 
 ---
 
@@ -656,20 +658,12 @@ YYYY-MM-DD
 
 ### Blockers
 
-- `src/App.tsx` still owns the main state and effect orchestration; the next meaningful reduction requires hook extraction.
+- None.
 
 ### Next Actions
 
 - Extract opponent lookup, team persistence, and matchup execution into focused hooks.
 - Decide whether to delete or archive legacy components under `src/components/TeamInput` and `src/components/MatchupResults`.
-- Updated docs in `README.md`, `docs/COMPONENT_DESIGN.md`, `docs/USER_GUIDE.md`, and `docs/DATA_FLOW.md`.
-
-### Blockers
-
-- None after installing Playwright Chromium runtime locally.
-
-### Next Actions
-
 - Add regression coverage for team editor validation edge cases (invalid slot values and mixed empty/filled states).
 - Review mobile ergonomics on small-height devices for above-the-fold best-choice visibility.
 

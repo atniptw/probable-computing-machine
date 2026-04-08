@@ -15,7 +15,6 @@
 ## Non-Goals
 
 - User accounts or saved teams.
-- Move-level matchup analysis (type-only for MVP).
 - Mobile app or browser extension.
 - Competitive tier ratings or team builder recommendations.
 - Support for fan-made or ROM hack Pokémon games.
@@ -45,7 +44,6 @@
 ## Out of Scope (Initial Phase)
 
 - User accounts, authentication, or saved teams.
-- Move-level or ability-level analysis.
 - Mobile app, PWA, or browser extension.
 - Team recommendations or competitive tier lists.
 - Custom Pokémon or fan-game support.

@@ -53,15 +53,15 @@ PM, Architect, Backend, Frontend, QA, DevOps, Docs
 
 ### Responsibility Matrix
 
-| Role | Responsibility |
-|------|---------------|
-| PM | Defines outcome, scope boundaries, and acceptance criteria. Resolves product trade-offs. |
+| Role      | Responsibility                                                                               |
+| --------- | -------------------------------------------------------------------------------------------- |
+| PM        | Defines outcome, scope boundaries, and acceptance criteria. Resolves product trade-offs.     |
 | Architect | Owns service boundaries and technical decisions. Approves architecture and contract changes. |
-| Backend | Implements APIs, domain logic, and persistence changes. |
-| Frontend | Implements user-facing flows and accessibility. |
-| QA | Validates acceptance criteria and regression safety. |
-| DevOps | Ensures deployment safety, observability, and rollback readiness. |
-| Docs | Updates user/developer docs and release notes. |
+| Backend   | Implements APIs, domain logic, and persistence changes.                                      |
+| Frontend  | Implements user-facing flows and accessibility.                                              |
+| QA        | Validates acceptance criteria and regression safety.                                         |
+| DevOps    | Ensures deployment safety, observability, and rollback readiness.                            |
+| Docs      | Updates user/developer docs and release notes.                                               |
 
 ### Standard Handoff Sequence
 
@@ -82,6 +82,7 @@ PM, Architect, Backend, Frontend, QA, DevOps, Docs
 ### Workflows
 
 Use commands in `.claude/commands/` for repeatable workflows:
+
 - `/feature-intake` — turn a request into a feature brief with acceptance criteria
 - `/architecture-review` — review architecture and contracts before implementation
 - `/release-readiness` — evaluate release readiness and rollback safety
@@ -96,12 +97,14 @@ Use commands in `.claude/commands/` for repeatable workflows:
 **Mission:** Translate product goals into clear, testable work with unambiguous acceptance criteria.
 
 **Required Outputs:**
+
 - Problem statement.
 - User value statement.
 - Acceptance criteria in checklist form.
 - Out-of-scope list.
 
 **Gate Rules:**
+
 - No implementation starts without acceptance criteria.
 - Ambiguity must be resolved before handoff.
 
@@ -112,11 +115,13 @@ Use commands in `.claude/commands/` for repeatable workflows:
 **Mission:** Ensure technical coherence, maintainability, and safe evolution of system boundaries.
 
 **Required Outputs:**
+
 - Architecture notes for any structural change.
 - API/data contract definitions.
 - Risks and mitigation notes.
 
 **Gate Rules:**
+
 - No implementation without approved contract.
 - Breaking changes require explicit migration or compatibility plan.
 
@@ -127,11 +132,13 @@ Use commands in `.claude/commands/` for repeatable workflows:
 **Mission:** Deliver reliable, testable server-side functionality aligned with approved contracts.
 
 **Required Outputs:**
+
 - Implementation scoped to approved architecture.
 - Unit and integration tests for changed behavior.
 - Notes on failure modes and edge cases.
 
 **Gate Rules:**
+
 - Must pass tests for modified behavior.
 - Must document contract changes before merge.
 
@@ -142,11 +149,13 @@ Use commands in `.claude/commands/` for repeatable workflows:
 **Mission:** Deliver clear, accessible user experiences that satisfy product acceptance criteria.
 
 **Required Outputs:**
+
 - UI behavior mapped to acceptance criteria.
 - Accessibility checks for modified views.
 - Error and empty-state behavior coverage.
 
 **Gate Rules:**
+
 - No handoff to QA without acceptance criteria mapping.
 - Accessibility regressions block completion.
 - Hook tests must avoid unstable effect dependencies (inline arrays/objects/functions) that can cause rerender loops.
@@ -160,11 +169,13 @@ Use commands in `.claude/commands/` for repeatable workflows:
 **Mission:** Verify expected behavior and prevent regressions through focused validation.
 
 **Required Outputs:**
+
 - Acceptance test checklist results.
 - Regression risk assessment.
 - Explicit pass/fail release recommendation.
 
 **Gate Rules:**
+
 - Release is blocked on unresolved critical defects.
 - No sign-off without traceability to acceptance criteria.
 
@@ -175,11 +186,13 @@ Use commands in `.claude/commands/` for repeatable workflows:
 **Mission:** Ensure reliable delivery with safe deployments, observability, and recovery plans.
 
 **Required Outputs:**
+
 - Deployment checklist.
 - Monitoring and alerting readiness notes.
 - Rollback steps for risky changes.
 
 **Gate Rules:**
+
 - No production release without rollback path.
 - No release without minimum observability in place.
 
@@ -190,11 +203,13 @@ Use commands in `.claude/commands/` for repeatable workflows:
 **Mission:** Keep product and technical docs aligned with shipped behavior.
 
 **Required Outputs:**
+
 - Updated usage or architecture docs.
 - Release note summary for meaningful changes.
 - Links to related decisions.
 
 **Gate Rules:**
+
 - Work is not complete when docs are stale.
 - Major behavior changes require release note updates.
 
@@ -254,6 +269,7 @@ Apply a security-first mindset to all code generated, reviewed, or refactored.
 Update documentation in the same commit as code changes. Never commit code changes without updating relevant docs.
 
 **Always update when:**
+
 - New features or capabilities are added → update README.md Features section.
 - APIs, interfaces, or contracts change → update `docs/` accordingly.
 - Breaking changes occur → document what changed, provide before/after examples.
@@ -261,6 +277,7 @@ Update documentation in the same commit as code changes. Never commit code chang
 - Code examples in docs become outdated → fix them.
 
 **Quality standards:**
+
 - Use clear, concise language with working code examples.
 - Keep docs close to code when possible.
 - Review documentation accuracy in code reviews.
@@ -269,67 +286,23 @@ Update documentation in the same commit as code changes. Never commit code chang
 
 ## Autonomous Loop Sequence
 
-When working on a feature autonomously from intake to shipped PR, follow this sequence without waiting for human check-ins at each step:
+When working on a feature autonomously from intake to shipped, follow this sequence without waiting for human check-ins at each step:
 
 1. **Feature Intake** — Run `/feature-intake`. Do not begin implementation until acceptance criteria exist.
 2. **Architecture Review (conditional)** — Run `/architecture-review` if the change touches new hooks/services, data contracts (PokéAPI shapes, localStorage keys), new component boundaries, or cross-role dependencies. Skip for isolated bug fixes or doc-only changes.
 3. **Implementation** — Implement in role order: Backend/Frontend → QA (tests) → Docs. Apply gate rules from the Role Instructions section at each phase.
-4. **Verification** — Before creating a PR, all of the following must pass locally:
+4. **Verification** — Before review, all of the following must pass locally:
    ```
    npm run lint
    npm run tsc
    npm run test
    ```
    For changes touching UI behavior, also run `npx playwright test --project=chromium`.
-   Do not proceed to PR creation if any check fails.
-5. **Update Logs** — Append a session entry to `SESSIONS.md`. If a trade-off was made, append a `DEC-XXXX` entry to `DECISIONS.md` (use the next sequential ID). If no trade-off was made, prepare to state "no new decision" in the PR body.
-6. **Create PR** — Run `/pr`.
-
----
-
-## PR Body Template
-
-Use this exact template when creating pull requests. `gate-evidence.yml` enforces exact section names and checkbox wording — do not rename headers or reword checkboxes.
-
-```
-## Summary
-
-- [1–3 bullets: what changed and why]
-
-## Acceptance Criteria
-
-- [Link to acceptance criteria source: issue, session entry, or feature brief]
-- [Each criterion and its pass/fail status]
-
-## Decision Log
-
-- [DEC-XXXX reference OR: "no new decision — [brief rationale]"]
-
-## QA Evidence
-
-- Tests run: npm run lint, npm run tsc, npm run test
-- Results: [pass counts or summary]
-- Risks: [known gaps or deferred coverage]
-
-## Docs Impact
-
-- [Files updated, or: "no docs impact — [reason]"]
-
-## Release and Rollback
-
-- Deployment impact: [what changes in the deployed GitHub Pages build]
-- Rollback plan: Revert the merge commit on main; GitHub Actions redeploys the previous build automatically.
-
-## Required Checks
-
-- [x] I linked acceptance criteria.
-- [x] I linked decision evidence or justified none.
-- [x] I provided QA evidence.
-- [x] I described docs impact.
-- [x] I documented rollback considerations.
-```
-
-**Critical:** All five checkboxes must be `[x]`. Unchecked `[ ]` boxes fail gate-evidence CI. Each checkbox line ends with a period.
+   Do not proceed to review if any check fails.
+5. **Update Logs** — Append a session entry to `SESSIONS.md`. If a trade-off was made, append a `DEC-XXXX` entry to `DECISIONS.md` (use the next sequential ID).
+6. **Code Review** — Launch a `general-purpose` agent as a reviewer. Provide it with the full diff (`git diff HEAD~1`) and ask it to: identify bugs or logic errors, flag any broken acceptance criteria, check for security issues, and report anything that must be fixed before shipping. Resolve all blocking issues the reviewer raises, then re-run verification.
+7. **User Sign-off** — Present the reviewer's verdict and the running app to the user for final sign-off before pushing.
+8. **Push** — `git push origin main`. Every commit that lands on main must be functional.
 
 ---
 
@@ -339,7 +312,7 @@ For features spanning more than two implementation steps, use TaskCreate to trac
 
 - Create a task at session start summarizing the feature goal.
 - Update to `in_progress` when beginning each major phase.
-- Update to `completed` when the PR is open and CI is green.
+- Update to `completed` when the change is pushed and CI is green.
 - Remove stale tasks at session end.
 
 Skip task tracking for single-step bug fixes or doc-only changes.
