@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 const TEAM_STORAGE_KEY = 'pmh_team_v1'
 const MAX_MOVES_PER_MEMBER = 4
@@ -127,7 +127,10 @@ export function useTeamConfiguration({
   const [activeTeamSlot, setActiveTeamSlot] = useState<number | null>(null)
   const teamDraftRef = useRef(teamDraft)
   const teamMovesDraftRef = useRef(teamMovesDraft)
-  const teamNames = teamMembers.map((member) => member.name)
+  const teamNames = useMemo(
+    () => teamMembers.map((member) => member.name),
+    [teamMembers],
+  )
 
   function prepareTeamEditor(): void {
     const nextTeamDraft = toTeamSlots(teamNames, teamSize)
