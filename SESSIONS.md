@@ -2,6 +2,39 @@
 
 ---
 
+## 2026-04-08 - Wave 4.4: Remove Dormant Assets
+
+### Objective
+
+- Delete three dormant source files, their tests, clear the Dormant Assets table, and raise the functions coverage floor (issue #19).
+
+### Decisions Made
+
+- DEC-0024 added: functions coverage floor raised from 68 back to 70, fulfilling the remediation commitment in DEC-0023. Actual functions coverage after removal: 75.92%.
+
+### Completed
+
+- Deleted: `src/components/AppView/BattleResultsPanel.tsx`, `src/hooks/useTeamPreview.ts`, `src/hooks/useMatchupResults.ts`
+- Deleted: `src/tests/useTeamPreview.test.ts`, `src/tests/useMatchupResults.test.ts` (BattleResultsPanel had no test file)
+- `docs/COMPONENT_DESIGN.md` — Dormant Assets table cleared ("None currently")
+- `vite.config.ts` — functions threshold raised from 68 → 70 (DEC-0024)
+- `DECISIONS.md` — DEC-0024 added at top
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 141 tests, 20 files, all pass
+  - `npm run test:coverage` → statements 89%, branches 80%, functions 75.92%, lines 89% — all above thresholds
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Review backlog for Wave 5 planning.
+
+---
+
 ## 2026-04-08 - Wave 4.3: Wire /architecture-drift into work-issue Cycle
 
 ### Objective

@@ -2,6 +2,30 @@
 
 ---
 
+## DEC-0024
+
+### Date
+
+2026-04-08
+
+### Title
+
+Raise functions coverage floor back to 70 after removing dormant assets
+
+### Context
+
+DEC-0023 set the functions floor to 68 (temporarily below the 70 target) because `BattleResultsPanel`, `useTeamPreview`, and `useMatchupResults` were in scope but not covered. Wave 4.4 deleted those files and their test files. After removal, actual functions coverage is 75.92% — well above the 70 target.
+
+### Decision
+
+Raise `functions` threshold from 68 back to 70, fulfilling the remediation commitment in DEC-0023. All other thresholds remain unchanged (`statements` 75, `branches` 80, `lines` 75).
+
+### Owner
+
+QA
+
+---
+
 ## DEC-0023
 
 ### Date

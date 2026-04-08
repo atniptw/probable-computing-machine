@@ -76,11 +76,7 @@ hooks: {
 
 Files that exist in `src/` but are **not on the active render path**. These are candidates for removal in a future clean-up pass.
 
-| File                                            | Reason dormant                                                        |
-| ----------------------------------------------- | --------------------------------------------------------------------- |
-| `src/components/AppView/BattleResultsPanel.tsx` | Superseded by `MatchupViewer/MatchupContainer`; not imported anywhere |
-| `src/hooks/useTeamPreview.ts`                   | Not imported in any production component; tested but unused           |
-| `src/hooks/useMatchupResults.ts`                | Not imported in any production component; tested but unused           |
+_None currently._
 
 ---
 
