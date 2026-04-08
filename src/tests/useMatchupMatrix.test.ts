@@ -34,7 +34,10 @@ const BASE_PARAMS = {
 
 function makeParams(
   overrides: Partial<
-    typeof BASE_PARAMS & { onError: (m: string | null) => void }
+    typeof BASE_PARAMS & {
+      onError: (m: string | null) => void
+      opponentMoves: string[]
+    }
   > = {},
 ) {
   return {
