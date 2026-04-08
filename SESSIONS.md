@@ -2,6 +2,46 @@
 
 ---
 
+## 2026-04-08 - Repo Hygiene, Wave 1.2, Wave 1.3
+
+### Objective
+
+- Aggressive repo cleanup: fix DECISIONS.md integrity, remove dead files, slim CLAUDE.md.
+- Complete Wave 1.2 (unit tests in pre-commit) and Wave 1.3 (aria-pressed on gym buttons).
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry — all changes are cleanup or straightforward hardening.
+
+### Completed
+
+- DECISIONS.md: renamed duplicate DEC-0018 → DEC-0022, removed duplicate Owner block in DEC-0017, sorted all 22 entries newest-first, stripped template header.
+- SESSIONS.md: removed template block, consolidated duplicate Blockers/Next Actions section.
+- PROJECT.md: removed stale non-goal (move-level analysis shipped in DEC-0019/0020).
+- Deleted 11 stale Copilot `.agent.md` files (obsolete after Claude Code migration).
+- Deleted `gate-evidence.yml` and `pull_request_template.md` (PR workflow not used).
+- Committed untracked files: `ROADMAP.md`, `src/tests/gyms.test.ts`, `.claude/commands/github-issues.md`.
+- Added DECISIONS.md integrity check to `deploy.yml` (unique IDs + descending order).
+- Added to CLAUDE.md: DECISIONS entry format rule, no-untracked-files DoD, delivery-model cleanup rule, issue-linking rule (`Closes #N`).
+- Slimmed CLAUDE.md from 322 → 172 lines: extracted Role Instructions to `.claude/commands/role-guide.md`, condensed Playwright guidelines, deleted stale `pr.md` skill.
+- Issue #7 (Wave 1.2): added `npx vitest run` to `.husky/pre-commit` — broken tests now block commits locally.
+- Issue #8 (Wave 1.3): added `aria-pressed` to `GymLeaderSelector` and `GymTeamPanel` buttons.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 104 tests, 15 files, pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Wave 2.1: Component tests for `GymLeaderSelector` and `GymTeamPanel` (issue #9).
+- Wave 2.2: Expand e2e smoke test to cover gym leader flow (issue #10).
+
+---
+
 ## 2026-04-07 - Wave 1.1: Add Gym Data Unit Tests
 
 ### Objective
