@@ -2,6 +2,71 @@
 
 ---
 
+## 2026-04-08 - Wave 2.2: Gym Leader E2E Scenario
+
+### Objective
+
+- Expand Playwright smoke spec to cover the gym leader flow end-to-end.
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry.
+- Extracted shared API route setup into `setupApiRoutes(page)` helper to avoid duplicating ~130 lines of mocks across two tests.
+
+### Completed
+
+- Added gym leader scenario to `e2e/matchup-smoke.spec.ts` covering all 4 acceptance criteria: mode toggle, gym selection, Pokémon click, matchup viewer render.
+- Refactored existing free-battle test to use shared `setupApiRoutes` helper.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 110 tests, 16 files, pass
+  - `npx playwright test` → cannot run locally (WSL2 missing libnspr4 system dep, requires sudo); CI validates via `--with-deps` in `deploy.yml`.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Wave 2.3: Add component tests for AppView and MatchupViewer (issue #11).
+
+---
+
+## 2026-04-08 - Wave 2.1: Component Tests for Gym Components
+
+### Objective
+
+- Add RTL component tests for `GymLeaderSelector` and `GymTeamPanel` to close the zero-coverage gap on the gym feature.
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry.
+- Explicit `cleanup()` calls required in `afterEach` — RTL auto-cleanup does not fire in this vitest/jsdom setup without a `setupFiles` configuration.
+
+### Completed
+
+- Added `src/tests/gymComponents.test.tsx` (5 tests) covering all acceptance criteria:
+  - All 8 Emerald gym leaders render with names and type labels.
+  - Clicking a leader calls `onSelect` with the correct gym ID.
+  - Selected gym button has `aria-pressed=true` (only one at a time).
+  - Empty state renders for non-Emerald games.
+  - Clicking a team Pokémon calls `onPokemonSelect` with the correct name.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 109 tests, 16 files, pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Wave 2.2: Expand e2e smoke test to cover gym leader flow (issue #10).
+
+---
+
 ## 2026-04-08 - Repo Hygiene, Wave 1.2, Wave 1.3
 
 ### Objective
