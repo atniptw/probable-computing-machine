@@ -138,25 +138,9 @@ Update documentation in the same commit as code changes. Never commit code chang
 
 ---
 
-## Autonomous Loop Sequence
+## Autonomous Loop
 
-When working on a feature autonomously from intake to shipped, follow this sequence without waiting for human check-ins at each step:
-
-1. **Feature Intake** — Run `/feature-intake`. Do not begin implementation until acceptance criteria exist.
-2. **Architecture Review (conditional)** — Run `/architecture-review` if the change touches new hooks/services, data contracts (PokéAPI shapes, localStorage keys), new component boundaries, or cross-role dependencies. Skip for isolated bug fixes or doc-only changes.
-3. **Implementation** — Implement in role order: Backend/Frontend → QA (tests) → Docs. Apply gate rules from the Role Instructions section at each phase.
-4. **Verification** — Before review, all of the following must pass locally:
-   ```
-   npm run lint
-   npm run tsc
-   npm run test
-   ```
-   For changes touching UI behavior, also run `npx playwright test --project=chromium`.
-   Do not proceed to review if any check fails.
-5. **Update Logs** — Append a session entry to `SESSIONS.md`. If a trade-off was made, append a `DEC-XXXX` entry to `DECISIONS.md` (use the next sequential ID).
-6. **Code Review** — Launch a `general-purpose` agent as a reviewer. Provide it with the full diff (`git diff HEAD~1`) and ask it to: identify bugs or logic errors, flag any broken acceptance criteria, check for security issues, and report anything that must be fixed before shipping. Resolve all blocking issues the reviewer raises, then re-run verification.
-7. **User Sign-off** — Present the reviewer's verdict and the running app to the user for final sign-off before pushing.
-8. **Push** — `git push origin main`. Every commit that lands on main must be functional.
+To work an issue from intake to push, invoke `/work-issue [number]`. Do not begin implementation on any issue without first invoking this skill.
 
 ---
 
