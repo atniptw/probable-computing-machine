@@ -24,6 +24,25 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
+      - name: Validate DECISIONS.md integrity
+        run: |
+          set -euo pipefail
+          ids=$(grep -E '^## DEC-[0-9]{4}' DECISIONS.md | grep -oE '[0-9]{4}')
+          dupes=$(echo "$ids" | sort | uniq -d)
+          if [ -n "$dupes" ]; then
+            echo "Duplicate DECISIONS.md IDs: $dupes"
+            exit 1
+          fi
+          prev=99999
+          while IFS= read -r id; do
+            n=$((10#$id))
+            if [ "$n" -ge "$prev" ]; then
+              echo "DECISIONS.md not in descending order near DEC-$id (expected < $prev)"
+              exit 1
+            fi
+            prev=$n
+          done <<< "$ids"
+          echo "DECISIONS.md integrity OK"
       - run: npm run lint
       - run: npm run format:check
       - run: npm run tsc

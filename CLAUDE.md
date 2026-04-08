@@ -17,7 +17,7 @@ This file defines shared, always-on behavior for Claude in this repository.
 ## Required Artifacts Per Meaningful Change
 
 - Session update in `SESSIONS.md`.
-- Decision entry in `DECISIONS.md` when trade-offs were made.
+- Decision entry in `DECISIONS.md` when trade-offs were made. New entries go at the **top** of the file using the next sequential ID (max existing ID + 1). Verify the ID is unique before committing.
 - Validation evidence (tests, QA notes, or release checks).
 
 ## Role Handoff Contract
@@ -41,6 +41,8 @@ Every handoff must include:
 - Acceptance criteria met.
 - Role gate validations complete.
 - Docs and logs updated.
+- No untracked files in `src/` or doc root (`*.md`, `*.ts`, `*.tsx`).
+- When delivery model changes (e.g. PR workflow → direct push), remove CI workflows and templates that enforce the old model in the same commit.
 - Next owner acknowledged or work marked complete.
 
 ---
