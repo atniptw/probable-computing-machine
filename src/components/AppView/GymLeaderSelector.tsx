@@ -29,6 +29,7 @@ export default function GymLeaderSelector({
           key={gym.id}
           type="button"
           className={`${styles.gymLeaderBtn}${selectedGymId === gym.id ? ` ${styles.gymLeaderBtnSelected}` : ''}`}
+          aria-pressed={selectedGymId === gym.id}
           onClick={() => onSelect(gym.id)}
         >
           <span className={styles.gymBadgeNum}>{gym.badge}.</span>

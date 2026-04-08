@@ -23,6 +23,7 @@ export default function GymTeamPanel({
               key={`${pokemon.name}-${index}`}
               type="button"
               className={`${styles.gymPokemonBtn}${isSelected ? ` ${styles.gymPokemonBtnSelected}` : ''}`}
+              aria-pressed={isSelected}
               onClick={() => onPokemonSelect(pokemon.name)}
             >
               {pokemon.name}
