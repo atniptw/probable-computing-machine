@@ -186,7 +186,7 @@ export const EMERALD_GYMS: GymLeader[] = [
       {
         name: 'altaria',
         level: 33,
-        moves: ['dragonbreath', 'take-down', 'aerial-ace', 'dragon-dance'],
+        moves: ['dragon-breath', 'take-down', 'aerial-ace', 'dragon-dance'],
       },
     ],
   },
