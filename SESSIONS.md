@@ -2,6 +2,41 @@
 
 ---
 
+## 2026-04-08 - Wave 3.3: Generation-Aware Type Chart Regression Tests
+
+### Objective
+
+- Add explicit regression tests for all generation-specific type chart rules (issue #15).
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry.
+- Used `getTypeMap` + `calcEffectiveness` end-to-end (not `applyGenerationTypeRules` directly) so tests catch both parsing and application of rules.
+- Placed in a new file `generationTypeRules.test.ts` (same `src/tests/` directory, satisfying "co-located with or near `calcEffectiveness` tests" AC).
+- `beforeEach` stubs fetch with a minimal 8-type fixture covering all tested rules; exact URL matching (not catch-all) prevents silent failures.
+
+### Completed
+
+- `src/tests/generationTypeRules.test.ts` — 9 tests covering all 4 acceptance criteria:
+  - AC1 (Ghost/Psychic Gen 1): Ghost immunity = 0 in Gen 1, super effective = 2 in Gen 2+
+  - AC2 (Fairy Gen 6): `map.has('fairy')` false in Gen 5, true in Gen 6; Fairy 2x vs Dragon
+  - AC3 (two+ extras): Dark/Steel absent in Gen 1; Ghost 0.5x vs Steel in Gen 3, neutral in Gen 6; Ice neutral vs Fire in Gen 1, 0.5x in Gen 2+
+  - AC4: File co-located with `calcEffectiveness.test.ts` in `src/tests/`
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 154 tests, 22 files, all pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Issue #16 — Wave 4.1: Formalize reviewer agent as a skill.
+
+---
+
 ## 2026-04-08 - Wave 3.2: PokéAPI Contract Tests
 
 ### Objective
