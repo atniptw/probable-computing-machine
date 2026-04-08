@@ -2,6 +2,38 @@
 
 ---
 
+## 2026-04-08 - Wave 2.3: Component Tests for AppView and MatchupViewer
+
+### Objective
+
+- Add RTL component tests for `BattleSelectorSection`, `TeamEditorPanel`, and `MatchupContainer` (issue #11).
+
+### Decisions Made
+
+- No trade-offs requiring a DECISIONS.md entry.
+- Mocked `useMatchupMatrix` at the module level in `matchupContainer.test.tsx` to isolate the component from async PokéAPI calls.
+- Used `screen.getByRole('region', { name: 'Matchup viewer' })` for the labeled section — RTL resolves `<section aria-label="...">` as role `region`, not via `getByLabel`.
+
+### Completed
+
+- `src/tests/battleSelectorSection.test.tsx` — 10 tests covering: free/gym mode toggle, opponent input render, suggestion list show/hide conditions, suggestion click callback, GymTeamPanel conditional render.
+- `src/tests/teamEditorPanel.test.tsx` — 8 tests covering: slot rendering, slot error display, move chip rendering, Remove callback, 4-move disable guard, Save button disabled state, onSave callback, onSlotChange callback.
+- `src/tests/matchupContainer.test.tsx` — 7 tests covering all 5 render branches: empty team, no opponent, no exact match, loading, and full matchup with heading + navigation.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 135 tests, 19 files, all pass
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Issue #12 — Wave 2.4: Add `src/components/**/*.tsx` to coverage scope and raise thresholds.
+
+---
+
 ## 2026-04-08 - Wave 2.2: Gym Leader E2E Scenario
 
 ### Objective
