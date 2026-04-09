@@ -91,17 +91,27 @@ export default function MatchupContainer({
 
   if (!teamNames.length) {
     return (
-      <p className={styles.viewerCard}>
-        Add your team first, then choose an opponent to view matchup details.
-      </p>
+      <div className={`${styles.viewerCard} ${styles.emptyState}`}>
+        <p className={styles.emptyStateTitle}>Get started</p>
+        <ol className={styles.emptyStateSteps}>
+          <li>
+            Tap <strong>Edit Team</strong> to add your Pokémon
+          </li>
+          <li>Search for an opponent above to see matchup details</li>
+        </ol>
+      </div>
     )
   }
 
   if (!normalizedOpponent) {
     return (
-      <p className={styles.viewerCard}>
-        Select an opponent to view offense and defense details.
-      </p>
+      <div className={`${styles.viewerCard} ${styles.emptyState}`}>
+        <p className={styles.emptyStateTitle}>Choose an opponent</p>
+        <p className={styles.emptyStateBody}>
+          Search by name above, or switch to Gym leader mode to pick from a gym
+          roster.
+        </p>
+      </div>
     )
   }
 

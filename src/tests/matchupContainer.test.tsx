@@ -80,19 +80,15 @@ describe('MatchupContainer — render branches', () => {
 
   it('shows the empty-team prompt when teamNames is empty', () => {
     renderContainer({ teamNames: [], teamMembers: [] })
-    expect(
-      screen.getByText(
-        'Add your team first, then choose an opponent to view matchup details.',
-      ),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Get started')).toBeInTheDocument()
+    expect(screen.getByText('Tap', { exact: false })).toBeInTheDocument()
   })
 
   it('shows the no-opponent prompt when normalizedOpponent is empty', () => {
     renderContainer({ normalizedOpponent: '' })
+    expect(screen.getByText('Choose an opponent')).toBeInTheDocument()
     expect(
-      screen.getByText(
-        'Select an opponent to view offense and defense details.',
-      ),
+      screen.getByText('Search by name above', { exact: false }),
     ).toBeInTheDocument()
   })
 

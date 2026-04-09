@@ -11,6 +11,32 @@
   padding: 12px;
 }
 
+.emptyState {
+  padding: 24px 20px;
+}
+
+.emptyStateTitle {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.emptyStateBody {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #5f6b77;
+  line-height: 1.5;
+}
+
+.emptyStateSteps {
+  margin: 4px 0 0;
+  padding-left: 20px;
+  font-size: 0.88rem;
+  color: #5f6b77;
+  line-height: 1.7;
+}
+
 .titleRow {
   display: flex;
   align-items: center;
