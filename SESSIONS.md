@@ -1599,3 +1599,42 @@ None.
 ### Next Actions
 
 Continue backlog.
+
+---
+
+## 2026-04-09 — Fix #28: Gym leader team chips lack clear click affordance
+
+### Objective
+
+Add hover and focus styles to gym leader Pokémon chips so users have clear visual feedback that they are interactive.
+
+### Completed Work
+
+- `App.module.css`: added `.gymPokemonBtn:hover` (light blue-gray background `#f0f4f8`, darker border `#4a5568`), `.gymPokemonBtn:focus-visible` (blue outline for keyboard users), `.gymPokemonBtnSelected:hover` (slightly lighter fill), and `transition` for smooth feedback
+- `cursor: pointer` was already present — no change needed for AC1
+- Selected chip style (`#1f2933` fill, white text) was already clearly distinct — confirmed via screenshot
+
+### Validation
+
+- lint: clean, tsc: clean, 148 unit tests passing, 6 Playwright E2E tests passing
+- Visual QA: selected chip contrast confirmed via screenshot; hover/cursor behavior approved by user via manual review
+
+### Retrospective
+
+**Assumptions made:**
+`cursor: pointer` was already set on the button — AC1 was pre-existing. Only the hover and focus states were missing.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — all three criteria were clear and actionable.
+- Scope clarity: Clear.
+
+**Process improvement suggestion:**
+None.
+
+### Next Actions
+
+Continue backlog.
