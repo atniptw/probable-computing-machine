@@ -1518,3 +1518,45 @@ Replace the generic "Pick an exact Pokemon name to load matchup details." status
 ### Next Actions
 
 - Continue working open backlog issues.
+
+---
+
+## 2026-04-09 — Fix #31: Label capitalization is inconsistent across the app
+
+### Objective
+
+Apply sentence case consistently to all field labels and section headings across the app.
+
+### Completed Work
+
+- `MatchupViewer.module.css`: removed `text-transform: uppercase` from `.cardLabel` (was causing "YOUR POKEMON" / "OPPONENT")
+- `MatchupContainer.tsx`: `"Your Pokemon"` → `"Your Pokémon"` (sentence case + fix missing accent)
+- `BattleSelectorSection.tsx`: `"Free Battle"` → `"Free battle"`, `"Gym Leader"` → `"Gym leader"`
+- `TeamConfigurationSection.tsx`: `"Team Configuration"` → `"Team configuration"`
+- `TeamEditorPanel.tsx`: `"Team Slot {n}"` → `"Team slot {n}"`, `"Moves (Optional)"` → `"Moves (optional)"`
+- Updated all affected unit test locators and E2E locators to match new casing
+
+### Validation
+
+- lint: clean, tsc: clean, 148 unit tests passing, 6 Playwright E2E tests passing
+- Visual QA: battle screen and team editor labels confirmed sentence case via screenshots; matchup card labels approved by user
+
+### Retrospective
+
+**Assumptions made:**
+The ALL CAPS appearance of "YOUR POKEMON" / "OPPONENT" was driven by CSS `text-transform: uppercase` on `.cardLabel`, not by the string values themselves. Verified before implementing.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Missing edge cases — the issue listed the problematic strings but did not enumerate every label that needed changing (e.g. mode toggle buttons). Required a full audit.
+- Scope clarity: Had to infer boundaries — had to discover all label/heading sites by reading components.
+
+**Process improvement suggestion:**
+For capitalization issues, the issue template should include a checklist of every affected label/heading so the AC is complete and the implementer doesn't need to audit the whole codebase.
+
+### Next Actions
+
+Continue backlog.
