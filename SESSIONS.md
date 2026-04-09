@@ -2,6 +2,32 @@
 
 ---
 
+## 2026-04-09 - Docs #34: Fix Stale useMatchupMatrix Contract
+
+### Objective
+
+Update `docs/COMPONENT_DESIGN.md` to reflect the actual `useMatchupMatrix` contract after the hook was refactored.
+
+### Completed Work
+
+- Updated `useMatchupMatrix` outputs from `{ matrix, activeIndex, setActiveIndex, loading }` → `{ loading, matchup }`
+- Updated inputs list to include full set: `teamNames`, `nameIndexReady`, `opponentMoves`, `selectedTeamIndex`
+- Noted `selectedTeamIndex: number` state ownership under `MatchupContainer` in the component tree
+- Architecture drift check: `CLEAN` before and after
+
+### Validation
+
+- `npm run lint`: pass
+- `npm run tsc`: pass
+- `npm run test`: 147/147 pass
+- `npx playwright test --project=chromium`: 6/6 pass
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-09 - Fix #37: Game-Aware Team Defaults and Per-Game Persistence
 
 ### Objective

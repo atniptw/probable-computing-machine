@@ -13,7 +13,7 @@ App
 │   └── SuggestionList (free mode, conditional)
 ├── TeamConfigurationSection (team screen header)
 │   └── GameVersionSelect
-├── MatchupContainer (battle screen, main pane)
+├── MatchupContainer (battle screen, main pane) [owns selectedTeamIndex: number]
 │   ├── PokemonCard (opponent + active team member)
 │   ├── OffenseSection
 │   └── DefenseSection
@@ -56,8 +56,9 @@ hooks: {
   },
   useMatchupMatrix: {
     // consumed internally by MatchupContainer, not App directly
-    inputs: { teamMembers, normalizedOpponent, exactMatchFound, generation, gameLabel, pokemonNameSet, onError },
-    outputs: { matrix, activeIndex, setActiveIndex, loading }
+    inputs: { teamMembers, teamNames, normalizedOpponent, exactMatchFound, generation, gameLabel,
+              nameIndexReady, opponentMoves, pokemonNameSet, selectedTeamIndex, onError },
+    outputs: { loading, matchup }
   }
 }
 ```
