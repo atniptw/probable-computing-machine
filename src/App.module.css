@@ -479,9 +479,33 @@
 .gymList {
   border: 1px solid #d7dce0;
   border-radius: 12px;
-  background: #ffffff;
   overflow-y: auto;
   max-height: 220px;
+  /* Scroll-shadow technique: shows a shadow at top/bottom only when
+     content extends beyond the visible area (background-attachment: local
+     covers hide the shadow when scrolled to that edge). */
+  background:
+    linear-gradient(#ffffff 30%, rgba(255, 255, 255, 0)) center top,
+    linear-gradient(rgba(255, 255, 255, 0), #ffffff 70%) center bottom,
+    radial-gradient(
+        farthest-side at 50% 0,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0)
+      )
+      center top,
+    radial-gradient(
+        farthest-side at 50% 100%,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0)
+      )
+      center bottom;
+  background-repeat: no-repeat;
+  background-size:
+    100% 40px,
+    100% 40px,
+    100% 12px,
+    100% 12px;
+  background-attachment: local, local, scroll, scroll;
 }
 
 .gymLeaderBtn {
