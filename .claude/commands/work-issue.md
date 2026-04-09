@@ -54,7 +54,44 @@ Skip this step only for changes with no user-visible effect (pure logic, data, o
 
 ## Step 5 — Update logs
 
-Append a session entry to `SESSIONS.md` covering: objective, decisions made, completed work with validation evidence, blockers, next actions.
+Append a session entry to `SESSIONS.md` using this structure:
+
+```
+## [date] — [issue prefix + number]: [short title]
+
+### Objective
+[One sentence: what was being solved]
+
+### Completed Work
+[Bullet list of actual changes made]
+
+### Validation
+[lint / tsc / test / playwright results + visual QA outcome]
+
+### Retrospective
+
+**Assumptions made:**
+List anything the implementation had to assume that was not stated in the issue
+(e.g. "assumed no min-length guard existed and skipped inline helper text").
+If the issue was complete and unambiguous: "None."
+
+**Course corrections:**
+List any moment where the user had to redirect, clarify scope, or undo a wrong
+choice. Quote or paraphrase the correction so patterns are visible over time.
+If none: "None."
+
+**Issue quality signal:**
+- AC completeness: Complete | Missing edge cases | Too vague
+- Scope clarity: Clear | Had to infer boundaries | Ambiguous
+
+**Process improvement suggestion:**
+If a recurring assumption or correction points to a gap in the issue template,
+a missing CLAUDE.md rule, or a role-guide gate that should exist — name it.
+If none: "None."
+
+### Next Actions
+[What comes next, or "Continue backlog."]
+```
 
 If a trade-off was made, add a `DEC-XXXX` entry to the top of `DECISIONS.md` using max existing ID + 1. Verify the ID is unique.
 
