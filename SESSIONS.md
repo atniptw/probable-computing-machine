@@ -2,6 +2,29 @@
 
 ---
 
+## 2026-04-09 - Fix: Intermittent Test Timeouts Under Parallel Load
+
+### Objective
+
+- Eliminate flaky vitest timeouts caused by resource contention on WSL2.
+
+### Decisions Made
+
+- See DEC-0025: capped vitest worker threads at 4 and doubled testTimeout to 10 000 ms.
+
+### Completed
+
+- `vite.config.ts` — added `testTimeout: 10000`, `pool: 'threads'`, `poolOptions.threads.maxThreads: 4`.
+- Validation evidence:
+  - 15 consecutive full-suite runs, 0 failures.
+  - Environment setup time dropped from ~23 s to ~11 s across the suite.
+
+### Blockers
+
+None.
+
+---
+
 ## 2026-04-08 - Wave 5.1: Gym Leader Known Movesets in Defense Section
 
 ### Objective

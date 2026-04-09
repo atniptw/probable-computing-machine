@@ -2,6 +2,30 @@
 
 ---
 
+## DEC-0025
+
+### Date
+
+2026-04-09
+
+### Title
+
+Cap vitest thread count and raise testTimeout to fix flaky tests on WSL2
+
+### Context
+
+20 test files running in parallel on WSL2 created 8 simultaneous jsdom environments (vitest default: half of 16 CPUs). Under memory and CPU pressure, sync tests were timing out at the default 5 000 ms limit — the failures were non-deterministic (different tests each run), confirming resource contention rather than a code bug. Total environment setup time: ~23 s across the suite.
+
+### Decision
+
+Set `maxThreads: 4` to halve jsdom parallelism, and raise `testTimeout` to 10 000 ms to give headroom for slower-start environments. Trade-off: slightly reduced parallelism (tests now take ~5 s wall-clock vs ~3 s before), but the suite is now stable. Environment setup dropped to ~11 s.
+
+### Owner
+
+DevOps
+
+---
+
 ## DEC-0024
 
 ### Date

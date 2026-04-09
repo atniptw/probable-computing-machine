@@ -9,6 +9,13 @@ export default defineConfig(({ command }) => ({
     environment: 'jsdom',
     setupFiles: ['src/tests/setup.ts'],
     exclude: ['e2e/**', 'node_modules/**'],
+    testTimeout: 10000,
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        maxThreads: 4,
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json-summary'],
