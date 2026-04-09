@@ -136,6 +136,7 @@ export default function MatchupContainer({
               className={styles.cycleButton}
               onClick={() => cycle(-1)}
               aria-label="Previous team member"
+              title="Previous team member"
             >
               ←
             </button>
@@ -144,6 +145,7 @@ export default function MatchupContainer({
               className={styles.cycleButton}
               onClick={() => cycle(1)}
               aria-label="Next team member"
+              title="Next team member"
             >
               →
             </button>

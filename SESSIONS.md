@@ -2,6 +2,32 @@
 
 ---
 
+## 2026-04-09 - a11y #29: Add Accessible Labels and Hover Tooltips to Cycle Buttons
+
+### Objective
+
+Add `aria-label` and `title` tooltip to the ← / → team-cycle buttons in `MatchupContainer`.
+
+### Completed Work
+
+- `aria-label` values were already present ("Previous team member" / "Next team member")
+- Added `title` attribute to both buttons to provide browser-native hover tooltips
+- No CSS or test changes required; existing unit tests already assert on `aria-label`
+
+### Validation
+
+- `npm run lint`: pass
+- `npm run tsc`: pass
+- `npm run test`: 147/147 pass
+- `npx playwright test --project=chromium`: 6/6 pass
+- Manual review: tooltips visible on hover, confirmed by user
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-09 - Docs #34: Fix Stale useMatchupMatrix Contract
 
 ### Objective
