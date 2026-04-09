@@ -53,14 +53,14 @@ export default function BattleSelectorSection({
           className={`${styles.modeToggleBtn}${battleMode === 'free' ? ` ${styles.modeToggleBtnActive}` : ''}`}
           onClick={() => onBattleModeChange('free')}
         >
-          Free Battle
+          Free battle
         </button>
         <button
           type="button"
           className={`${styles.modeToggleBtn}${battleMode === 'gym' ? ` ${styles.modeToggleBtnActive}` : ''}`}
           onClick={() => onBattleModeChange('gym')}
         >
-          Gym Leader
+          Gym leader
         </button>
       </div>
 

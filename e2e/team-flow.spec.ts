@@ -10,7 +10,7 @@ test.describe('Team flow', () => {
 
     // Open team editor and change slot 1 from the default (swampert) to flygon
     await page.getByRole('button', { name: 'Edit Team' }).click()
-    await page.getByLabel('Team Slot 1', { exact: true }).fill('flygon')
+    await page.getByLabel('Team slot 1', { exact: true }).fill('flygon')
     await page.getByRole('button', { name: 'Save Team' }).click()
 
     // Saving returns to the battle screen
@@ -34,7 +34,7 @@ test.describe('Team flow', () => {
 
     // Edit slot 1 and save
     await page.getByRole('button', { name: 'Edit Team' }).click()
-    await page.getByLabel('Team Slot 1', { exact: true }).fill('gardevoir')
+    await page.getByLabel('Team slot 1', { exact: true }).fill('gardevoir')
     await page.getByRole('button', { name: 'Save Team' }).click()
     await expect(page.getByLabel('Opponent Pokemon')).toBeVisible()
 
@@ -43,7 +43,7 @@ test.describe('Team flow', () => {
 
     // Re-open editor and confirm the saved value survived the reload
     await page.getByRole('button', { name: 'Edit Team' }).click()
-    await expect(page.getByLabel('Team Slot 1', { exact: true })).toHaveValue(
+    await expect(page.getByLabel('Team slot 1', { exact: true })).toHaveValue(
       'gardevoir',
     )
   })

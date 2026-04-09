@@ -86,7 +86,7 @@ export default function TeamEditorPanel({
           return (
             <div className={styles.teamSlot} key={`team-slot-${index}`}>
               <label htmlFor={`team-slot-${index}`}>
-                Team Slot {index + 1}
+                Team slot {index + 1}
               </label>
               <input
                 id={`team-slot-${index}`}
@@ -96,7 +96,7 @@ export default function TeamEditorPanel({
                 onFocus={() => onSlotFocus(index)}
                 onBlur={() => onSlotBlur(index)}
                 placeholder={`Pokemon ${index + 1}`}
-                aria-label={`Team Slot ${index + 1}`}
+                aria-label={`Team slot ${index + 1}`}
               />
 
               {activeTeamSlot === index &&
@@ -116,7 +116,7 @@ export default function TeamEditorPanel({
               )}
 
               <label htmlFor={`team-slot-moves-${index}`}>
-                Moves (Optional)
+                Moves (optional)
               </label>
 
               {moves.length > 0 && (

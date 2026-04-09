@@ -46,7 +46,7 @@ test.describe('Battle Screen - Matchup viewer flow', () => {
 
     await test.step('Open battle screen and switch to Gym Leader mode', async () => {
       await page.goto(APP_ENTRY_PATH)
-      await page.getByRole('button', { name: 'Gym Leader' }).click()
+      await page.getByRole('button', { name: 'Gym leader' }).click()
       await expect(page.getByRole('button', { name: /Wattson/i })).toBeVisible()
     })
 

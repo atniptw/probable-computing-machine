@@ -60,8 +60,8 @@ describe('TeamEditorPanel', () => {
 
   it('renders a labeled input for each team slot', () => {
     renderPanel()
-    expect(screen.getByLabelText('Team Slot 1')).toBeInTheDocument()
-    expect(screen.getByLabelText('Team Slot 2')).toBeInTheDocument()
+    expect(screen.getByLabelText('Team slot 1')).toBeInTheDocument()
+    expect(screen.getByLabelText('Team slot 2')).toBeInTheDocument()
   })
 
   it('shows a slot error when teamSlotErrors has a value', () => {
@@ -107,7 +107,7 @@ describe('TeamEditorPanel', () => {
 
   it('calls onSlotChange when a slot input value changes', () => {
     renderPanel()
-    fireEvent.change(screen.getByLabelText('Team Slot 1'), {
+    fireEvent.change(screen.getByLabelText('Team slot 1'), {
       target: { value: 'flygon' },
     })
     expect(onSlotChange).toHaveBeenCalledOnce()

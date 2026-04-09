@@ -53,16 +53,16 @@ describe('BattleSelectorSection — free battle mode', () => {
     expect(screen.getByLabelText('Opponent Pokemon')).toBeInTheDocument()
   })
 
-  it('calls onBattleModeChange("gym") when Gym Leader button is clicked', () => {
+  it('calls onBattleModeChange("gym") when Gym leader button is clicked', () => {
     renderSection()
-    fireEvent.click(screen.getByRole('button', { name: 'Gym Leader' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Gym leader' }))
     expect(onBattleModeChange).toHaveBeenCalledOnce()
     expect(onBattleModeChange).toHaveBeenCalledWith('gym')
   })
 
-  it('calls onBattleModeChange("free") when Free Battle button is clicked', () => {
+  it('calls onBattleModeChange("free") when Free battle button is clicked', () => {
     renderSection({ battleMode: 'gym' })
-    fireEvent.click(screen.getByRole('button', { name: 'Free Battle' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Free battle' }))
     expect(onBattleModeChange).toHaveBeenCalledOnce()
     expect(onBattleModeChange).toHaveBeenCalledWith('free')
   })

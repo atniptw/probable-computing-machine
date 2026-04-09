@@ -15,7 +15,7 @@ export default function TeamConfigurationSection({
   return (
     <section className={styles.selectorSection}>
       <div className={styles.selectorHeader}>
-        <div className={styles.selectorLabel}>Team Configuration</div>
+        <div className={styles.selectorLabel}>Team configuration</div>
         <button type="button" className={styles.linkButton} onClick={onBack}>
           Back
         </button>

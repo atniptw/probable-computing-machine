@@ -166,7 +166,7 @@ export default function MatchupContainer({
 
         <div className={styles.sideGrid}>
           <article className={styles.sideCard} aria-label="Your side">
-            <PokemonCard label="Your Pokemon" pokemon={matchup.player} />
+            <PokemonCard label="Your Pokémon" pokemon={matchup.player} />
             <DefenseSection
               playerName={playerName}
               dangerous={matchup.defense.dangerous}
