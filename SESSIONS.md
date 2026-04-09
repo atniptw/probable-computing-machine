@@ -1490,3 +1490,31 @@ None.
 
 - Add unit tests covering `useTeamConfiguration` validation/persistence branches.
 - Add unit tests for `useMatchupResults` reset behavior when game/index conditions change.
+
+---
+
+## 2026-04-09 - Fix: Clarify Matchup Status Messages (Issue #26)
+
+### Objective
+
+Replace the generic "Pick an exact Pokemon name to load matchup details." status message with contextual messages that reflect what the user actually needs to do.
+
+### Decisions Made
+
+- Added `opponentSuggestions: string[]` as a required prop to `MatchupContainer` so it can differentiate between "results visible", "no results", and "index loading" states without re-deriving suggestions internally.
+- Used `&ldquo;`/`&rdquo;` HTML entities for the quoted query in the "No Pokémon found for" message (correct typographic quotes).
+
+### Completed
+
+- `src/components/MatchupViewer/MatchupContainer.tsx`: replaced single status message with three context-aware messages — "Select a Pokémon from the list above to view matchup details." (suggestions visible), "No Pokémon found for \"...\"." (no suggestions), "Loading Pokédex..." (index not ready).
+- `src/App.tsx`: pass `opponentSuggestions` to `MatchupContainer`.
+- `src/tests/matchupContainer.test.tsx`: updated two stale tests, added two new tests for the new message branches. 148 tests passing.
+- All verifications passed: lint, tsc, 148 unit tests, 6 Playwright E2E tests.
+
+### Blockers
+
+- None.
+
+### Next Actions
+
+- Continue working open backlog issues.
