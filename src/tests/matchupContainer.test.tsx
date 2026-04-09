@@ -52,6 +52,7 @@ const BASE_PROPS = {
   nameIndexReady: true,
   normalizedOpponent: 'manectric',
   onError,
+  opponentSuggestions: [] as string[],
   pokemonNameSet: new Set(['swampert', 'manectric']),
   teamMembers: [{ name: 'swampert', moves: [] }] as TeamMemberConfig[],
   teamNames: ['swampert'],
@@ -95,17 +96,27 @@ describe('MatchupContainer — render branches', () => {
     ).toBeInTheDocument()
   })
 
-  it('shows the pick-exact-name prompt when exactMatchFound is false', () => {
-    renderContainer({ exactMatchFound: false })
+  it('shows the loading prompt when nameIndexReady is false', () => {
+    renderContainer({ nameIndexReady: false })
+    expect(screen.getByText('Loading Pokédex...')).toBeInTheDocument()
+  })
+
+  it('shows the select-from-list prompt when exactMatchFound is false and suggestions exist', () => {
+    renderContainer({
+      exactMatchFound: false,
+      opponentSuggestions: ['manectric', 'mankey'],
+    })
     expect(
-      screen.getByText('Pick an exact Pokemon name to load matchup details.'),
+      screen.getByText(
+        'Select a Pokémon from the list above to view matchup details.',
+      ),
     ).toBeInTheDocument()
   })
 
-  it('shows the pick-exact-name prompt when nameIndexReady is false', () => {
-    renderContainer({ nameIndexReady: false })
+  it('shows the no-results prompt when exactMatchFound is false and no suggestions', () => {
+    renderContainer({ exactMatchFound: false, normalizedOpponent: 'zzz' })
     expect(
-      screen.getByText('Pick an exact Pokemon name to load matchup details.'),
+      screen.getByText('No Pokémon found for \u201cZzz\u201d.'),
     ).toBeInTheDocument()
   })
 

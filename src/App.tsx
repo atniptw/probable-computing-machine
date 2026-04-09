@@ -215,6 +215,7 @@ export default function App() {
             gameLabel={selectedGame.label}
             pokemonNameSet={pokemonNameSet}
             opponentMoves={opponentMoves}
+            opponentSuggestions={opponentSuggestions}
             onError={setError}
           />
         )}

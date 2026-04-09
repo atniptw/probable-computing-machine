@@ -16,6 +16,7 @@ interface MatchupContainerProps {
   normalizedOpponent: string
   onError: (message: string | null) => void
   opponentMoves?: string[]
+  opponentSuggestions: string[]
   pokemonNameSet: Set<string>
   teamMembers: TeamMemberConfig[]
   teamNames: string[]
@@ -36,6 +37,7 @@ export default function MatchupContainer({
   normalizedOpponent,
   onError,
   opponentMoves,
+  opponentSuggestions,
   pokemonNameSet,
   teamMembers,
   teamNames,
@@ -104,9 +106,19 @@ export default function MatchupContainer({
   }
 
   if (!exactMatchFound || !nameIndexReady) {
+    if (!nameIndexReady) {
+      return <p className={styles.viewerCard}>Loading Pokédex...</p>
+    }
+    if (opponentSuggestions.length > 0) {
+      return (
+        <p className={styles.viewerCard}>
+          Select a Pokémon from the list above to view matchup details.
+        </p>
+      )
+    }
     return (
       <p className={styles.viewerCard}>
-        Pick an exact Pokemon name to load matchup details.
+        No Pokémon found for &ldquo;{toTitleCase(normalizedOpponent)}&rdquo;.
       </p>
     )
   }
