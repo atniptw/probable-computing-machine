@@ -1638,3 +1638,40 @@ None.
 ### Next Actions
 
 Continue backlog.
+
+---
+
+## 2026-04-09 — Fix #27: Gym leader list gives no scroll indicator when overflowing
+
+### Objective
+
+Make it visually apparent that the gym leader list is scrollable when it contains more entries than fit in the visible area.
+
+### Completed Work
+
+- `App.module.css`: replaced `background: #ffffff` on `.gymList` with the CSS scroll-shadow technique — four layered background gradients using `background-attachment: local/scroll` to show a bottom shadow when content overflows and a top shadow after scrolling down
+
+### Validation
+
+- lint: clean, tsc: clean, 148 unit tests passing, 6 Playwright E2E tests passing
+- Visual QA: all 8 leaders confirmed in DOM; scroll shadow visible in both initial and scrolled states; approved by user
+
+### Retrospective
+
+**Assumptions made:**
+The existing `overflow-y: auto` + `max-height: 220px` already made the list scrollable — only the visual indicator was missing. The CSS scroll-shadow technique was chosen over a JS-based solution for simplicity and zero runtime overhead.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — clear criteria with concrete examples.
+- Scope clarity: Clear.
+
+**Process improvement suggestion:**
+None.
+
+### Next Actions
+
+Continue backlog.
