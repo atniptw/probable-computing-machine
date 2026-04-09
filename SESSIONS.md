@@ -1560,3 +1560,42 @@ For capitalization issues, the issue template should include a checklist of ever
 ### Next Actions
 
 Continue backlog.
+
+---
+
+## 2026-04-09 — Feat #30: Improve empty state on battle screen
+
+### Objective
+
+Replace the bare status messages in the matchup area with structured empty-state cards that make the blank area feel intentional.
+
+### Completed Work
+
+- `MatchupViewer.module.css`: added `.emptyState`, `.emptyStateTitle`, `.emptyStateBody`, `.emptyStateSteps` CSS classes for structured layout
+- `MatchupContainer.tsx`: replaced `<p>` no-team message with a "Get started" card (bold title + numbered two-step list); replaced `<p>` no-opponent message with a "Choose an opponent" card (title + one-line hint)
+- `matchupContainer.test.tsx`: updated two test assertions to match new heading text
+
+### Validation
+
+- lint: clean, tsc: clean, 148 unit tests passing, 6 Playwright E2E tests passing
+- Visual QA: both empty states confirmed via screenshots (desktop + mobile); no-clutter criterion approved by user
+
+### Retrospective
+
+**Assumptions made:**
+The appropriate visual treatment was a title + supporting text within the existing `.viewerCard` container — no illustrations or icons, keeping it consistent with the app's minimal style.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Missing edge cases — the issue only describes the "no opponent" state in the problem description, but the "no team" state also needed improving.
+- Scope clarity: Had to infer boundaries — "feel intentional" required judgment on which visual approach fit the existing design system.
+
+**Process improvement suggestion:**
+None.
+
+### Next Actions
+
+Continue backlog.
