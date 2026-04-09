@@ -73,7 +73,7 @@ export default function BattleSelectorSection({
               className={styles.selectorInput}
               value={opponentInput}
               onChange={(event) => onOpponentInputChange(event.target.value)}
-              placeholder="Type 2-3 letters"
+              placeholder="Search Pokémon…"
               aria-label="Opponent Pokemon"
             />
           </label>

@@ -2,6 +2,31 @@
 
 ---
 
+## 2026-04-09 - Fix #25: Replace "Type 2-3 Letters" Placeholder
+
+### Objective
+
+Replace the misleading opponent search placeholder with a conventional search hint.
+
+### Completed Work
+
+- Changed placeholder in `BattleSelectorSection.tsx` from "Type 2-3 letters" → "Search Pokémon…"
+- No min-length guard exists in the codebase, so no inline helper text was needed
+
+### Validation
+
+- `npm run lint`: pass
+- `npm run tsc`: pass
+- `npm run test`: 147/147 pass
+- `npx playwright test --project=chromium`: 6/6 pass
+- Manual review: confirmed by user
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-09 - a11y #29: Add Accessible Labels and Hover Tooltips to Cycle Buttons
 
 ### Objective
