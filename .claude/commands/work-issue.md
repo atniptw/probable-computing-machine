@@ -33,15 +33,22 @@ npm run test
 npx playwright test --project=chromium
 ```
 
-## Step 4.5 — Manual app review (UI changes only)
+## Step 4.5 — Visual QA review (UI changes only)
 
-If the change affects any visible UI behavior, run the dev server and ask the user to review before continuing:
+If the change affects any visible UI behavior:
+
+1. Start the dev server:
 
 ```
-npm run dev
+npm run dev -- --host 127.0.0.1 --port 4173
 ```
 
-Tell the user what to verify (which screen, which interaction). Wait for explicit confirmation before proceeding to Step 5.
+2. Run `/visual-qa [issue number]` to pre-screen visual acceptance criteria via screenshots. The command will:
+   - Automatically verify what it can (colors, layout, text, element presence)
+   - Flag items that need your judgment or can't be checked programmatically
+   - Present a focused brief of what still needs your eyes
+
+3. Wait for explicit user confirmation (**Approved** or **Blocked**) before proceeding to Step 5.
 
 Skip this step only for changes with no user-visible effect (pure logic, data, or test changes).
 

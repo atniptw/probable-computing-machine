@@ -87,6 +87,7 @@ PM, Architect, Backend, Frontend, QA, DevOps, Docs
 Use commands in `.claude/commands/` for repeatable workflows:
 
 - `/backlog-health` — score all open issues against the PM health rubric; surface missing AC, bad titles, unlabeled issues, and stale items
+- `/visual-qa` — screenshot the running app, auto-verify visual AC items, then brief the user on what still needs their eyes
 - `/feature-intake` — turn a request into a feature brief with acceptance criteria
 - `/architecture-review` — review architecture and contracts before implementation
 - `/architecture-drift` — compare live component/hook graph against docs/COMPONENT_DESIGN.md
