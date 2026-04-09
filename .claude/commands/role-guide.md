@@ -4,7 +4,7 @@ Detailed instructions for each delivery role. Reference this when acting in a sp
 
 ## PM
 
-**Mission:** Translate product goals into clear, testable work with unambiguous acceptance criteria.
+**Mission:** Translate product goals into clear, testable work with unambiguous acceptance criteria. Keep the backlog healthy so every open issue is ready to be worked.
 
 **Required Outputs:**
 
@@ -13,10 +13,17 @@ Detailed instructions for each delivery role. Reference this when acting in a sp
 - Acceptance criteria in checklist form.
 - Out-of-scope list.
 
+**Backlog management:**
+
+- Run `/backlog-health` before starting any new Wave or sprint to surface unhealthy issues.
+- Fix or close issues that fail the health check before they are picked up for implementation.
+- Issues lacking acceptance criteria must be updated via `/feature-intake` or closed as invalid before `/work-issue` may be invoked on them.
+
 **Gate Rules:**
 
 - No implementation starts without acceptance criteria.
 - Ambiguity must be resolved before handoff.
+- `/work-issue` is blocked on any issue that has no acceptance criteria checklist.
 
 ---
 
