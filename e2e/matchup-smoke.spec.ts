@@ -20,7 +20,7 @@ test.describe('Battle Screen - Matchup viewer flow', () => {
 
     await test.step('See matchup viewer sections and selected pokemon', async () => {
       await expect(
-        page.getByRole('heading', { name: 'Salamence vs Swampert' }),
+        page.getByRole('heading', { name: 'Swampert vs Salamence' }),
       ).toHaveCount(1)
       await expect(page.getByLabel('Matchup viewer')).toBeVisible()
       await expect(page.getByLabel('Your side')).toBeVisible()
@@ -31,7 +31,7 @@ test.describe('Battle Screen - Matchup viewer flow', () => {
     await test.step('Cycle team members and keep matchup UI interactive', async () => {
       await page.getByRole('button', { name: 'Next team member' }).click()
       await expect(
-        page.getByRole('heading', { name: 'Salamence vs Manectric' }),
+        page.getByRole('heading', { name: 'Manectric vs Salamence' }),
       ).toBeVisible()
     })
   })
@@ -58,7 +58,7 @@ test.describe('Battle Screen - Matchup viewer flow', () => {
 
     await test.step('See matchup viewer render for selected Pokémon', async () => {
       await expect(
-        page.getByRole('heading', { name: 'Manectric vs Swampert' }),
+        page.getByRole('heading', { name: 'Swampert vs Manectric' }),
       ).toBeVisible()
       await expect(page.getByLabel('Matchup viewer')).toBeVisible()
     })

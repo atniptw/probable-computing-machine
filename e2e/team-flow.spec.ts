@@ -23,7 +23,7 @@ test.describe('Team flow', () => {
 
     // Slot 0 is now flygon — matchup heading should reflect that
     await expect(
-      page.getByRole('heading', { name: 'Swampert vs Flygon' }),
+      page.getByRole('heading', { name: 'Flygon vs Swampert' }),
     ).toBeVisible()
   })
 

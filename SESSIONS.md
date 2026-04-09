@@ -2,6 +2,35 @@
 
 ---
 
+## 2026-04-09 - Fix #24: Matchup Card Title Shows Opponent First
+
+### Objective
+
+- Fix heading order in matchup card so it reads "[Your Pokémon] vs [Opponent]".
+
+### Decisions Made
+
+- No trade-offs; one-line string swap.
+
+### Completed
+
+- `src/components/MatchupViewer/MatchupContainer.tsx:131` — swapped `{opponentName} vs {playerName}` to `{playerName} vs {opponentName}`.
+- `src/tests/matchupContainer.test.tsx:120` — updated heading assertion to `'Swampert vs Manectric'`.
+- `e2e/matchup-smoke.spec.ts` — updated 3 heading assertions to player-first order.
+- `e2e/team-flow.spec.ts:26` — updated heading assertion to player-first order.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 143 tests, all pass
+  - `npx playwright test --project=chromium` → 6/6 pass
+  - Manual review: approved by user
+
+### Blockers
+
+None.
+
+---
+
 ## 2026-04-09 - Fix: Intermittent Test Timeouts Under Parallel Load
 
 ### Objective

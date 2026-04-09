@@ -128,7 +128,7 @@ export default function MatchupContainer({
       <article className={styles.viewerCard}>
         <div className={styles.titleRow}>
           <h2 className={styles.title}>
-            {opponentName} vs {playerName}
+            {playerName} vs {opponentName}
           </h2>
           <div className={styles.cycleControls}>
             <button

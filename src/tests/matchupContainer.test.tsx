@@ -117,7 +117,7 @@ describe('MatchupContainer — render branches', () => {
   it('renders the matchup heading and navigation when matchup is ready', () => {
     renderContainer({}, { loading: false, matchup: FULL_MATCHUP })
     expect(
-      screen.getByRole('heading', { name: 'Manectric vs Swampert' }),
+      screen.getByRole('heading', { name: 'Swampert vs Manectric' }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Previous team member' }),
