@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test'
 
-import { APP_ENTRY_PATH, setupApiRoutes } from './helpers'
+import { APP_ENTRY_PATH, seedTeam, setupApiRoutes } from './helpers'
 
 test.describe('Battle Screen - Matchup viewer flow', () => {
   test('shows matchup viewer details after typeahead opponent selection', async ({
     page,
   }) => {
+    await seedTeam(page, 'emerald', ['swampert', 'manectric'])
     await setupApiRoutes(page)
     await page.setViewportSize({ width: 390, height: 844 })
 
@@ -39,6 +40,7 @@ test.describe('Battle Screen - Matchup viewer flow', () => {
   test('shows matchup viewer after selecting a gym leader team Pokémon', async ({
     page,
   }) => {
+    await seedTeam(page, 'emerald', ['swampert'])
     await setupApiRoutes(page)
     await page.setViewportSize({ width: 390, height: 844 })
 

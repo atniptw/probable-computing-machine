@@ -18,7 +18,13 @@ describe('games metadata', () => {
       version: 'emerald',
       label: 'Pokémon Emerald',
       generation: 3,
+      defaultTeam: [],
     })
+  })
+
+  it('defaults to empty team for non-Emerald games', () => {
+    expect(getGameDefinition('red')?.defaultTeam).toEqual([])
+    expect(getGameDefinition('platinum')?.defaultTeam).toEqual([])
   })
 
   it('returns null for unsupported games', () => {

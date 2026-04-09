@@ -22,7 +22,7 @@ class MockStorage {
   }
 }
 
-const TEAM_KEY = 'pmh_team_v1'
+const TEAM_KEY = 'pmh_team_v1_red'
 
 type Params = Parameters<typeof useTeamConfiguration>[0]
 
@@ -34,6 +34,7 @@ function makeParams(overrides: Partial<Params> = {}): Params {
     onError: vi.fn(),
     pokemonNameSet: new Set(['pikachu', 'bulbasaur', 'charmander']),
     teamSize: 3,
+    version: 'red',
     ...overrides,
   }
 }
@@ -80,9 +81,19 @@ describe('useTeamConfiguration', () => {
       expect(result.current.teamNames).toEqual(['pikachu'])
     })
 
-    it('supports legacy array-shaped team storage', () => {
-      storage.setItem(TEAM_KEY, JSON.stringify(['charmander']))
-      const { result } = renderHook(() => useTeamConfiguration(makeParams()))
+    it('starts with all empty slots when no team is saved', () => {
+      const { result } = renderHook(() =>
+        useTeamConfiguration(makeParams({ defaultTeam: [], teamSize: 6 })),
+      )
+      expect(result.current.teamNames).toEqual([])
+      expect(result.current.teamDraft).toEqual(['', '', '', '', '', ''])
+    })
+
+    it('supports legacy array-shaped team storage for Emerald', () => {
+      storage.setItem('pmh_team_v1', JSON.stringify(['charmander']))
+      const { result } = renderHook(() =>
+        useTeamConfiguration(makeParams({ version: 'emerald' })),
+      )
       expect(result.current.teamNames).toEqual(['charmander'])
       expect(result.current.teamMembers[0].moves).toEqual([])
     })
@@ -97,6 +108,49 @@ describe('useTeamConfiguration', () => {
       const { result } = renderHook(() => useTeamConfiguration(makeParams()))
       expect(result.current.teamDraft).toEqual(['charmander', '', ''])
       expect(result.current.teamMovesDraft).toEqual([['ember'], [], []])
+    })
+  })
+
+  describe('resetTeam', () => {
+    it('clears the team when switching to a game with no saved data', () => {
+      storage.setItem(
+        TEAM_KEY,
+        JSON.stringify({
+          members: [{ name: 'pikachu', moves: ['thunderbolt'] }],
+        }),
+      )
+      const params = makeParams({ teamSize: 3 })
+      const { result } = renderHook(() => useTeamConfiguration(params))
+      expect(result.current.teamNames).toEqual(['pikachu'])
+
+      act(() => {
+        result.current.resetTeam('platinum', [])
+      })
+
+      expect(result.current.teamNames).toEqual([])
+      expect(result.current.teamDraft).toEqual(['', '', ''])
+      expect(result.current.teamMovesDraft).toEqual([[], [], []])
+    })
+
+    it('restores a previously saved team when switching back to that game', () => {
+      storage.setItem(
+        'pmh_team_v1_emerald',
+        JSON.stringify({
+          members: [
+            { name: 'bulbasaur', moves: [] },
+            { name: 'charmander', moves: [] },
+          ],
+        }),
+      )
+      const params = makeParams({ teamSize: 3 })
+      const { result } = renderHook(() => useTeamConfiguration(params))
+
+      act(() => {
+        result.current.resetTeam('emerald', ['swampert'])
+      })
+
+      expect(result.current.teamNames).toEqual(['bulbasaur', 'charmander'])
+      expect(result.current.teamDraft).toEqual(['bulbasaur', 'charmander', ''])
     })
   })
 

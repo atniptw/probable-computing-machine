@@ -2,6 +2,22 @@ import type { Page, Route } from '@playwright/test'
 
 export const APP_ENTRY_PATH = '/'
 
+/** Seed a saved team in localStorage before the page loads. */
+export async function seedTeam(
+  page: Page,
+  version: string,
+  names: string[],
+): Promise<void> {
+  const key = `pmh_team_v1_${version}`
+  const members = names.map((name) => ({ name, moves: [] }))
+  await page.addInitScript(
+    ({ k, m }: { k: string; m: { name: string; moves: string[] }[] }) => {
+      localStorage.setItem(k, JSON.stringify({ members: m }))
+    },
+    { k: key, m: members },
+  )
+}
+
 type PokemonRouteHandler = (route: Route) => void | Promise<void>
 
 async function defaultPokemonHandler(route: Route): Promise<void> {

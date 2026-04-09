@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-import { APP_ENTRY_PATH, setupApiRoutes } from './helpers'
+import { APP_ENTRY_PATH, seedTeam, setupApiRoutes } from './helpers'
 
 test.describe('Error states', () => {
   test('shows error banner when saved team contains a pokemon outside the pokedex', async ({
@@ -26,6 +26,7 @@ test.describe('Error states', () => {
   test('shows error banner when the pokemon API returns 404', async ({
     page,
   }) => {
+    await seedTeam(page, 'emerald', ['swampert'])
     await setupApiRoutes(page, async (route) => {
       await route.fulfill({ status: 404 })
     })

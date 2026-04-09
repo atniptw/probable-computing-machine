@@ -3,6 +3,7 @@
 ## PokéAPI Source Schema (relevant fields only)
 
 ### GET /api/v2/pokemon/{name}
+
 ```json
 {
   "name": "charizard",
@@ -14,23 +15,37 @@
 ```
 
 ### GET /api/v2/type/{name}
+
 ```json
 {
   "name": "fire",
   "damage_relations": {
-    "double_damage_to":   [{ "name": "grass" }, { "name": "ice" }],
-    "half_damage_to":     [{ "name": "fire" }, { "name": "water" }],
-    "no_damage_to":       [],
+    "double_damage_to": [{ "name": "grass" }, { "name": "ice" }],
+    "half_damage_to": [{ "name": "fire" }, { "name": "water" }],
+    "no_damage_to": [],
     "double_damage_from": [{ "name": "water" }, { "name": "rock" }],
-    "half_damage_from":   [{ "name": "fire" }, { "name": "grass" }],
-    "no_damage_from":     []
+    "half_damage_from": [{ "name": "fire" }, { "name": "grass" }],
+    "no_damage_from": []
   }
 }
 ```
 
 ## Application Types (JavaScript)
 
+### GameDefinition
+
+```ts
+{
+  version: string      // PokéAPI game version slug, e.g. "emerald"
+  label: string        // Display name, e.g. "Pokémon Emerald"
+  generation: number   // Generation number for type-chart lookups
+  defaultTeam: string[] // Pre-filled team when no saved team exists;
+                         // currently [] for all games (reserved for future use)
+}
+```
+
 ### Pokemon
+
 ```js
 {
   name: string,      // lowercase, e.g. "charizard"
@@ -39,17 +54,20 @@
 ```
 
 ### Team
+
 ```js
 Pokemon[]   // 1–6 entries
 ```
 
 ### Effectiveness
+
 ```js
-"2x" | "1x" | "0.5x" | "0x"
+;'2x' | '1x' | '0.5x' | '0x'
 // Combined = product of modifiers for each type pair
 ```
 
 ### MatchupEntry
+
 ```js
 {
   yourPokemon:      Pokemon,
@@ -60,6 +78,7 @@ Pokemon[]   // 1–6 entries
 ```
 
 ### MatchupResult
+
 ```js
 {
   yourTeam:      Pokemon[],
@@ -74,6 +93,7 @@ Pokemon[]   // 1–6 entries
 ```
 
 ### TypeMap (in-memory cache)
+
 ```js
 {
   [typeName: string]: {
@@ -89,8 +109,12 @@ Pokemon[]   // 1–6 entries
 
 ## localStorage Cache Schema
 
-| Key | Value shape | TTL |
-|-----|-------------|-----|
-| `pkm_v1_{name}` | `{ types: string[], cachedAt: number }` | 7 days (604800000 ms) |
+| Key                     | Value shape                             | TTL                   |
+| ----------------------- | --------------------------------------- | --------------------- |
+| `pkm_v1_{name}`         | `{ types: string[], cachedAt: number }` | 7 days (604800000 ms) |
+| `pmh_team_v1_{version}` | `{ members: TeamMemberConfig[] }`       | persistent            |
+| `pmh_game_v1`           | game version slug string                | persistent            |
+
+`pmh_team_v1_{version}` stores the saved team per game (e.g. `pmh_team_v1_emerald`). The legacy key `pmh_team_v1` is still read as a fallback for Emerald saves written before this scheme was introduced.
 
 Type data (TypeMap) is NOT persisted to localStorage — it is rebuilt each session.

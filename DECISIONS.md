@@ -2,6 +2,32 @@
 
 ---
 
+## DEC-0026
+
+### Date
+
+2026-04-09
+
+### Title
+
+Per-game localStorage keys for team persistence; all games default to empty slots
+
+### Context
+
+Issue #37: the hardcoded `EMERALD_DEFAULT_TEAM` pre-filled invalid Pokémon when switching to non-Emerald games. The initial fix (per-game `defaultTeam` on `GameDefinition`) solved the invalid-team-on-init problem but not the mid-session switch case. User feedback also confirmed Emerald's pre-filled 6-member default should be removed — all games should start blank if no saved team exists.
+
+### Decision
+
+1. Moved team storage from the single key `pmh_team_v1` to per-game keys `pmh_team_v1_${version}`. Legacy `pmh_team_v1` is still read as a fallback for Emerald to avoid breaking existing saves.
+2. Set `defaultTeam: []` for all games, including Emerald. The `defaultTeam` field is retained on `GameDefinition` for future extensibility.
+3. `resetTeam(version, defaultTeam)` reads from the target game's storage key, enabling correct round-trip: switch away → switch back → saved team restored.
+
+### Owner
+
+Backend / Frontend
+
+---
+
 ## DEC-0025
 
 ### Date

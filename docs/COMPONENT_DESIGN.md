@@ -45,10 +45,10 @@ hooks: {
     outputs: { moveNameIndex: string[] }
   },
   useTeamConfiguration: {
-    inputs: { defaultTeam, gameLabel, nameIndexReady, onError, pokemonNameSet, teamSize },
+    inputs: { defaultTeam, gameLabel, nameIndexReady, onError, pokemonNameSet, teamSize, version },
     outputs: { teamNames, teamDraft, teamMembers, teamMovesDraft, teamSlotErrors, teamMoveErrors,
                activeTeamSlot, saveTeam, updateTeamSlot, addTeamMove, removeTeamMove,
-               setActiveTeamSlot, prepareTeamEditor }
+               setActiveTeamSlot, prepareTeamEditor, resetTeam }
   },
   usePokemonSuggestions: {
     inputs: { pokemonNameIndex: string[], maxSuggestions: number },

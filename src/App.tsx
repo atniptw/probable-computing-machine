@@ -13,14 +13,6 @@ import { usePokemonSuggestions } from './hooks/usePokemonSuggestions'
 import { useTeamConfiguration } from './hooks/useTeamConfiguration'
 import styles from './App.module.css'
 
-const EMERALD_DEFAULT_TEAM = [
-  'swampert',
-  'manectric',
-  'breloom',
-  'gardevoir',
-  'flygon',
-  'salamence',
-]
 const TEAM_SIZE = 6
 const MAX_SUGGESTIONS = 20
 
@@ -80,6 +72,7 @@ export default function App() {
     addTeamMove,
     prepareTeamEditor,
     removeTeamMove,
+    resetTeam,
     saveTeam,
     setActiveTeamSlot,
     teamDraft,
@@ -90,12 +83,13 @@ export default function App() {
     teamSlotErrors,
     updateTeamSlot,
   } = useTeamConfiguration({
-    defaultTeam: EMERALD_DEFAULT_TEAM,
+    defaultTeam: selectedGame.defaultTeam,
     gameLabel: selectedGame.label,
     nameIndexReady,
     onError: setError,
     pokemonNameSet,
     teamSize: TEAM_SIZE,
+    version: selectedGame.version,
   })
 
   const { getSuggestions } = usePokemonSuggestions({
@@ -115,11 +109,14 @@ export default function App() {
   }
 
   function handleGameChange(nextVersion: string): void {
+    const nextGame =
+      getGameDefinition(nextVersion) ?? getGameDefinition(DEFAULT_GAME_VERSION)!
     setSelectedGameVersion(nextVersion)
     setBattleMode('free')
     setSelectedGymId(null)
     setOpponentInput('')
     setError(null)
+    resetTeam(nextGame.version, nextGame.defaultTeam)
   }
 
   function handleBattleModeChange(mode: BattleMode): void {

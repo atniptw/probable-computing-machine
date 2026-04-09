@@ -2,6 +2,43 @@
 
 ---
 
+## 2026-04-09 - Fix #37: Game-Aware Team Defaults and Per-Game Persistence
+
+### Objective
+
+- Remove the hardcoded Emerald default team; all games start with blank slots when no saved team exists.
+- Persist teams per game so switching away and back restores the correct saved team.
+
+### Decisions Made
+
+- See DEC-0026: moved from a single `pmh_team_v1` key to per-game `pmh_team_v1_${version}` keys with legacy Emerald fallback.
+- All games, including Emerald, now default to 6 empty slots (no pre-filled Pokémon).
+- Added `version` to `UseTeamConfigurationParams` and `resetTeam(version, defaultTeam)` to the hook interface.
+
+### Completed
+
+- `src/data/games.ts` — `defaultTeam: string[]` added to `GameDefinition`; all games (including Emerald) set to `[]`.
+- `src/hooks/useTeamConfiguration.ts` — per-game storage key; `version` param; `resetTeam(version, defaultTeam)` reads from the target game's storage.
+- `src/App.tsx` — passes `version` to `useTeamConfiguration`; `handleGameChange` calls `resetTeam` with the new game's version and default.
+- `src/tests/games.test.ts` — updated snapshot; new test for non-Emerald empty default.
+- `src/tests/useTeamConfiguration.test.ts` — added `version` to `makeParams`; updated storage keys; new `resetTeam` tests.
+- `e2e/helpers.ts` — added `seedTeam` helper.
+- `e2e/matchup-smoke.spec.ts`, `e2e/error-states.spec.ts` — seed team before tests that need a player Pokémon.
+- `docs/COMPONENT_DESIGN.md` — `useTeamConfiguration` inputs/outputs updated.
+- `docs/DATA_MODEL.md` — `GameDefinition` type and new storage key schema documented.
+- Validation evidence:
+  - `npm run lint` → pass
+  - `npm run tsc` → pass
+  - `npm run test` → 147 tests, all pass
+  - `npx playwright test --project=chromium` → 6/6 pass
+  - Manual review: approved by user
+
+### Blockers
+
+None.
+
+---
+
 ## 2026-04-09 - Fix #24: Matchup Card Title Shows Opponent First
 
 ### Objective

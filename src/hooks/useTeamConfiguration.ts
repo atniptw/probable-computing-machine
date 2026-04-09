@@ -1,7 +1,11 @@
 import { useMemo, useRef, useState } from 'react'
 
-const TEAM_STORAGE_KEY = 'pmh_team_v1'
+const LEGACY_TEAM_KEY = 'pmh_team_v1'
 const MAX_MOVES_PER_MEMBER = 4
+
+function getTeamKey(version: string): string {
+  return `pmh_team_v1_${version}`
+}
 
 export interface TeamMemberConfig {
   name: string
@@ -19,6 +23,7 @@ interface UseTeamConfigurationParams {
   onError: (message: string | null) => void
   pokemonNameSet: Set<string>
   teamSize: number
+  version: string
 }
 
 function toTeamSlots(values: string[], teamSize: number): string[] {
@@ -73,8 +78,12 @@ function toMembersFromNames(
 function readConfiguredTeam(
   defaultTeam: string[],
   teamSize: number,
+  version: string,
 ): TeamMemberConfig[] {
-  const raw = localStorage.getItem(TEAM_STORAGE_KEY)
+  // Prefer the version-specific key; fall back to the legacy key for Emerald.
+  const raw =
+    localStorage.getItem(getTeamKey(version)) ??
+    (version === 'emerald' ? localStorage.getItem(LEGACY_TEAM_KEY) : null)
   if (!raw) return toMembersFromNames(defaultTeam, teamSize)
 
   try {
@@ -104,19 +113,20 @@ export function useTeamConfiguration({
   onError,
   pokemonNameSet,
   teamSize,
+  version,
 }: UseTeamConfigurationParams) {
   const [teamMembers, setTeamMembers] = useState<TeamMemberConfig[]>(() =>
-    readConfiguredTeam(defaultTeam, teamSize),
+    readConfiguredTeam(defaultTeam, teamSize, version),
   )
   const [teamDraft, setTeamDraft] = useState<string[]>(() => {
-    const configured = readConfiguredTeam(defaultTeam, teamSize)
+    const configured = readConfiguredTeam(defaultTeam, teamSize, version)
     return toTeamSlots(
       configured.map((member) => member.name),
       teamSize,
     )
   })
   const [teamMovesDraft, setTeamMovesDraft] = useState<string[][]>(() =>
-    toMoveSlots(readConfiguredTeam(defaultTeam, teamSize), teamSize),
+    toMoveSlots(readConfiguredTeam(defaultTeam, teamSize, version), teamSize),
   )
   const [teamSlotErrors, setTeamSlotErrors] = useState<(string | null)[]>(() =>
     Array.from({ length: teamSize }, () => null),
@@ -131,6 +141,23 @@ export function useTeamConfiguration({
     () => teamMembers.map((member) => member.name),
     [teamMembers],
   )
+
+  function resetTeam(newVersion: string, newDefaultTeam: string[]): void {
+    const nextMembers = readConfiguredTeam(newDefaultTeam, teamSize, newVersion)
+    const nextDraft = toTeamSlots(
+      nextMembers.map((m) => m.name),
+      teamSize,
+    )
+    const nextMoveDraft = toMoveSlots(nextMembers, teamSize)
+    teamDraftRef.current = nextDraft
+    teamMovesDraftRef.current = nextMoveDraft
+    setTeamMembers(nextMembers)
+    setTeamDraft(nextDraft)
+    setTeamMovesDraft(nextMoveDraft)
+    setTeamSlotErrors(Array.from({ length: teamSize }, () => null))
+    setTeamMoveErrors(Array.from({ length: teamSize }, () => null))
+    onError(null)
+  }
 
   function prepareTeamEditor(): void {
     const nextTeamDraft = toTeamSlots(teamNames, teamSize)
@@ -292,7 +319,7 @@ export function useTeamConfiguration({
     }
 
     localStorage.setItem(
-      TEAM_STORAGE_KEY,
+      getTeamKey(version),
       JSON.stringify({ members: nextTeam }),
     )
     setTeamMembers(nextTeam)
@@ -304,6 +331,7 @@ export function useTeamConfiguration({
   return {
     activeTeamSlot,
     prepareTeamEditor,
+    resetTeam,
     saveTeam,
     setActiveTeamSlot,
     teamDraft,
