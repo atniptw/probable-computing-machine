@@ -144,4 +144,49 @@ describe('BattleSelectorSection — gym leader mode', () => {
       screen.queryByRole('button', { name: /nosepass/i }),
     ).not.toBeInTheDocument()
   })
+
+  it('shows full gym picker when a gym is selected but no Pokémon matched yet', () => {
+    renderSection({
+      battleMode: 'gym',
+      selectedGymId: 'roxanne',
+      exactMatchFound: false,
+      normalizedOpponent: 'geo',
+    })
+    expect(screen.getByRole('button', { name: /Roxanne/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /nosepass/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Clear selection' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows collapsed summary bar with leader and Pokémon names when exactMatchFound', () => {
+    renderSection({
+      battleMode: 'gym',
+      selectedGymId: 'roxanne',
+      exactMatchFound: true,
+      normalizedOpponent: 'geodude',
+    })
+    expect(screen.getByText('Roxanne')).toBeInTheDocument()
+    expect(screen.getByText('geodude')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Clear selection' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /nosepass/i }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('calls onOpponentInputChange("") when the clear button is clicked', () => {
+    renderSection({
+      battleMode: 'gym',
+      selectedGymId: 'roxanne',
+      exactMatchFound: true,
+      normalizedOpponent: 'geodude',
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Clear selection' }))
+    expect(onOpponentInputChange).toHaveBeenCalledOnce()
+    expect(onOpponentInputChange).toHaveBeenCalledWith('')
+  })
 })

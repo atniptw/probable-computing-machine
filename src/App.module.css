@@ -627,6 +627,61 @@
   padding: 4px 0;
 }
 
+.gymSummaryBar {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: #ffffff;
+  border: 1px solid #d7dce0;
+  border-radius: 12px;
+}
+
+.gymSummaryLeader {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2933;
+  text-transform: capitalize;
+}
+
+.gymSummarySep {
+  color: #5f6b77;
+  font-size: 0.9rem;
+}
+
+.gymSummaryPokemon {
+  font-size: 0.9rem;
+  color: #1f2933;
+  text-transform: capitalize;
+  flex: 1;
+}
+
+.gymSummaryClear {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #d7dce0;
+  background: #f7f9fa;
+  color: #5f6b77;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.gymSummaryClear:hover {
+  background: #eef1f3;
+  border-color: #4a5568;
+}
+
+.gymSummaryClear:focus-visible {
+  outline: 2px solid #4299e1;
+  outline-offset: 2px;
+}
+
 @media (min-width: 768px) {
   .app {
     max-width: min(1200px, 100%);

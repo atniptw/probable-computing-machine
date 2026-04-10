@@ -88,6 +88,20 @@ export default function BattleSelectorSection({
               />
             )}
         </>
+      ) : exactMatchFound && selectedGym ? (
+        <div className={styles.gymSummaryBar} aria-label="Selected opponent">
+          <span className={styles.gymSummaryLeader}>{selectedGym.name}</span>
+          <span className={styles.gymSummarySep}>›</span>
+          <span className={styles.gymSummaryPokemon}>{normalizedOpponent}</span>
+          <button
+            type="button"
+            className={styles.gymSummaryClear}
+            onClick={() => onOpponentInputChange('')}
+            aria-label="Clear selection"
+          >
+            ×
+          </button>
+        </div>
       ) : (
         <>
           <div className={styles.selectorLabel}>Gym</div>

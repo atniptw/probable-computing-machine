@@ -2,6 +2,50 @@
 
 ---
 
+## 2026-04-10 — Feat #40: Collapse gym picker to summary bar after Pokémon selection
+
+### Objective
+
+Replace the gym list + team panel with a compact single-line summary bar once a Pokémon is selected in gym mode, freeing the viewport for the matchup viewer.
+
+### Completed Work
+
+- `src/components/AppView/BattleSelectorSection.tsx` — added a third branch to the gym mode conditional: when `exactMatchFound && selectedGym`, render `.gymSummaryBar` (leader name › Pokémon name + clear button) instead of `GymLeaderSelector` + `GymTeamPanel`
+- `src/App.module.css` — added 5 new CSS classes: `.gymSummaryBar` (40px, white, bordered, radius 12px, flex row), `.gymSummaryLeader`, `.gymSummarySep`, `.gymSummaryPokemon`, `.gymSummaryClear` (28×28 circular button) with hover and focus-visible states
+- `src/tests/battleSelectorSection.test.tsx` — added 3 unit tests: collapsed bar renders leader/Pokémon text, clear button calls `onOpponentInputChange('')`, full gym UI shows when `exactMatchFound === false`
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test` — 149/149 pass
+- `npx playwright test --project=chromium` — 6/6 pass
+- Visual QA — approved; summary bar renders correctly at 390×844 and 1280×800; clear re-expands same gym; matchup viewer fully visible after collapse
+
+### Retrospective
+
+**Assumptions made:**
+
+- The `×` clear button aria-label `"Clear selection"` was chosen over the literal `"×"` for screen reader clarity — not specified in the AC but consistent with a11y practice in this codebase.
+- Desktop layout was declared "unaffected" in the AC, but the summary bar renders identically on desktop (no media query gate needed) — this was accepted as correct per the issue's design intent.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Process improvement suggestion:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-10 — Feat #22: Color-code effectiveness multipliers
 
 ### Objective
