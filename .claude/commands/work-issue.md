@@ -86,9 +86,20 @@ Append a session entry to `SESSIONS.md` using this structure:
 [Bullet list of actual changes made]
 
 ### Validation
-[lint / tsc / test / playwright results + visual QA outcome]
+- `npm run lint` — pass | fail
+- `npm run tsc` — pass | fail
+- `npm run test:coverage` — pass | fail (note branch %)
+- `npx playwright test --project=chromium` — pass | fail
+- Visual QA — approved | blocked | skipped (reason)
 
 ### Retrospective
+
+**Permission requests:**
+List every action you paused and asked the user to explicitly approve before
+proceeding (e.g. "Asked before pushing to main", "Asked before deleting branch X").
+These reveal where trust boundaries currently sit — recurring requests are
+candidates for explicit instructions or auto-approved defaults.
+If none: "None."
 
 **Assumptions made:**
 List anything the implementation had to assume that was not stated in the issue
@@ -104,9 +115,12 @@ If none: "None."
 - AC completeness: Complete | Missing edge cases | Too vague
 - Scope clarity: Clear | Had to infer boundaries | Ambiguous
 
-**Process improvement suggestion:**
-If a recurring assumption or correction points to a gap in the issue template,
-a missing CLAUDE.md rule, or a role-guide gate that should exist — name it.
+**Feedforward signals:**
+Tag each gap or pattern found so it can be batched into the right improvement:
+- `[instruction]` — a rule to add or update in CLAUDE.md or role-guide
+- `[skill]` — a command or skill that should be created or updated
+- `[tooling]` — wrong script, missing step, or broken default in the workflow
+- `[issue-template]` — the issue template or AC format needs updating
 If none: "None."
 
 ### Next Actions
