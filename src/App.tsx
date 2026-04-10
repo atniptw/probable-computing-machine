@@ -362,6 +362,11 @@ export default function App() {
           </button>
         </div>
       )}
+
+      <footer className={styles.disclaimerFooter}>
+        Fan-made tool. Pokémon and all related names are © Nintendo / Game
+        Freak. Not affiliated with or endorsed by Nintendo.
+      </footer>
     </div>
   )
 }

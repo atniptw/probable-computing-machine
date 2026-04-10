@@ -188,6 +188,15 @@
   background: #f6f6f6;
 }
 
+.disclaimerFooter {
+  padding: 6px 12px;
+  border-top: 1px solid #d7dce0;
+  background: #f6f6f6;
+  font-size: 0.75rem;
+  color: #5f6b77;
+  text-align: center;
+}
+
 .resultsPane {
   flex: 1;
   overflow-y: auto;
@@ -731,5 +740,9 @@
 
   .teamFooter {
     padding: 12px 20px;
+  }
+
+  .disclaimerFooter {
+    padding: 8px 20px;
   }
 }

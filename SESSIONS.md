@@ -48,6 +48,51 @@ Continue backlog.
 
 ---
 
+## 2026-04-10 — Feat #44: Add fan-tool disclaimer to app footer
+
+### Objective
+
+Add a visually subtle disclaimer footer to satisfy fan-tool attribution conventions before public sharing.
+
+### Completed Work
+
+- Added `<footer className={styles.disclaimerFooter}>` as the last child of `.app` in `src/App.tsx`, always rendered on both screens
+- Added `.disclaimerFooter` CSS rule to `src/App.module.css`: `font-size: 0.75rem`, `color: #5f6b77`, `text-align: center`, `padding: 6px 12px`, `background: #f6f6f6`, `border-top: 1px solid #d7dce0`
+- Added desktop breakpoint override (`@media (min-width: 768px)`) with `padding: 8px 20px`
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (branch 80.62%)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — approved
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+None — AC specified exact values (0.75rem, muted color) and the design review confirmed hex values from the existing palette.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-10 — Feat #36: Add ErrorBoundary component to catch runtime render errors
 
 ### Objective
