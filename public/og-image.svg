@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#f6f6f6"/>
+  <rect x="0" y="0" width="1200" height="8" fill="#e84444"/>
+  <!-- Pokéball icon -->
+  <g transform="translate(508, 140)">
+    <circle cx="92" cy="92" r="88" fill="#ffffff" stroke="#1f2933" stroke-width="8"/>
+    <path d="M4 88a88 88 0 0 1 176 0Z" fill="#e84444"/>
+    <line x1="4" y1="92" x2="180" y2="92" stroke="#1f2933" stroke-width="8"/>
+    <circle cx="92" cy="92" r="24" fill="#ffffff" stroke="#1f2933" stroke-width="8"/>
+    <circle cx="92" cy="92" r="10" fill="#1f2933"/>
+  </g>
+  <text x="600" y="380" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="700" fill="#1f2933" text-anchor="middle">Pokémon Matchup Advisor</text>
+  <text x="600" y="450" font-family="system-ui, -apple-system, sans-serif" font-size="32" fill="#5f6b77" text-anchor="middle">Type effectiveness at a glance — gym leaders, free battle, and team planning.</text>
+</svg>

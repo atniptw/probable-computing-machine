@@ -2,6 +2,54 @@
 
 ---
 
+## 2026-04-10 — Chore #45: Add favicon, meta description, and OG tags to index.html
+
+### Objective
+
+Add `<head>` metadata so browser tabs show an icon, search engines have a description, and Discord/Reddit link previews show a rich card.
+
+### Completed Work
+
+- `public/favicon.svg` — created a simple Pokéball SVG icon
+- `public/og-image.svg` — created a 1200×630 branded preview card (app title + tagline)
+- `index.html` — added `<meta name="description">`, `<meta name="theme-color">`, `<link rel="canonical">`, `<link rel="icon">`, `og:title`, `og:description`, `og:url`, `og:image`
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test` — 149/149 pass
+- `npx playwright test --project=chromium` — 6/6 pass
+- Visual QA — skipped (head-only metadata change; no user-visible UI affected)
+
+### Retrospective
+
+**Assumptions made:**
+
+- The canonical URL and OG `og:url` were inferred from the Vite config `base: '/probable-computing-machine/'`, resolving to `https://atniptw.github.io/probable-computing-machine/`. The issue did not specify the URL explicitly.
+- The favicon `href` uses the production base path `/probable-computing-machine/favicon.svg` so it resolves correctly on GitHub Pages. In dev (`npm run dev`) this will 404 the favicon — acceptable since this is a deployed-URL concern.
+- `og:image` uses an SVG. Discord and most modern platforms support SVG OG images; Twitter/X does not. The issue did not require a rasterized image, so SVG was chosen for simplicity.
+- `theme-color` was set to `#f6f6f6` (the app header/chrome background) — no specific value was given in the AC.
+
+**Course corrections:**
+
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Missing the actual GitHub Pages URL (had to infer from Vite config)
+- Scope clarity: Clear
+
+**Process improvement suggestion:**
+
+Issues referencing canonical/OG URLs should include the deployed URL as a stated fact, not leave it for implementation to infer.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-10 — Feat #40: Collapse gym picker to summary bar after Pokémon selection
 
 ### Objective
