@@ -2,6 +2,52 @@
 
 ---
 
+## 2026-04-10 — Feat #47: Add help and feedback links to app header
+
+### Objective
+
+Add compact Help (?) and Feedback (bug) icon links to the shared app header so users on any screen have a path to the user guide and issue tracker.
+
+### Completed Work
+
+- `src/App.tsx`: added `.headerActions` wrapper div containing two `<a>` icon links (Help + Feedback) and the existing Edit Team button; both links always rendered on both screens
+- `src/App.module.css`: added `.headerActions` (flex, `gap: 4px`) and `.headerIconLink` (32×32, `border-radius: 6px`, muted default color, hover + focus-visible states)
+- `docs/COMPONENT_DESIGN.md`: updated header entry in the Runtime Component Tree to document the new Help and Feedback links
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (branch 80.62%)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — approved
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+The `docs/USER_GUIDE.md` link targets the GitHub blob URL rather than a deployed docs URL, since the app has no bundled docs route. This was not specified in the issue.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+
+- `[issue-template]` — AC items that specify external URLs (like the docs link) should state whether to use GitHub blob, raw, or a deployed URL to avoid ambiguity.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-10 — Feat #36: Add ErrorBoundary component to catch runtime render errors
 
 ### Objective

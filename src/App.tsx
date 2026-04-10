@@ -139,15 +139,132 @@ export default function App() {
     <div className={styles.app}>
       <header className={styles.header}>
         <h1>Pokémon Matchup Helper</h1>
-        {screen === 'battle' && (
-          <button
-            type="button"
-            className={styles.editTeamButton}
-            onClick={openTeamEditor}
+        <div className={styles.headerActions}>
+          <a
+            href="https://github.com/atniptw/probable-computing-machine/blob/main/docs/USER_GUIDE.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.headerIconLink}
+            aria-label="Open user guide"
           >
-            Edit Team
-          </button>
-        )}
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                cx="9"
+                cy="9"
+                r="8"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M7 7c0-1.1.9-2 2-2s2 .9 2 2c0 .8-.5 1.5-1.2 1.8L9 11"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <circle cx="9" cy="13" r=".75" fill="currentColor" />
+            </svg>
+          </a>
+          <a
+            href="https://github.com/atniptw/probable-computing-machine/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.headerIconLink}
+            aria-label="Report an issue"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              aria-hidden="true"
+            >
+              <ellipse
+                cx="9"
+                cy="10.5"
+                rx="3.5"
+                ry="4.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <circle
+                cx="9"
+                cy="5"
+                r="1.75"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <line
+                x1="5.5"
+                y1="8.5"
+                x2="2.5"
+                y2="7.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <line
+                x1="5.5"
+                y1="11"
+                x2="2.5"
+                y2="11"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <line
+                x1="5.5"
+                y1="13.5"
+                x2="2.5"
+                y2="14.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <line
+                x1="12.5"
+                y1="8.5"
+                x2="15.5"
+                y2="7.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <line
+                x1="12.5"
+                y1="11"
+                x2="15.5"
+                y2="11"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+              <line
+                x1="12.5"
+                y1="13.5"
+                x2="15.5"
+                y2="14.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </a>
+          {screen === 'battle' && (
+            <button
+              type="button"
+              className={styles.editTeamButton}
+              onClick={openTeamEditor}
+            >
+              Edit Team
+            </button>
+          )}
+        </div>
       </header>
 
       {screen === 'battle' ? (

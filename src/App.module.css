@@ -27,6 +27,36 @@
   text-align: left;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.headerIconLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: #5f6b77;
+  text-decoration: none;
+  transition:
+    color 0.12s,
+    background 0.12s;
+}
+
+.headerIconLink:hover {
+  color: #1f2933;
+  background: #eef1f3;
+}
+
+.headerIconLink:focus-visible {
+  outline: 2px solid #4299e1;
+  outline-offset: 2px;
+}
+
 .editTeamButton {
   border: none;
   background: transparent;

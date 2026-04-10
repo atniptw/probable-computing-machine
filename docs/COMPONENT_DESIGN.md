@@ -5,6 +5,8 @@
 ```
 App
 ├── header (inline JSX — no separate component)
+│   ├── Help link (inline, always visible — opens USER_GUIDE.md)
+│   ├── Feedback link (inline, always visible — opens GitHub Issues)
 │   └── "Edit Team" button (inline, battle screen only)
 ├── BattleSelectorSection (battle screen)
 │   ├── GameVersionSelect
