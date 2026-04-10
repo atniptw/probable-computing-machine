@@ -2,6 +2,50 @@
 
 ---
 
+## 2026-04-10 — Fix #23: Save button not visible without scrolling
+
+### Objective
+
+Make the Save button always visible on the Edit Team page and provide confirmation feedback after saving.
+
+### Completed Work
+
+- Moved the Save Team button from inside the scrollable `TeamEditorPanel` to a sticky footer in `App.tsx`, pinned below the scroll area
+- Added `successMessage` state and `handleSave()` function in `App.tsx`; after a successful save the app navigates to the battle screen and shows a 2-second "Team saved" green banner (`role="status"`)
+- Added `.teamFooter`, `.successBanner` CSS classes to `App.module.css`; removed now-unused `margin-top` from `.primaryButton`
+- Removed `onSave` and `saveDisabled` props from `TeamEditorPanel` (no longer needed)
+- Updated `teamEditorPanel.test.tsx`: removed `onSave` mock and two now-invalid Save button tests
+
+### Validation
+
+- lint: clean
+- tsc: clean
+- tests: 146/146 passed
+- playwright: 6/6 passed
+- visual QA: user approved — footer button visible on mobile and desktop without scrolling; "Team saved" banner confirmed on battle screen after save
+
+### Retrospective
+
+**Assumptions made:**
+Assumed moving the button to App-level was cleaner than `position: sticky` inside the scroll container, since it avoids CSS containment edge cases and makes the button's presence unconditional.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Process improvement suggestion:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-09 - Fix #25: Replace "Type 2-3 Letters" Placeholder
 
 ### Objective
