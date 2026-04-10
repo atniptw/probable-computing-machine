@@ -2,6 +2,49 @@
 
 ---
 
+## 2026-04-10 — Feat #22: Color-code effectiveness multipliers
+
+### Objective
+
+Color-code move effectiveness multipliers in the matchup card so users can tell at a glance whether a value is favorable or unfavorable.
+
+### Completed Work
+
+- Added three CSS classes to `MatchupViewer.module.css`: `.moveIndicatorSuper` (green `#1a6b3c`), `.moveIndicatorResisted` (red `#8a2c24`), `.moveIndicatorImmune` (purple `#6941c6`)
+- Updated `indicator()` in both `OffenseSection.tsx` and `DefenseSection.tsx` to return `'0x'` for immune (previously fell through to `'0.5x'`)
+- Added `indicatorClass()` and `indicatorLabel()` helpers in both components; `renderMoves` applies color class and `aria-label` (e.g. `"super effective, 2x"`) to each `.moveIndicator` span
+- Design review ran first: design spec appended to issue #22 with exact color values and all affected locations enumerated
+
+### Validation
+
+- lint: clean
+- tsc: clean
+- tests: 146/146 passed
+- playwright: 6/6 passed
+- visual QA: user approved — green on 2x (Earthquake), purple on 0x (Spark/Thunderbolt), aria-labels confirmed via computed DOM; resisted class verified by code inspection
+
+### Retrospective
+
+**Assumptions made:**
+Assumed color-coding is magnitude-based regardless of section context (offense vs defense) — the section heading already conveys direction.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete (design review added exact values before implementation)
+- Scope clarity: Clear
+
+**Process improvement suggestion:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-10 — Fix #23: Save button not visible without scrolling
 
 ### Objective
