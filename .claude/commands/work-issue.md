@@ -8,6 +8,14 @@ gh issue view [ARGUMENTS]
 
 Summarize: title, acceptance criteria, notes. If no acceptance criteria exist, stop and run `/feature-intake` before continuing.
 
+## Step 1.7 — Design review (visual issues only)
+
+Run `/design-review [ARGUMENTS]` if the issue touches visible UI layout, color, typography, spacing, or interactive states. The command will audit all affected locations, produce a concrete design spec with exact values, and update the issue before implementation begins.
+
+Skip for: pure logic, data, or test changes; a11y attribute-only fixes; refactors with no visual output change; docs-only changes. State explicitly which applies and why you are skipping or not.
+
+Do not begin Step 3 (Implementation) for a qualifying visual issue until the Design Spec is appended to the issue.
+
 ## Step 1.5 — Architecture drift check
 
 Run `/architecture-drift`. If the verdict is `DRIFT DETECTED`, resolve all findings (update `docs/COMPONENT_DESIGN.md` to match the live codebase) and commit the fix before proceeding to Step 2. Do not carry pre-existing drift into the implementation.

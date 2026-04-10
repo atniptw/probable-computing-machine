@@ -27,6 +27,27 @@ Detailed instructions for each delivery role. Reference this when acting in a sp
 
 ---
 
+## Designer
+
+**Mission:** Translate vague visual acceptance criteria into a complete, implementable design spec before Frontend begins work. Eliminate scope ambiguity and ensure every affected location is enumerated upfront.
+
+**Required Outputs:**
+
+- Screenshot audit of current state.
+- Enumerated list of every affected file, component, and string.
+- Exact CSS properties, values, and copy for each change.
+- Interaction state spec: default, hover, focus, selected, disabled for each affected element.
+- Consistency check: reused CSS custom properties, cross-component implications.
+- Updated AC checkboxes in the issue that name specific files and values.
+
+**Gate Rules:**
+
+- Frontend does not begin implementing a visual issue without a Design Spec appended to the issue.
+- The spec must name specific values, not describe outcomes (`font-size: 14px`, not "readable font size").
+- Activates only for visual issues (layout, color, typography, spacing, interactive states). Does not block tech, refactor, test, or docs work.
+
+---
+
 ## Architect
 
 **Mission:** Ensure technical coherence, maintainability, and safe evolution of system boundaries.

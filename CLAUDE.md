@@ -52,28 +52,30 @@ Every handoff must include:
 
 ### Active Roles
 
-PM, Architect, Backend, Frontend, QA, DevOps, Docs
+PM, Designer, Architect, Backend, Frontend, QA, DevOps, Docs
 
 ### Responsibility Matrix
 
-| Role      | Responsibility                                                                               |
-| --------- | -------------------------------------------------------------------------------------------- |
-| PM        | Defines outcome, scope boundaries, and acceptance criteria. Resolves product trade-offs.     |
-| Architect | Owns service boundaries and technical decisions. Approves architecture and contract changes. |
-| Backend   | Implements APIs, domain logic, and persistence changes.                                      |
-| Frontend  | Implements user-facing flows and accessibility.                                              |
-| QA        | Validates acceptance criteria and regression safety.                                         |
-| DevOps    | Ensures deployment safety, observability, and rollback readiness.                            |
-| Docs      | Updates user/developer docs and release notes.                                               |
+| Role      | Responsibility                                                                                             |
+| --------- | ---------------------------------------------------------------------------------------------------------- |
+| PM        | Defines outcome, scope boundaries, and acceptance criteria. Resolves product trade-offs.                   |
+| Designer  | Produces concrete design specs for visual issues before implementation. Enumerates all affected locations. |
+| Architect | Owns service boundaries and technical decisions. Approves architecture and contract changes.               |
+| Backend   | Implements APIs, domain logic, and persistence changes.                                                    |
+| Frontend  | Implements user-facing flows and accessibility.                                                            |
+| QA        | Validates acceptance criteria and regression safety.                                                       |
+| DevOps    | Ensures deployment safety, observability, and rollback readiness.                                          |
+| Docs      | Updates user/developer docs and release notes.                                                             |
 
 ### Standard Handoff Sequence
 
 1. PM: feature intake and acceptance criteria.
-2. Architect: design and contract approval.
-3. Backend and Frontend: implementation.
-4. QA: validation and sign-off.
-5. DevOps: release readiness and deployment checks.
-6. Docs: publication and documentation closure.
+2. Designer: design spec for visual issues (skip for non-visual work).
+3. Architect: design and contract approval.
+4. Backend and Frontend: implementation.
+5. QA: validation and sign-off.
+6. DevOps: release readiness and deployment checks.
+7. Docs: publication and documentation closure.
 
 ### Escalation Rules
 
@@ -87,6 +89,7 @@ PM, Architect, Backend, Frontend, QA, DevOps, Docs
 Use commands in `.claude/commands/` for repeatable workflows:
 
 - `/backlog-health` — score all open issues against the PM health rubric; surface missing AC, bad titles, unlabeled issues, and stale items
+- `/design-review` — produce a concrete design spec for a visual issue: enumerate all affected locations, exact CSS values, interaction states; update the issue before implementation
 - `/visual-qa` — screenshot the running app, auto-verify visual AC items, then brief the user on what still needs their eyes
 - `/feature-intake` — turn a request into a feature brief with acceptance criteria
 - `/architecture-review` — review architecture and contracts before implementation
