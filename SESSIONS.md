@@ -2,6 +2,48 @@
 
 ---
 
+## 2026-04-10 — Docs #46: Update README with live URL and user-facing description
+
+### Objective
+
+Replace the internal-only README with a user-facing page that includes the live GitHub Pages URL, a plain-English description, feature list, how-to link, screenshot, and fan-tool disclaimer.
+
+### Completed Work
+
+- `README.md` — full rewrite: live URL at the top, 2-sentence description, feature list (Gen 1–9, gym leader mode, type effectiveness, team configuration), link to `docs/USER_GUIDE.md`, screenshot, fan-tool disclaimer, trimmed dev section
+- `docs/screenshots/matchup-viewer.png` — captured via Playwright showing Swampert vs Machop matchup with type cards loaded
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test` — 149/149 pass
+- `npx playwright test --project=chromium` — 6/6 pass
+- No visual QA needed (docs-only change, no UI code modified)
+
+### Retrospective
+
+**Assumptions made:**
+
+- No in-app footer disclaimer exists in the current codebase; wrote a standard fan-project disclaimer based on common Nintendo/Game Freak attribution conventions.
+- The GitHub Pages URL (`https://atniptw.github.io/probable-computing-machine/`) was derived from the vite.config.ts base path and repo owner — not explicitly stated in the issue.
+- Screenshot was captured headlessly via Playwright against the dev server; acceptable for docs since the image faithfully represents the live app state.
+
+**Course corrections:** None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Process improvement suggestion:** The issue referenced "consistent with the in-app footer" for the disclaimer, but no such footer exists. AC should be checked against live code before referencing app elements that may not exist.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-10 — Chore #45: Add favicon, meta description, and OG tags to index.html
 
 ### Objective

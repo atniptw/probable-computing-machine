@@ -1,65 +1,66 @@
-# probable-computing-machine
+# Pokémon Matchup Helper
 
-Foundational project workspace for a new web app.
+**[Live app → https://atniptw.github.io/probable-computing-machine/](https://atniptw.github.io/probable-computing-machine/)**
 
-## Quick Start
+A fast, in-battle type matchup tool for Pokémon players. Search for your opponent's Pokémon, configure your team, and instantly see which of your Pokémon have the best type advantage — optimized for use mid-fight on any device.
+
+---
+
+## Features
+
+- **Games supported:** Pokémon Red, Crystal, Emerald, Platinum, Black 2, X, Ultra Sun, Sword, and Scarlet (Gen 1–9)
+- **Gym leader mode:** browse gym leaders for each game and select their Pokémon directly — no typing required
+- **Type effectiveness:** full offensive and defensive matchup analysis, generation-aware for historical chart differences
+- **Team configuration:** configure up to 6 Pokémon with up to 4 moves each; team persists locally per game
+
+---
+
+## Screenshot
+
+![Pokémon Matchup Helper showing Swampert vs Machop matchup with type cards and offense/defense analysis](docs/screenshots/matchup-viewer.png)
+
+---
+
+## How to Use
+
+See the [User Guide](docs/USER_GUIDE.md) for full instructions.
+
+**Quick start:**
+
+1. Select a **Game** to filter the Pokédex to that game's roster.
+2. In **Free battle** mode, type 2–3 letters in the Opponent field and select from the instant suggestions.
+3. In **Gym leader** mode, pick a gym and then a Pokémon from their team.
+4. Tap **Edit Team** to add your Pokémon before your first battle.
+5. Read the matchup cards — each shows type badges, what your Pokémon resists, and what threatens it.
+
+---
+
+## Disclaimer
+
+This is an unofficial fan tool. Pokémon and all related names are trademarks of Nintendo, Game Freak, and Creatures Inc. This project is not affiliated with or endorsed by Nintendo or The Pokémon Company. Data is sourced from [PokéAPI](https://pokeapi.co).
+
+---
+
+## Development
 
 ```bash
-npm install       # install dependencies (auto-runs on devcontainer open)
-npm run dev       # start dev server → open http://localhost:5173
+npm install       # install dependencies
+npm run dev       # start dev server → http://localhost:5173
 ```
 
-Port 5173 is automatically forwarded when opened in a devcontainer — VS Code will show an "Open in Browser" notification.
-
-## Current Status
-
-- Stage: MVP battle UX implemented with game-specific Pokédex filtering and structured team move editing with autocomplete
-- Product: Pokémon matchup viewer (descriptive offense/defense UI, static web app)
-- Stack: React 18 + Vite, hosted on GitHub Pages
-- Collaboration cadence: continuous flow with explicit role handoffs
-
-## Collaboration Workflow
-
-1. Use PM intake to define acceptance criteria before implementation.
-2. Require architecture and contract validation before coding.
-3. Route implementation through Backend/Frontend with test evidence.
-4. Require QA, DevOps, and Docs gates before release closure.
-
-## Core Docs
-
-- [PROJECT.md](PROJECT.md): project scope, success criteria, and questionnaire answers
-- [SESSIONS.md](SESSIONS.md): append-only session log and handoffs
-- [DECISIONS.md](DECISIONS.md): decision log with rationale
-- [.github/copilot-instructions.md](.github/copilot-instructions.md): shared team operating instructions
-
-## Agentic Team System
-
-- [.github/copilot-instructions.md](.github/copilot-instructions.md): shared always-on team rules
-- [.github/AGENTS.md](.github/AGENTS.md): role ownership and handoff protocol
-- [.github/instructions/](.github/instructions/): role-specific constraints and gate rules
-- [.github/prompts/](.github/prompts/): repeatable PM/architecture/QA/release workflows
-- [.github/skills/README.md](.github/skills/README.md): reusable multi-step skills catalog
-
-## Next Immediate Actions
-
-1. Add focused tests for `src/components/MatchupViewer/*` covering swipe/cycle behavior and section rendering states.
-2. Remove or archive deprecated recommendation-only rendering assets if no longer part of product direction.
-3. Add focused UI tests for team editor move chip interactions, autocomplete states, and save validation errors.
-
-## Testing Reliability Notes
-
-- Avoid inline arrays/objects/functions in hook test callbacks when they are effect dependencies. Unstable references can create rerender loops and hanging suites.
-- For async effect collaborators, mocks must always return promises. Returning `undefined` can produce unhandled errors that do not always fail individual assertions.
-- Treat unhandled Vitest errors as gate failures even if all assertions pass.
-
-## Validation Commands
+### Validation
 
 ```bash
-npm run check          # typecheck + production build (pre-flight sanity check)
 npm run lint
-npm run format:check
 npm run tsc
-npm run test:coverage
-npm run build
-npm run e2e
+npm run test
+npx playwright test --project=chromium
 ```
+
+### Core Docs
+
+- [PROJECT.md](PROJECT.md) — project scope and success criteria
+- [SESSIONS.md](SESSIONS.md) — session log and handoffs
+- [DECISIONS.md](DECISIONS.md) — decision log with rationale
+- [docs/USER_GUIDE.md](docs/USER_GUIDE.md) — user-facing how-to guide
+- [docs/COMPONENT_DESIGN.md](docs/COMPONENT_DESIGN.md) — component architecture
