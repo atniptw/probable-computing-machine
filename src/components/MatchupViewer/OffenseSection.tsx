@@ -14,10 +14,26 @@ interface OffenseSectionProps {
 }
 
 function indicator(multiplier: number): string {
+  if (multiplier === 0) return '0x'
   if (multiplier >= 4) return '4x'
   if (multiplier >= 2) return '2x'
   if (multiplier === 1) return '1x'
   return '0.5x'
+}
+
+function indicatorClass(multiplier: number): string {
+  if (multiplier === 0) return styles.moveIndicatorImmune
+  if (multiplier < 1) return styles.moveIndicatorResisted
+  if (multiplier > 1) return styles.moveIndicatorSuper
+  return ''
+}
+
+function indicatorLabel(multiplier: number): string {
+  const value = indicator(multiplier)
+  if (multiplier === 0) return `immune, ${value}`
+  if (multiplier < 1) return `resisted, ${value}`
+  if (multiplier > 1) return `super effective, ${value}`
+  return `neutral, ${value}`
 }
 
 function renderMoves(moves: MoveRow[], showAll: boolean): JSX.Element {
@@ -31,7 +47,10 @@ function renderMoves(moves: MoveRow[], showAll: boolean): JSX.Element {
       {visibleMoves.map((move) => (
         <li className={styles.moveRow} key={move.name}>
           <span className={styles.moveName}>{move.name}</span>
-          <span className={styles.moveIndicator}>
+          <span
+            className={`${styles.moveIndicator} ${indicatorClass(move.multiplier)}`}
+            aria-label={indicatorLabel(move.multiplier)}
+          >
             {indicator(move.multiplier)}
           </span>
         </li>

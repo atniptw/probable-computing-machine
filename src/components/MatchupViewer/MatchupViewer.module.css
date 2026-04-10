@@ -213,6 +213,18 @@
   font-weight: 700;
 }
 
+.moveIndicatorSuper {
+  color: #1a6b3c;
+}
+
+.moveIndicatorResisted {
+  color: #8a2c24;
+}
+
+.moveIndicatorImmune {
+  color: #6941c6;
+}
+
 .summaryText {
   margin: 8px 0 0;
   color: #344150;
