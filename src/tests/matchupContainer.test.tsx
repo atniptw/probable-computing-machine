@@ -24,6 +24,10 @@ const OPPONENT_POKEMON = {
   types: ['electric'],
   sprite: null,
 }
+const PLAYER_POKEMON_WITH_SPRITE = {
+  ...PLAYER_POKEMON,
+  sprite: 'https://example.com/swampert.png',
+}
 
 const FULL_MATCHUP: MatchupViewModel = {
   player: PLAYER_POKEMON,
@@ -138,6 +142,19 @@ describe('MatchupContainer — render branches', () => {
     renderContainer({}, { loading: false, matchup: FULL_MATCHUP })
     expect(
       screen.getByRole('region', { name: 'Matchup viewer' }),
+    ).toBeInTheDocument()
+  })
+
+  it('renders a sprite img when the pokemon has a sprite URL', () => {
+    renderContainer(
+      {},
+      {
+        loading: false,
+        matchup: { ...FULL_MATCHUP, player: PLAYER_POKEMON_WITH_SPRITE },
+      },
+    )
+    expect(
+      screen.getByRole('img', { name: /swampert sprite/i }),
     ).toBeInTheDocument()
   })
 })

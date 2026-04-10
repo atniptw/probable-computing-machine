@@ -49,7 +49,7 @@ Run all of the following. Do not proceed to Step 5 if any fails.
 ```
 npm run lint
 npm run tsc
-npm run test
+npm run test:coverage
 npx playwright test --project=chromium
 ```
 

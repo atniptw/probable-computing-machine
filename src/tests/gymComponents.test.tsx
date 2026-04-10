@@ -126,4 +126,21 @@ describe('GymTeamPanel', () => {
     expect(onPokemonSelect).toHaveBeenCalledOnce()
     expect(onPokemonSelect).toHaveBeenCalledWith('geodude')
   })
+
+  it('marks the selected Pokémon button as aria-pressed', () => {
+    render(
+      <GymTeamPanel
+        gymLeader={ROXANNE}
+        selectedOpponent="nosepass"
+        onPokemonSelect={onPokemonSelect}
+      />,
+    )
+    expect(screen.getByRole('button', { name: /nosepass/i })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    screen.getAllByRole('button', { name: /geodude/i }).forEach((btn) => {
+      expect(btn).toHaveAttribute('aria-pressed', 'false')
+    })
+  })
 })
