@@ -8,6 +8,18 @@ gh issue view [ARGUMENTS]
 
 Summarize: title, acceptance criteria, notes. If no acceptance criteria exist, stop and run `/feature-intake` before continuing.
 
+## Step 1.2 — Mark issue in progress
+
+```
+gh issue edit [ARGUMENTS] --add-label "in progress"
+```
+
+If the label does not exist, create it first:
+
+```
+gh label create "in progress" --color "0075ca" --description "Actively being worked"
+```
+
 ## Step 1.7 — Design review (visual issues only)
 
 Run `/design-review [ARGUMENTS]` if the issue touches visible UI layout, color, typography, spacing, or interactive states. The command will audit all affected locations, produce a concrete design spec with exact values, and update the issue before implementation begins.
