@@ -31,6 +31,7 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>('battle')
   const [opponentInput, setOpponentInput] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [battleMode, setBattleMode] = useState<BattleMode>('free')
   const [selectedGymId, setSelectedGymId] = useState<string | null>(null)
 
@@ -125,6 +126,14 @@ export default function App() {
     setSelectedGymId(null)
   }
 
+  function handleSave(): void {
+    if (saveTeam()) {
+      setScreen('battle')
+      setSuccessMessage('Team saved')
+      window.setTimeout(() => setSuccessMessage(null), 2000)
+    }
+  }
+
   return (
     <div className={styles.app}>
       <header className={styles.header}>
@@ -172,6 +181,12 @@ export default function App() {
         </div>
       )}
 
+      {successMessage && (
+        <div className={styles.successBanner} role="status">
+          {successMessage}
+        </div>
+      )}
+
       <main className={styles.resultsPane}>
         {screen === 'team' ? (
           <TeamEditorPanel
@@ -197,12 +212,6 @@ export default function App() {
               updateTeamSlot(index, name)
               setActiveTeamSlot(null)
             }}
-            onSave={() => {
-              if (saveTeam()) {
-                setScreen('battle')
-              }
-            }}
-            saveDisabled={!nameIndexReady}
           />
         ) : (
           <MatchupContainer
@@ -220,6 +229,19 @@ export default function App() {
           />
         )}
       </main>
+
+      {screen === 'team' && (
+        <div className={styles.teamFooter}>
+          <button
+            type="button"
+            className={styles.primaryButton}
+            onClick={handleSave}
+            disabled={!nameIndexReady}
+          >
+            Save Team
+          </button>
+        </div>
+      )}
     </div>
   )
 }

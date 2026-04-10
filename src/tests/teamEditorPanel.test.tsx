@@ -13,7 +13,6 @@ const onRemoveMove = vi.fn()
 const onSlotFocus = vi.fn()
 const onSlotBlur = vi.fn()
 const onSuggestionSelect = vi.fn()
-const onSave = vi.fn()
 
 function resetMocks() {
   getSuggestions.mockReset().mockReturnValue([])
@@ -24,7 +23,6 @@ function resetMocks() {
   onSlotFocus.mockReset()
   onSlotBlur.mockReset()
   onSuggestionSelect.mockReset()
-  onSave.mockReset()
 }
 
 function renderPanel(
@@ -44,8 +42,6 @@ function renderPanel(
     onSlotFocus,
     onSlotBlur,
     onSuggestionSelect,
-    onSave,
-    saveDisabled: false,
   }
   render(<TeamEditorPanel {...defaults} {...overrides} />)
 }
@@ -92,17 +88,6 @@ describe('TeamEditorPanel', () => {
     expect(
       screen.getAllByRole('button', { name: 'Add Move' })[0],
     ).toBeDisabled()
-  })
-
-  it('calls onSave when Save Team button is clicked', () => {
-    renderPanel()
-    fireEvent.click(screen.getByRole('button', { name: 'Save Team' }))
-    expect(onSave).toHaveBeenCalledOnce()
-  })
-
-  it('disables Save Team button when saveDisabled is true', () => {
-    renderPanel({ saveDisabled: true })
-    expect(screen.getByRole('button', { name: 'Save Team' })).toBeDisabled()
   })
 
   it('calls onSlotChange when a slot input value changes', () => {

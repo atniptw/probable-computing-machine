@@ -18,8 +18,6 @@ interface TeamEditorPanelProps {
   onSlotFocus: (index: number) => void
   onSlotBlur: (index: number) => void
   onSuggestionSelect: (index: number, name: string) => void
-  onSave: () => void
-  saveDisabled: boolean
 }
 
 export default function TeamEditorPanel({
@@ -36,8 +34,6 @@ export default function TeamEditorPanel({
   onSlotFocus,
   onSlotBlur,
   onSuggestionSelect,
-  onSave,
-  saveDisabled,
 }: TeamEditorPanelProps) {
   const [activeMoveSlot, setActiveMoveSlot] = useState<number | null>(null)
   const [moveInputDrafts, setMoveInputDrafts] = useState<string[]>(() =>
@@ -193,15 +189,6 @@ export default function TeamEditorPanel({
           )
         })}
       </div>
-
-      <button
-        type="button"
-        className={styles.primaryButton}
-        onClick={onSave}
-        disabled={saveDisabled}
-      >
-        Save Team
-      </button>
     </section>
   )
 }
