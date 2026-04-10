@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { DEFAULT_GAME_VERSION, getGameDefinition } from './data/games'
 import { getGymById } from './data/gyms/emerald'
 import BattleSelectorSection from './components/AppView/BattleSelectorSection'
+import ErrorBoundary from './components/ErrorBoundary'
 
 export type BattleMode = 'free' | 'gym'
 import TeamConfigurationSection from './components/AppView/TeamConfigurationSection'
@@ -188,46 +189,48 @@ export default function App() {
       )}
 
       <main className={styles.resultsPane}>
-        {screen === 'team' ? (
-          <TeamEditorPanel
-            teamDraft={teamDraft}
-            teamMovesDraft={teamMovesDraft}
-            teamSlotErrors={teamSlotErrors}
-            teamMoveErrors={teamMoveErrors}
-            activeTeamSlot={activeTeamSlot}
-            getSuggestions={getSuggestions}
-            getMoveSuggestions={getMoveSuggestions}
-            onSlotChange={updateTeamSlot}
-            onAddMove={addTeamMove}
-            onRemoveMove={removeTeamMove}
-            onSlotFocus={setActiveTeamSlot}
-            onSlotBlur={(index) => {
-              window.setTimeout(() => {
-                setActiveTeamSlot((current) =>
-                  current === index ? null : current,
-                )
-              }, 120)
-            }}
-            onSuggestionSelect={(index, name) => {
-              updateTeamSlot(index, name)
-              setActiveTeamSlot(null)
-            }}
-          />
-        ) : (
-          <MatchupContainer
-            teamMembers={teamMembers}
-            teamNames={teamNames}
-            normalizedOpponent={normalizedOpponent}
-            exactMatchFound={exactMatchFound}
-            nameIndexReady={nameIndexReady}
-            generation={selectedGame.generation}
-            gameLabel={selectedGame.label}
-            pokemonNameSet={pokemonNameSet}
-            opponentMoves={opponentMoves}
-            opponentSuggestions={opponentSuggestions}
-            onError={setError}
-          />
-        )}
+        <ErrorBoundary>
+          {screen === 'team' ? (
+            <TeamEditorPanel
+              teamDraft={teamDraft}
+              teamMovesDraft={teamMovesDraft}
+              teamSlotErrors={teamSlotErrors}
+              teamMoveErrors={teamMoveErrors}
+              activeTeamSlot={activeTeamSlot}
+              getSuggestions={getSuggestions}
+              getMoveSuggestions={getMoveSuggestions}
+              onSlotChange={updateTeamSlot}
+              onAddMove={addTeamMove}
+              onRemoveMove={removeTeamMove}
+              onSlotFocus={setActiveTeamSlot}
+              onSlotBlur={(index) => {
+                window.setTimeout(() => {
+                  setActiveTeamSlot((current) =>
+                    current === index ? null : current,
+                  )
+                }, 120)
+              }}
+              onSuggestionSelect={(index, name) => {
+                updateTeamSlot(index, name)
+                setActiveTeamSlot(null)
+              }}
+            />
+          ) : (
+            <MatchupContainer
+              teamMembers={teamMembers}
+              teamNames={teamNames}
+              normalizedOpponent={normalizedOpponent}
+              exactMatchFound={exactMatchFound}
+              nameIndexReady={nameIndexReady}
+              generation={selectedGame.generation}
+              gameLabel={selectedGame.label}
+              pokemonNameSet={pokemonNameSet}
+              opponentMoves={opponentMoves}
+              opponentSuggestions={opponentSuggestions}
+              onError={setError}
+            />
+          )}
+        </ErrorBoundary>
       </main>
 
       {screen === 'team' && (

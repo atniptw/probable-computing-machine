@@ -2,6 +2,51 @@
 
 ---
 
+## 2026-04-10 — Feat #36: Add ErrorBoundary component to catch runtime render errors
+
+### Objective
+
+Add a React error boundary around `<main>` so synchronous render crashes show a recoverable fallback instead of a white screen.
+
+### Completed Work
+
+- Created `src/components/ErrorBoundary.tsx` — class component with `getDerivedStateFromError`, fallback card UI ("Something went wrong." + body text + full-width "Try again" reset button)
+- Created `src/components/ErrorBoundary.module.css` — fallback card styles matching the established card palette (`#ffffff` bg, `#d7dce0` border, `12px` radius, `#8a2c24` error heading, `#5f6b77` body, `.primaryButton`-style reset button)
+- Updated `src/App.tsx` to import and wrap `<main>` with `<ErrorBoundary>`
+- Created `src/tests/ErrorBoundary.test.tsx` — 3 unit tests: renders children normally, renders fallback on thrown error, resets to children after "Try again"
+- Updated `docs/COMPONENT_DESIGN.md` — `ErrorBoundary` added to Runtime Component Tree wrapping `<main>`
+
+### Validation
+
+- lint: ✓ 0 warnings
+- tsc: ✓ no errors
+- test: ✓ 152/152 passed (3 new ErrorBoundary tests)
+- playwright: ✓ 6/6 passed
+- visual QA: ✓ agent-verified (fallback card, copy, colors, button, mobile layout, app chrome preserved); focus-visible ring flagged for human review, user approved
+
+### Retrospective
+
+**Assumptions made:**
+
+- The design spec (produced during design review) fully specified all visual values; implementation followed the spec exactly — no additional assumptions required.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete (design review enriched the original AC with exact CSS values before implementation)
+- Scope clarity: Clear
+
+**Process improvement suggestion:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-10 — Docs #46: Update README with live URL and user-facing description
 
 ### Objective

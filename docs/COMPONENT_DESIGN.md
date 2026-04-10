@@ -13,12 +13,13 @@ App
 │   └── SuggestionList (free mode, conditional)
 ├── TeamConfigurationSection (team screen header)
 │   └── GameVersionSelect
-├── MatchupContainer (battle screen, main pane) [owns selectedTeamIndex: number]
-│   ├── PokemonCard (opponent + active team member)
-│   ├── OffenseSection
-│   └── DefenseSection
-└── TeamEditorPanel (team screen, main pane)
-    └── SuggestionList × 2 (slot + move autocomplete)
+└── ErrorBoundary (wraps <main> — catches synchronous render errors in the results pane)
+    ├── MatchupContainer (battle screen, main pane) [owns selectedTeamIndex: number]
+    │   ├── PokemonCard (opponent + active team member)
+    │   ├── OffenseSection
+    │   └── DefenseSection
+    └── TeamEditorPanel (team screen, main pane)
+        └── SuggestionList × 2 (slot + move autocomplete)
 ```
 
 ## App Contract
