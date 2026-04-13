@@ -22,7 +22,7 @@ if not cmd:
 ALLOWED = [
     r"^npm run ",
     r"^npm audit",
-    r"^npm install",
+    r"^npm install$",
     r"^npx playwright test",
     r"^npx playwright install",
     r"^bash /home/atnip/projects/probable-computing-machine/\.claude/",
