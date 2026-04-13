@@ -2,6 +2,53 @@
 
 ---
 
+## 2026-04-13 — Feat #32: Increase Pokémon sprite size in matchup card
+
+### Objective
+
+Increase sprite display size in the matchup card for better visual richness and Pokémon recognizability.
+
+### Completed Work
+
+- Updated `.spriteWrap` from 58px → 96px (desktop) in `MatchupViewer.module.css`
+- Updated `.spriteWrap img` from 52px → 88px (desktop)
+- Updated `.spriteFallback` font-size from 0.95rem → 1.5rem (desktop)
+- Added `@media (max-width: 480px)` overrides: `.spriteWrap` 72px, `.spriteWrap img` 64px, `.spriteFallback` 1.25rem
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (158 tests, 80.46% branch)
+- `npx playwright test --project=chromium` — pass (6 tests)
+- Visual QA — approved (programmatic pixel measurement confirmed exact AC values at all viewports)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+None. Design spec in issue was fully specified with exact pixel values and affected file locations.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+
+- `[skill]` — `/visual-qa` script setup took multiple retries to find correct opponent input locator (`#opponent-input`) and to seed team data via `addInitScript`. A short fixture/helper note in the skill or a project-level Playwright fixture would prevent this friction on future visual issues.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Chore #48: Address npm audit vulnerabilities (brace-expansion, picomatch, vite)
 
 ### Objective
