@@ -2,6 +2,56 @@
 
 ---
 
+## 2026-04-13 — Refactor #38: Split pokeapi.ts god module into focused service modules
+
+### Objective
+
+Break the 739-line `src/services/pokeapi.ts` monolith into four focused modules while preserving the full public API surface and all existing tests unchanged.
+
+### Completed Work
+
+- `src/services/pokeapiClient.ts` (177 lines): domain types, internal PokéAPI response types, error classes (`PokemonNotFoundError`, `RateLimitError`, `NetworkError`), `BASE_URL`, `generationNameMap`, `fetchWithRetry`
+- `src/services/pokemonCache.ts` (244 lines): cache constants, `CachedPokemonNameIndex` type, in-memory deduplication Maps, `getPokemonNameIndex`, `getMoveNameIndex`, and all supporting fetch helpers (`fetchPokemonNameIndexFromApi`, `fetchMoveNameIndexFromApi`, `getGameVersionContext`, `fetchPokemonNameIndexForVersion`)
+- `src/services/typechart.ts` (179 lines): `typeMapCache`, `cloneTypeMap`, `removeType`, `ensureHalfDamageTo`, `ensureNoDamageTo`, `applyGenerationTypeRules`, `buildBaseTypeMap`, `getTypeMap`, `calcEffectiveness`, `modifierLabel`
+- `src/services/pokeapi.ts` rewritten (216 lines): re-exports all public symbols from the three sub-modules; implements `getPokemon`, `getMoveType`, and `computeMatchups`
+- `docs/API_SPEC.md`: updated "Client-Side Service Interface" section to describe the four-module layout with per-module responsibility and full public function signatures
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (161 tests, thresholds met)
+- `npx playwright test --project=chromium` — pass (6 tests)
+- Visual QA — skipped (pure refactor, no user-visible changes)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- `modifierLabel` (private helper in original `pokeapi.ts`) was moved to `typechart.ts` and exported so `computeMatchups` in `pokeapi.ts` can import it without duplicating logic. It is not re-exported from the barrel (not public API).
+- `generationNameMap` was placed in `pokeapiClient.ts` (the lowest-dependency layer) so both `pokemonCache.ts` and `pokeapi.ts` can import it without circular dependency.
+- `pokemonRequestCache`, `moveTypeCache`, and `moveTypePromise` Maps were kept in `pokeapi.ts` alongside the functions that own them rather than exporting them from `pokemonCache.ts`, since the issue's intent for that module was the index-level caching.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — specific file names, line limit, and public API surface all enumerated.
+- Scope clarity: Clear.
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Chore #39: Extract shared test utilities into testUtils.ts
 
 ### Objective

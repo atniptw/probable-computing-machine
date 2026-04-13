@@ -10,20 +10,19 @@ All calls go directly from the browser to PokéAPI v2. No backend proxy. CORS is
 
 Fetch a Pokémon's type assignments by name.
 
-| | |
-|---|---|
-| Auth | None |
-| Cache | `localStorage`, 7-day TTL |
-| On 404 | Throw `PokemonNotFoundError` |
+|        |                                                  |
+| ------ | ------------------------------------------------ |
+| Auth   | None                                             |
+| Cache  | `localStorage`, 7-day TTL                        |
+| On 404 | Throw `PokemonNotFoundError`                     |
 | On 429 | Retry once after 1s, then throw `RateLimitError` |
 
 **Success — fields used**
+
 ```json
 {
   "name": "pikachu",
-  "types": [
-    { "slot": 1, "type": { "name": "electric" } }
-  ]
+  "types": [{ "slot": 1, "type": { "name": "electric" } }]
 }
 ```
 
@@ -33,10 +32,10 @@ Fetch a Pokémon's type assignments by name.
 
 Fetch total Pokemon count to determine the exact index size.
 
-| | |
-|---|---|
-| Auth | None |
-| Cache | None |
+|         |                                           |
+| ------- | ----------------------------------------- |
+| Auth    | None                                      |
+| Cache   | None                                      |
 | Purpose | Derive exact `count` before loading names |
 
 ---
@@ -45,13 +44,14 @@ Fetch total Pokemon count to determine the exact index size.
 
 Fetch the full Pokemon name index for client-side partial search using the exact count from the previous call.
 
-| | |
-|---|---|
-| Auth | None |
-| Cache | `localStorage`, 7-day TTL (`pkm_names_v1`) |
-| Failure fallback | Use stale cached names if available |
+|                  |                                            |
+| ---------------- | ------------------------------------------ |
+| Auth             | None                                       |
+| Cache            | `localStorage`, 7-day TTL (`pkm_names_v1`) |
+| Failure fallback | Use stale cached names if available        |
 
 **Success - fields used**
+
 ```json
 {
   "count": 1302,
@@ -68,23 +68,24 @@ Fetch the full Pokemon name index for client-side partial search using the exact
 
 Fetch type effectiveness relations.
 
-| | |
-|---|---|
-| Auth | None |
-| Cache | Module-level memory map (session lifetime) |
-| Called | Once per unique type, on first startup |
+|        |                                            |
+| ------ | ------------------------------------------ |
+| Auth   | None                                       |
+| Cache  | Module-level memory map (session lifetime) |
+| Called | Once per unique type, on first startup     |
 
 **Success — fields used**
+
 ```json
 {
   "name": "electric",
   "damage_relations": {
-    "double_damage_to":   [{ "name": "water" }, { "name": "flying" }],
-    "half_damage_to":     [{ "name": "electric" }, { "name": "grass" }],
-    "no_damage_to":       [{ "name": "ground" }],
+    "double_damage_to": [{ "name": "water" }, { "name": "flying" }],
+    "half_damage_to": [{ "name": "electric" }, { "name": "grass" }],
+    "no_damage_to": [{ "name": "ground" }],
     "double_damage_from": [{ "name": "ground" }],
-    "half_damage_from":   [{ "name": "flying" }, { "name": "steel" }],
-    "no_damage_from":     []
+    "half_damage_from": [{ "name": "flying" }, { "name": "steel" }],
+    "no_damage_from": []
   }
 }
 ```
@@ -97,25 +98,72 @@ List all type names. Called once on startup to prefetch the full TypeMap.
 
 ---
 
-## Client-Side Service Interface (`src/services/pokeapi.js`)
+## Client-Side Service Modules
 
-```js
-// Returns Pokemon with name and types.
+The service layer is split into four focused modules. All public symbols are
+re-exported from `src/services/pokeapi.ts` so callers import from one path.
+
+### `src/services/pokeapiClient.ts`
+
+Raw HTTP layer: `fetchWithRetry` (1s retry on 429), error classes
+(`PokemonNotFoundError`, `RateLimitError`, `NetworkError`), all domain types
+(`Pokemon`, `TypeRelations`, `Effectiveness`, etc.), and internal PokéAPI
+response shape interfaces.
+
+### `src/services/pokemonCache.ts`
+
+Name and move index fetching with localStorage TTL caching and in-memory
+Promise deduplication. Exports `getPokemonNameIndex` and `getMoveNameIndex`.
+Cache constants (`CACHE_PREFIX`, `CACHE_TTL_MS`) are defined here and shared
+with the barrel.
+
+### `src/services/typechart.ts`
+
+Type effectiveness logic: `getTypeMap` (fetches and caches per-generation type
+charts), `calcEffectiveness` (multiplier computation), and internal generation
+rule helpers (`applyGenerationTypeRules`, `cloneTypeMap`).
+
+### `src/services/pokeapi.ts` (barrel + Pokémon fetch)
+
+Re-exports all public symbols from the three modules above and implements
+`getPokemon`, `getMoveType`, and `computeMatchups`.
+
+```ts
+// Returns Pokémon with name, types (generation-aware), and sprite.
 // Checks localStorage first; falls back to PokéAPI fetch.
-async function getPokemon(name: string): Promise<Pokemon>
+async function getPokemon(
+  name: string,
+  options?: PokemonQueryOptions,
+): Promise<Pokemon>
 
-// Returns all Pokemon names for local partial search.
+// Returns all Pokémon names for a version's Pokédex (or global if omitted).
 // Uses cached localStorage index and falls back to stale cache on fetch failure.
-async function getPokemonNameIndex(): Promise<string[]>
+async function getPokemonNameIndex(version?: string): Promise<string[]>
 
-// Returns complete TypeMap.
-// Fetches all types once per session; subsequent calls return cached map.
-async function getTypeMap(): Promise<TypeMap>
+// Returns all move names for local autocomplete.
+async function getMoveNameIndex(): Promise<string[]>
+
+// Returns the move's type string.
+async function getMoveType(moveName: string): Promise<string>
+
+// Returns the complete generation-aware TypeMap.
+// Fetched once per session; subsequent calls return the cached map.
+async function getTypeMap(
+  options?: TypeMapOptions,
+): Promise<Map<string, TypeRelations>>
+
+// Pure function: computes type effectiveness multiplier.
+function calcEffectiveness(
+  attackerTypes: string[],
+  defenderTypes: string[],
+  typeMap: Map<string, TypeRelations>,
+): number
 
 // Resolves all Pokémon, builds TypeMap, computes full matchup matrix.
 async function computeMatchups(
   yourTeam: string[],
-  opponentTeam: string[]
+  opponentTeam: string[],
+  options?: PokemonQueryOptions,
 ): Promise<MatchupResult>
 ```
 
@@ -129,7 +177,7 @@ For each `(yourPokemon, opponentPokemon)` pair, compute `youVsThem`:
    - If opponent type is in `halfDamageTo` → multiply by `0.5`
    - If opponent type is in `noDamageTo` → multiply by `0`
 3. Map final modifier:
-   - `≥ 2` → `"2x"` 
+   - `≥ 2` → `"2x"`
    - `1` → `"1x"`
    - `0.5` or `0.25` → `"0.5x"`
    - `0` → `"0x"`
@@ -137,8 +185,8 @@ For each `(yourPokemon, opponentPokemon)` pair, compute `youVsThem`:
 
 ## Error Types
 
-| Error class | Cause | App response |
-|-------------|-------|--------------|
-| `PokemonNotFoundError(name)` | 404 from `/pokemon/{name}` | Inline field error |
-| `RateLimitError` | 429 after retry | Top-level retry banner |
-| `NetworkError` | Fetch threw / no connection | Top-level "check connection" banner |
+| Error class                  | Cause                       | App response                        |
+| ---------------------------- | --------------------------- | ----------------------------------- |
+| `PokemonNotFoundError(name)` | 404 from `/pokemon/{name}`  | Inline field error                  |
+| `RateLimitError`             | 429 after retry             | Top-level retry banner              |
+| `NetworkError`               | Fetch threw / no connection | Top-level "check connection" banner |

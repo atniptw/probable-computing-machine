@@ -1,198 +1,63 @@
-// --- Exported domain types ---
+// Re-export public API surface
 
-export interface Pokemon {
-  name: string
-  types: string[]
-  sprite: string | null
-}
+export type {
+  Pokemon,
+  PokemonQueryOptions,
+  TypeMapOptions,
+  GameVersionContext,
+  TypeRelations,
+  Effectiveness,
+  MatchupEntry,
+  MatchupSummary,
+  MatchupResult,
+} from './pokeapiClient'
 
-export interface PokemonQueryOptions {
-  generation?: number
-}
+export {
+  PokemonNotFoundError,
+  RateLimitError,
+  NetworkError,
+} from './pokeapiClient'
 
-export interface TypeMapOptions {
-  generation?: number
-}
+export { getPokemonNameIndex, getMoveNameIndex } from './pokemonCache'
 
-export interface GameVersionContext {
-  version: string
-  versionGroup: string
-  generation: number
-  pokedex: string
-}
+export { getTypeMap, calcEffectiveness } from './typechart'
 
-export interface TypeRelations {
-  doubleDamageTo: string[]
-  halfDamageTo: string[]
-  noDamageTo: string[]
-}
+// --- Imports for local implementation ---
 
-export type Effectiveness = '2x' | '1x' | '0.5x' | '0x'
+import {
+  BASE_URL,
+  fetchWithRetry,
+  generationNameMap,
+  NetworkError,
+  PokemonNotFoundError,
+  type MatchupEntry,
+  type MatchupResult,
+  type MatchupSummary,
+  type PokeApiMoveResponse,
+  type PokeApiPokemonResponse,
+  type PokeApiTypeEntry,
+  type Pokemon,
+  type PokemonQueryOptions,
+} from './pokeapiClient'
 
-export interface MatchupEntry {
-  yours: Pokemon
-  theirs: Pokemon
-  youVsThem: Effectiveness
-  themVsYou: Effectiveness
-}
+import { CACHE_PREFIX, CACHE_TTL_MS } from './pokemonCache'
 
-export interface MatchupSummary {
-  superEffective: number
-  neutral: number
-  notVeryEffective: number
-}
+import { calcEffectiveness, getTypeMap, modifierLabel } from './typechart'
 
-export interface MatchupResult {
-  yourTeam: Pokemon[]
-  opponentTeam: Pokemon[]
-  matrix: MatchupEntry[]
-  summary: MatchupSummary
-}
+// --- Module-level caches for Pokemon and move-type requests ---
 
-// --- Internal types ---
+const pokemonRequestCache = new Map<string, Promise<Pokemon>>()
+const moveTypeCache = new Map<string, string>()
+const moveTypePromise = new Map<string, Promise<string>>()
 
-interface PokeApiTypeEntry {
-  slot: number
-  type: { name: string }
-}
-interface PokeApiPokemonResponse {
-  name: string
-  types: PokeApiTypeEntry[]
-  past_types: {
-    generation: { name: string }
-    types: PokeApiTypeEntry[]
-  }[]
-  sprites: {
-    front_default: string | null
-  }
-}
-interface PokeApiMoveResponse {
-  type: { name: string }
-}
-interface PokeApiDamageRelations {
-  double_damage_to: { name: string }[]
-  half_damage_to: { name: string }[]
-  no_damage_to: { name: string }[]
-}
-interface PokeApiTypeResponse {
-  damage_relations: PokeApiDamageRelations
-}
-interface PokeApiTypeListResponse {
-  results: { name: string; url: string }[]
-}
-interface PokeApiPokemonListResponse {
-  count: number
-  results: { name: string; url: string }[]
-}
-interface PokeApiMoveListResponse {
-  count: number
-  results: { name: string; url: string }[]
-}
-interface PokeApiVersionResponse {
-  name: string
-  version_group: { name: string }
-}
-interface PokeApiVersionGroupResponse {
-  generation: { name: string }
-  pokedexes: { name: string }[]
-}
-interface PokeApiPokedexResponse {
-  pokemon_entries: {
-    pokemon_species: { name: string }
-  }[]
-}
+// --- Internal cache type ---
+
 interface CachedPokemon {
   data: Pokemon
   expires: number
 }
-interface CachedPokemonNameIndex {
-  names: string[]
-  expires: number
-}
 
-// --- Module-level cache ---
-
-const typeMapCache = new Map<number, Map<string, TypeRelations>>()
-
-const BASE_URL = 'https://pokeapi.co/api/v2'
-const CACHE_PREFIX = 'pkm_v2_'
-const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000
-const NAME_INDEX_CACHE_KEY = 'pkm_names_v2_all'
-const MOVE_INDEX_CACHE_KEY = 'pkm_moves_v1_all'
-const NAME_INDEX_LIMIT = 100000
-const MOVE_INDEX_LIMIT = 100000
-
-const pokemonNameIndexCache = new Map<string, string[]>()
-const pokemonNameIndexPromise = new Map<string, Promise<string[]>>()
-const moveNameIndexCache = new Map<string, string[]>()
-const moveNameIndexPromise = new Map<string, Promise<string[]>>()
-const pokemonRequestCache = new Map<string, Promise<Pokemon>>()
-const moveTypeCache = new Map<string, string>()
-const moveTypePromise = new Map<string, Promise<string>>()
-const gameContextCache = new Map<string, GameVersionContext>()
-const gameContextPromise = new Map<string, Promise<GameVersionContext>>()
-
-const generationNameMap: Record<string, number> = {
-  'generation-i': 1,
-  'generation-ii': 2,
-  'generation-iii': 3,
-  'generation-iv': 4,
-  'generation-v': 5,
-  'generation-vi': 6,
-  'generation-vii': 7,
-  'generation-viii': 8,
-  'generation-ix': 9,
-}
-
-// --- Error types ---
-
-export class PokemonNotFoundError extends Error {
-  pokemonName: string
-  constructor(name: string) {
-    super(`Pokémon not found: "${name}"`)
-    this.name = 'PokemonNotFoundError'
-    this.pokemonName = name
-  }
-}
-
-export class RateLimitError extends Error {
-  constructor() {
-    super('Rate limit reached. Please try again shortly.')
-    this.name = 'RateLimitError'
-  }
-}
-
-export class NetworkError extends Error {
-  constructor() {
-    super('Network error. Please check your connection.')
-    this.name = 'NetworkError'
-  }
-}
-
-// --- Fetch helper with 429 retry ---
-
-async function fetchWithRetry(url: string): Promise<Response> {
-  let res: Response
-  try {
-    res = await fetch(url)
-  } catch {
-    throw new NetworkError()
-  }
-
-  if (res.status === 429) {
-    await new Promise<void>((r) => setTimeout(r, 1000))
-    try {
-      res = await fetch(url)
-    } catch {
-      throw new NetworkError()
-    }
-    if (res.status === 429) throw new RateLimitError()
-  }
-
-  return res
-}
-
-// --- getPokemon ---
+// --- Pokemon normalization ---
 
 function normalizePokemonTypes(entries: PokeApiTypeEntry[]): string[] {
   return [...entries]
@@ -227,6 +92,8 @@ function resolveTypesForGeneration(
   if (!candidate) return normalizePokemonTypes(json.types)
   return normalizePokemonTypes(candidate.types)
 }
+
+// --- getPokemon ---
 
 export async function getPokemon(
   name: string,
@@ -276,6 +143,8 @@ export async function getPokemon(
   }
 }
 
+// --- getMoveType ---
+
 function normalizeMoveName(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, '-')
 }
@@ -310,394 +179,6 @@ export async function getMoveType(moveName: string): Promise<string> {
   } finally {
     moveTypePromise.delete(normalizedName)
   }
-}
-
-// --- getPokemonNameIndex ---
-
-async function fetchPokemonNameIndexFromApi(): Promise<string[]> {
-  const countRes = await fetchWithRetry(`${BASE_URL}/pokemon?limit=1`)
-  if (!countRes.ok) throw new NetworkError()
-  const countJson = (await countRes.json()) as PokeApiPokemonListResponse
-
-  const safeLimit = Math.max(
-    1,
-    Math.min(countJson.count || 1, NAME_INDEX_LIMIT),
-  )
-
-  const listRes = await fetchWithRetry(`${BASE_URL}/pokemon?limit=${safeLimit}`)
-  if (!listRes.ok) throw new NetworkError()
-
-  const listJson = (await listRes.json()) as PokeApiPokemonListResponse
-  return listJson.results
-    .map((entry) => entry.name.toLowerCase())
-    .filter(Boolean)
-}
-
-async function fetchMoveNameIndexFromApi(): Promise<string[]> {
-  const countRes = await fetchWithRetry(`${BASE_URL}/move?limit=1`)
-  if (!countRes.ok) throw new NetworkError()
-  const countJson = (await countRes.json()) as PokeApiMoveListResponse
-
-  const safeLimit = Math.max(
-    1,
-    Math.min(countJson.count || 1, MOVE_INDEX_LIMIT),
-  )
-
-  const listRes = await fetchWithRetry(`${BASE_URL}/move?limit=${safeLimit}`)
-  if (!listRes.ok) throw new NetworkError()
-
-  const listJson = (await listRes.json()) as PokeApiMoveListResponse
-  return listJson.results
-    .map((entry) => entry.name.toLowerCase().replace(/-/g, ' '))
-    .filter(Boolean)
-}
-
-async function getGameVersionContext(
-  version: string,
-): Promise<GameVersionContext> {
-  if (gameContextCache.has(version)) {
-    return gameContextCache.get(version) as GameVersionContext
-  }
-
-  const inFlight = gameContextPromise.get(version)
-  if (inFlight) return inFlight
-
-  const request = (async () => {
-    const versionRes = await fetchWithRetry(
-      `${BASE_URL}/version/${encodeURIComponent(version)}`,
-    )
-    if (!versionRes.ok) throw new NetworkError()
-    const versionJson = (await versionRes.json()) as PokeApiVersionResponse
-
-    const versionGroupRes = await fetchWithRetry(
-      `${BASE_URL}/version-group/${versionJson.version_group.name}`,
-    )
-    if (!versionGroupRes.ok) throw new NetworkError()
-    const versionGroupJson =
-      (await versionGroupRes.json()) as PokeApiVersionGroupResponse
-
-    const generation = generationFromName(versionGroupJson.generation.name)
-    const pokedex = versionGroupJson.pokedexes[0]?.name
-
-    if (!generation || !pokedex) {
-      throw new NetworkError()
-    }
-
-    const context: GameVersionContext = {
-      version,
-      versionGroup: versionJson.version_group.name,
-      generation,
-      pokedex,
-    }
-
-    gameContextCache.set(version, context)
-    return context
-  })()
-
-  gameContextPromise.set(version, request)
-  try {
-    return await request
-  } finally {
-    gameContextPromise.delete(version)
-  }
-}
-
-async function fetchPokemonNameIndexForVersion(
-  version: string,
-): Promise<string[]> {
-  const context = await getGameVersionContext(version)
-  const pokedexRes = await fetchWithRetry(
-    `${BASE_URL}/pokedex/${context.pokedex}`,
-  )
-  if (!pokedexRes.ok) throw new NetworkError()
-
-  const pokedexJson = (await pokedexRes.json()) as PokeApiPokedexResponse
-  return pokedexJson.pokemon_entries
-    .map((entry) => entry.pokemon_species.name.toLowerCase())
-    .filter(Boolean)
-}
-
-export async function getPokemonNameIndex(version?: string): Promise<string[]> {
-  const cacheKey = version ? `pkm_names_v2_${version}` : NAME_INDEX_CACHE_KEY
-
-  if (pokemonNameIndexCache.has(cacheKey)) {
-    return pokemonNameIndexCache.get(cacheKey) as string[]
-  }
-  if (pokemonNameIndexPromise.has(cacheKey)) {
-    return pokemonNameIndexPromise.get(cacheKey) as Promise<string[]>
-  }
-
-  const cachedRaw = localStorage.getItem(cacheKey)
-  let cached: CachedPokemonNameIndex | null = null
-
-  if (cachedRaw) {
-    try {
-      cached = JSON.parse(cachedRaw) as CachedPokemonNameIndex
-      if (!Array.isArray(cached.names) || typeof cached.expires !== 'number') {
-        cached = null
-      }
-    } catch {
-      cached = null
-    }
-  }
-
-  if (cached && Date.now() < cached.expires) {
-    pokemonNameIndexCache.set(cacheKey, cached.names)
-    return cached.names
-  }
-
-  const request = (async () => {
-    try {
-      const names = version
-        ? await fetchPokemonNameIndexForVersion(version)
-        : await fetchPokemonNameIndexFromApi()
-
-      const payload: CachedPokemonNameIndex = {
-        names,
-        expires: Date.now() + CACHE_TTL_MS,
-      }
-
-      localStorage.setItem(cacheKey, JSON.stringify(payload))
-      pokemonNameIndexCache.set(cacheKey, names)
-      return names
-    } catch (error) {
-      if (cached && cached.names.length > 0) {
-        pokemonNameIndexCache.set(cacheKey, cached.names)
-        return cached.names
-      }
-      throw error
-    }
-  })()
-
-  pokemonNameIndexPromise.set(cacheKey, request)
-  try {
-    return await request
-  } finally {
-    pokemonNameIndexPromise.delete(cacheKey)
-  }
-}
-
-export async function getMoveNameIndex(): Promise<string[]> {
-  if (moveNameIndexCache.has(MOVE_INDEX_CACHE_KEY)) {
-    return moveNameIndexCache.get(MOVE_INDEX_CACHE_KEY) as string[]
-  }
-
-  if (moveNameIndexPromise.has(MOVE_INDEX_CACHE_KEY)) {
-    return moveNameIndexPromise.get(MOVE_INDEX_CACHE_KEY) as Promise<string[]>
-  }
-
-  const cachedRaw = localStorage.getItem(MOVE_INDEX_CACHE_KEY)
-  let cached: CachedPokemonNameIndex | null = null
-
-  if (cachedRaw) {
-    try {
-      cached = JSON.parse(cachedRaw) as CachedPokemonNameIndex
-      if (!Array.isArray(cached.names) || typeof cached.expires !== 'number') {
-        cached = null
-      }
-    } catch {
-      cached = null
-    }
-  }
-
-  if (cached && Date.now() < cached.expires) {
-    moveNameIndexCache.set(MOVE_INDEX_CACHE_KEY, cached.names)
-    return cached.names
-  }
-
-  const request = (async () => {
-    try {
-      const names = await fetchMoveNameIndexFromApi()
-      const payload: CachedPokemonNameIndex = {
-        names,
-        expires: Date.now() + CACHE_TTL_MS,
-      }
-
-      localStorage.setItem(MOVE_INDEX_CACHE_KEY, JSON.stringify(payload))
-      moveNameIndexCache.set(MOVE_INDEX_CACHE_KEY, names)
-      return names
-    } catch (error) {
-      if (cached && cached.names.length > 0) {
-        moveNameIndexCache.set(MOVE_INDEX_CACHE_KEY, cached.names)
-        return cached.names
-      }
-      throw error
-    }
-  })()
-
-  moveNameIndexPromise.set(MOVE_INDEX_CACHE_KEY, request)
-  try {
-    return await request
-  } finally {
-    moveNameIndexPromise.delete(MOVE_INDEX_CACHE_KEY)
-  }
-}
-
-// --- getTypeMap ---
-
-function cloneTypeMap(
-  source: Map<string, TypeRelations>,
-): Map<string, TypeRelations> {
-  return new Map(
-    [...source.entries()].map(([typeName, relations]) => [
-      typeName,
-      {
-        doubleDamageTo: [...relations.doubleDamageTo],
-        halfDamageTo: [...relations.halfDamageTo],
-        noDamageTo: [...relations.noDamageTo],
-      },
-    ]),
-  )
-}
-
-function removeType(map: Map<string, TypeRelations>, typeName: string): void {
-  map.delete(typeName)
-  for (const relations of map.values()) {
-    relations.doubleDamageTo = relations.doubleDamageTo.filter(
-      (name) => name !== typeName,
-    )
-    relations.halfDamageTo = relations.halfDamageTo.filter(
-      (name) => name !== typeName,
-    )
-    relations.noDamageTo = relations.noDamageTo.filter(
-      (name) => name !== typeName,
-    )
-  }
-}
-
-function ensureHalfDamageTo(
-  map: Map<string, TypeRelations>,
-  attackerType: string,
-  defenderType: string,
-): void {
-  const relations = map.get(attackerType)
-  if (!relations) return
-  if (!relations.halfDamageTo.includes(defenderType)) {
-    relations.halfDamageTo.push(defenderType)
-  }
-  relations.doubleDamageTo = relations.doubleDamageTo.filter(
-    (name) => name !== defenderType,
-  )
-  relations.noDamageTo = relations.noDamageTo.filter(
-    (name) => name !== defenderType,
-  )
-}
-
-function ensureNoDamageTo(
-  map: Map<string, TypeRelations>,
-  attackerType: string,
-  defenderType: string,
-): void {
-  const relations = map.get(attackerType)
-  if (!relations) return
-  if (!relations.noDamageTo.includes(defenderType)) {
-    relations.noDamageTo.push(defenderType)
-  }
-  relations.doubleDamageTo = relations.doubleDamageTo.filter(
-    (name) => name !== defenderType,
-  )
-  relations.halfDamageTo = relations.halfDamageTo.filter(
-    (name) => name !== defenderType,
-  )
-}
-
-function applyGenerationTypeRules(
-  map: Map<string, TypeRelations>,
-  generation: number,
-): void {
-  if (generation < 6) {
-    removeType(map, 'fairy')
-    ensureHalfDamageTo(map, 'ghost', 'steel')
-    ensureHalfDamageTo(map, 'dark', 'steel')
-  }
-
-  if (generation < 2) {
-    removeType(map, 'dark')
-    removeType(map, 'steel')
-    ensureNoDamageTo(map, 'ghost', 'psychic')
-
-    const iceRelations = map.get('ice')
-    if (iceRelations) {
-      iceRelations.halfDamageTo = iceRelations.halfDamageTo.filter(
-        (type) => type !== 'fire',
-      )
-    }
-  }
-}
-
-async function buildBaseTypeMap(): Promise<Map<string, TypeRelations>> {
-  const listRes = await fetchWithRetry(`${BASE_URL}/type?limit=100`)
-  if (!listRes.ok) throw new NetworkError()
-  const listJson = (await listRes.json()) as PokeApiTypeListResponse
-
-  const typeNames = listJson.results
-    .map((t) => t.name)
-    .filter((n) => n !== 'unknown' && n !== 'shadow')
-
-  const baseMap = new Map<string, TypeRelations>()
-
-  await Promise.all(
-    typeNames.map(async (typeName) => {
-      const res = await fetchWithRetry(`${BASE_URL}/type/${typeName}`)
-      if (!res.ok) return
-      const json = (await res.json()) as PokeApiTypeResponse
-      const dr = json.damage_relations
-      baseMap.set(typeName, {
-        doubleDamageTo: dr.double_damage_to.map((t) => t.name),
-        halfDamageTo: dr.half_damage_to.map((t) => t.name),
-        noDamageTo: dr.no_damage_to.map((t) => t.name),
-      })
-    }),
-  )
-
-  return baseMap
-}
-
-export async function getTypeMap(
-  options?: TypeMapOptions,
-): Promise<Map<string, TypeRelations>> {
-  const generation = options?.generation ?? 9
-
-  const cached = typeMapCache.get(generation)
-  if (cached) return cached
-
-  const baseTypeMap = typeMapCache.get(9) ?? (await buildBaseTypeMap())
-  if (!typeMapCache.has(9)) {
-    typeMapCache.set(9, baseTypeMap)
-  }
-
-  const generationTypeMap = cloneTypeMap(baseTypeMap)
-  applyGenerationTypeRules(generationTypeMap, generation)
-  typeMapCache.set(generation, generationTypeMap)
-
-  return generationTypeMap
-}
-
-// --- calcEffectiveness (exported for unit tests) ---
-
-export function calcEffectiveness(
-  attackerTypes: string[],
-  defenderTypes: string[],
-  typeMap: Map<string, TypeRelations>,
-): number {
-  let modifier = 1
-  for (const atkType of attackerTypes) {
-    const relations = typeMap.get(atkType)
-    if (!relations) continue
-    for (const defType of defenderTypes) {
-      if (relations.doubleDamageTo.includes(defType)) modifier *= 2
-      else if (relations.halfDamageTo.includes(defType)) modifier *= 0.5
-      else if (relations.noDamageTo.includes(defType)) modifier *= 0
-    }
-  }
-  return modifier
-}
-
-function modifierLabel(modifier: number): Effectiveness {
-  if (modifier >= 2) return '2x'
-  if (modifier === 1) return '1x'
-  if (modifier > 0) return '0.5x'
-  return '0x'
 }
 
 // --- computeMatchups ---
