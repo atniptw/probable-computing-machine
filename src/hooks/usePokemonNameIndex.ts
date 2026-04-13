@@ -6,7 +6,7 @@ interface UsePokemonNameIndexParams {
   generation: number
   label: string
   version: string
-  onError: (message: string) => void
+  onError: (message: string | null) => void
 }
 
 export function usePokemonNameIndex({
