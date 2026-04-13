@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import MatchupContainer from '../components/MatchupViewer/MatchupContainer'
 import { useMatchupMatrix } from '../hooks/useMatchupMatrix'
 import type { MatchupViewModel } from '../hooks/useMatchupMatrix'
-import type { TeamMemberConfig } from '../hooks/useTeamConfiguration'
+import { makeMatchupViewModel, makeTeamMember } from './testUtils'
 
 // ─── Mock useMatchupMatrix ────────────────────────────────────────────────────
 // vi.mock is hoisted above all imports by Vitest, so the static import above
@@ -29,7 +29,7 @@ const PLAYER_POKEMON_WITH_SPRITE = {
   sprite: 'https://example.com/swampert.png',
 }
 
-const FULL_MATCHUP: MatchupViewModel = {
+const FULL_MATCHUP = makeMatchupViewModel({
   player: PLAYER_POKEMON,
   opponent: OPPONENT_POKEMON,
   offense: {
@@ -43,7 +43,7 @@ const FULL_MATCHUP: MatchupViewModel = {
     resisted: [{ name: 'Thunderbolt', multiplier: 0.25 }],
   },
   summary: { offenseRating: 2, defenseRating: 4 },
-}
+})
 
 // ─── Shared callbacks / props ─────────────────────────────────────────────────
 
@@ -59,9 +59,9 @@ const TWO_MEMBER_PROPS = {
   opponentSuggestions: [] as string[],
   pokemonNameSet: new Set(['swampert', 'manectric', 'blaziken']),
   teamMembers: [
-    { name: 'swampert', moves: [] },
-    { name: 'blaziken', moves: [] },
-  ] as TeamMemberConfig[],
+    makeTeamMember({ name: 'swampert' }),
+    makeTeamMember({ name: 'blaziken' }),
+  ],
   teamNames: ['swampert', 'blaziken'],
 }
 
@@ -74,7 +74,7 @@ const BASE_PROPS = {
   onError,
   opponentSuggestions: [] as string[],
   pokemonNameSet: new Set(['swampert', 'manectric']),
-  teamMembers: [{ name: 'swampert', moves: [] }] as TeamMemberConfig[],
+  teamMembers: [makeTeamMember({ name: 'swampert' })],
   teamNames: ['swampert'],
 }
 

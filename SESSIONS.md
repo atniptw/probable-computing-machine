@@ -2,6 +2,52 @@
 
 ---
 
+## 2026-04-13 — Chore #39: Extract shared test utilities into testUtils.ts
+
+### Objective
+
+Eliminate copy-paste mock/fixture patterns in test files by creating `src/tests/testUtils.ts` with factory functions for `TeamMemberConfig` and `MatchupViewModel`.
+
+### Completed Work
+
+- Created `src/tests/testUtils.ts` with `makeTeamMember(overrides?)` and `makeMatchupViewModel(overrides?)` factories
+- Refactored `matchupContainer.test.tsx` to use `makeTeamMember` and `makeMatchupViewModel` (removes `as TeamMemberConfig[]` casts and the explicit `MatchupViewModel` type annotation on `FULL_MATCHUP`)
+- Refactored `useMatchupMatrix.test.ts` to use `makeTeamMember` across all `teamMembers` usages (removes `as TeamMemberConfig[]` casts and the `TeamMemberConfig` import)
+- `src/tests/testUtils.ts` is not in the coverage `include` list (`src/tests/` was already excluded by omission) — no config change needed
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (161 tests, all green; branch coverage 81.21%)
+- `npx playwright test --project=chromium` — pass (6 tests)
+- Visual QA — skipped (pure test infrastructure, no UI changes)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+The AC mentions extracting common `BASE_PROPS` patterns where reused across ≥ 3 test files. No identical BASE_PROPS structure exists across 3+ files currently, so only the explicitly requested factories (`makeTeamMember`, `makeMatchupViewModel`) were added. The condition "where reused across ≥ 3 test files" was treated as a guard, not a mandate.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — explicit factory signatures, minimum refactor count, coverage exclusion guidance, and incremental-apply note were all clear.
+- Scope clarity: Clear.
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Test #35: Add swipe gesture coverage to MatchupContainer tests
 
 ### Objective

@@ -2,13 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 
 import { useMatchupMatrix } from '../hooks/useMatchupMatrix'
-import type { TeamMemberConfig } from '../hooks/useTeamConfiguration'
 import {
   getMoveType,
   getPokemon,
   getTypeMap,
   RateLimitError,
 } from '../services/pokeapi'
+import { makeTeamMember } from './testUtils'
 
 vi.mock('../services/pokeapi', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../services/pokeapi')>()
@@ -28,7 +28,7 @@ const BASE_PARAMS = {
   normalizedOpponent: 'gyarados',
   pokemonNameSet: new Set(['manectric']),
   selectedTeamIndex: 0,
-  teamMembers: [{ name: 'manectric', moves: [] }] as TeamMemberConfig[],
+  teamMembers: [makeTeamMember({ name: 'manectric' })],
   teamNames: ['manectric'],
 }
 
@@ -168,10 +168,10 @@ describe('useMatchupMatrix', () => {
     const params = makeParams({
       onError,
       teamMembers: [
-        {
+        makeTeamMember({
           name: 'manectric',
           moves: ['ice beam', 'thunderbolt'],
-        },
+        }),
       ],
     })
 
@@ -194,7 +194,7 @@ describe('useMatchupMatrix', () => {
     const onError = vi.fn()
     const params = makeParams({
       onError,
-      teamMembers: [{ name: 'charizard', moves: [] }],
+      teamMembers: [makeTeamMember({ name: 'charizard' })],
       teamNames: ['charizard'],
       pokemonNameSet: new Set(['manectric']),
     })
