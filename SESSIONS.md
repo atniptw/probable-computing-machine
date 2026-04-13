@@ -2,6 +2,52 @@
 
 ---
 
+## 2026-04-13 — Refactor #41: Extract shared MoveList component
+
+### Objective
+
+Eliminate ~40 lines of duplicated rendering logic shared between `OffenseSection.tsx` and `DefenseSection.tsx` by extracting a shared `MoveList` component.
+
+### Completed Work
+
+- Created `src/components/MatchupViewer/MoveList.tsx` with exported `MoveRow` interface and `MoveList` component; `indicator`, `showAll`, and `emptyText` are props; `indicatorClass` and `indicatorLabel` are module-private helpers
+- Updated `OffenseSection.tsx`: removed `indicatorClass`, `indicatorLabel`, `renderMoves`, and local `MoveRow`; retained local `indicator()` (supports `4x`); uses `<MoveList emptyText="No common moves listed.">`
+- Updated `DefenseSection.tsx`: same removals; retained local `indicator()` (no `4x`); uses `<MoveList emptyText="No common threats listed.">`
+- Updated `docs/COMPONENT_DESIGN.md`: added `MoveList × N` under `OffenseSection` and `DefenseSection` in the component tree
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (158 tests, 91.27% stmt coverage)
+- `npx playwright test --project=chromium` — pass (6 tests)
+- Visual QA — skipped (pure refactor, no visual output change)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+None — issue was unambiguous and explicitly directed to skip design and architecture review.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Chore #43: Standardize onError signature to (string | null) across all hooks
 
 ### Objective

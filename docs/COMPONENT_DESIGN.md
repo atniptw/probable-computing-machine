@@ -21,7 +21,9 @@ App
     │   ├── PokemonCard (opponent + active team member)
     │   │   └── TypeBadge × N (Pokémon types)
     │   ├── OffenseSection
+    │   │   └── MoveList × N
     │   └── DefenseSection
+    │       └── MoveList × N
     └── TeamEditorPanel (team screen, main pane)
         └── SuggestionList × 2 (slot + move autocomplete)
 ```
