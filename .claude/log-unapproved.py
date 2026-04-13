@@ -21,10 +21,16 @@ if not cmd:
 # Mirrors the allowlist patterns in settings.json — keep in sync when allowlist changes
 ALLOWED = [
     r"^npm run ",
+    r"^npm audit",
+    r"^npm install",
     r"^npx playwright test",
     r"^npx playwright install",
+    r"^bash /home/atnip/projects/probable-computing-machine/\.claude/",
+    r"^find /home/atnip/projects/pcm-issue-",
     r"^git (add|diff|log|status|commit|fetch|merge|worktree|rm|push)",
+    r"^git -C .* (log|diff|status|worktree|fetch|merge)",
     r"^gh (issue|label)",
+    r"^gh pr (list|view)",
     r"^curl -s http://127\.0\.0\.1",
     r"^sleep ",
     r"^rm /tmp/(vqa|visual-qa|dr|design-review)-",
