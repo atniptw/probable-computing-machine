@@ -2,6 +2,51 @@
 
 ---
 
+## 2026-04-13 — Chore #48: Address npm audit vulnerabilities (brace-expansion, picomatch, vite)
+
+### Objective
+
+Resolve 3 reported npm audit vulnerabilities (1 moderate, 2 high) before the dependency surface grows further.
+
+### Completed Work
+
+- Ran `npm audit fix` to update lock file: brace-expansion 1.1.12→1.1.14/2.0.2→2.1.0, picomatch 4.0.3→4.0.4, vite 6.4.1→6.4.2
+- Confirmed `npm audit` reports 0 vulnerabilities after fix
+- Reviewed 5 open Dependabot PRs (#1–5): all are major version bumps (React 18→19, TypeScript 5→6, @eslint/js 9→10, vitest 3→4) unrelated to the security vulnerabilities; closed with explanatory comments
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (158 tests, 91% stmt / 80% branch)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — skipped (lock file only, no UI changes)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+Dependabot PRs #1–5 are all major version bumps with no overlap with the security vulnerability fixes; closing them as out-of-scope rather than merging or creating new issues is appropriate since none are security-critical.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — clear per-vulnerability table and explicit criteria.
+- Scope clarity: Clear.
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Chore #42: Replace O(n²) move deduplication with Set in useTeamConfiguration
 
 ### Objective
