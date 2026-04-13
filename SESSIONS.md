@@ -2,6 +2,49 @@
 
 ---
 
+## 2026-04-13 — Chore #42: Replace O(n²) move deduplication with Set in useTeamConfiguration
+
+### Objective
+
+Replace the `Array.indexOf`-inside-`filter` pattern in `normalizeMoveList` with a `Set`-based deduplication to eliminate the O(n²) antipattern.
+
+### Completed Work
+
+- Updated `normalizeMoveList` in `src/hooks/useTeamConfiguration.ts` (lines 52–58) to use `[...new Set(...)]` instead of a second `.filter` with `indexOf`
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (158/158 tests, all 20 useTeamConfiguration tests pass)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — skipped (no visual changes)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+None — issue was precise and complete.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Feat #21: Add color coding to Pokémon type badges
 
 ### Objective
