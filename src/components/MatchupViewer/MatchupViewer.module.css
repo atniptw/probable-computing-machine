@@ -129,8 +129,8 @@
 }
 
 .spriteWrap {
-  width: 58px;
-  height: 58px;
+  width: 96px;
+  height: 96px;
   border-radius: 10px;
   border: 1px solid #d7dce0;
   background: #f7f9fa;
@@ -141,13 +141,13 @@
 }
 
 .spriteWrap img {
-  width: 52px;
-  height: 52px;
+  width: 88px;
+  height: 88px;
   image-rendering: pixelated;
 }
 
 .spriteFallback {
-  font-size: 0.95rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #4d5a67;
 }
@@ -262,6 +262,20 @@
 
   .sectionCard {
     padding: 14px;
+  }
+
+  .spriteWrap {
+    width: 72px;
+    height: 72px;
+  }
+
+  .spriteWrap img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .spriteFallback {
+    font-size: 1.25rem;
   }
 }
 
