@@ -2,6 +2,49 @@
 
 ---
 
+## 2026-04-13 — Chore #43: Standardize onError signature to (string | null) across all hooks
+
+### Objective
+
+Widen `UsePokemonNameIndexParams.onError` from `(message: string) => void` to `(message: string | null) => void` to match the signature used by all other hooks.
+
+### Completed Work
+
+- Updated `src/hooks/usePokemonNameIndex.ts:9` — widened `onError` parameter type from `string` to `string | null`
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (158 tests, 80.46% branch)
+- `npx playwright test --project=chromium` — pass (6 tests)
+- Visual QA — skipped (pure type change, no user-visible effect)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+None.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Feat #32: Increase Pokémon sprite size in matchup card
 
 ### Objective
