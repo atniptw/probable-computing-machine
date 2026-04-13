@@ -3,6 +3,7 @@
     "allow": [
       "Bash(npm run *)",
       "Bash(npx playwright test*)",
+      "Bash(npx playwright install*)",
       "Bash(node /tmp/*.mjs*)",
       "Bash(gh issue view*)",
       "Bash(gh issue edit*)",
@@ -20,6 +21,17 @@
     ]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /home/atnip/projects/probable-computing-machine/.claude/log-unapproved.py"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
@@ -36,7 +48,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd /home/atnip/projects/probable-computing-machine && npm run test"
+            "command": "cd /home/atnip/projects/probable-computing-machine && npm run test:coverage"
           }
         ]
       }

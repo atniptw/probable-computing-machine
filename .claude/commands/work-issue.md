@@ -47,10 +47,7 @@ Implement in role order: Backend/Frontend → QA (tests) → Docs. Apply gate ru
 Run all of the following. Do not proceed to Step 5 if any fails.
 
 ```
-npm run lint
-npm run tsc
-npm run test:coverage
-npx playwright test --project=chromium
+npm run verify
 ```
 
 ## Step 4.5 — Visual QA review (UI changes only)
@@ -60,7 +57,7 @@ If the change affects any visible UI behavior:
 1. Start the dev server:
 
 ```
-npm run dev -- --host 127.0.0.1 --port 4173
+npm run dev:qa
 ```
 
 2. Run `/visual-qa [issue number]` to pre-screen visual acceptance criteria via screenshots. The command will:

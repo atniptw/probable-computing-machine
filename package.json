@@ -15,6 +15,8 @@
     "tsc": "tsc --noEmit",
     "check": "tsc --noEmit && vite build",
     "e2e": "playwright test",
+    "verify": "npm run lint && npm run tsc && npm run test:coverage && npm run build && npx playwright test --project=chromium",
+    "dev:qa": "vite --host 127.0.0.1 --port 4173",
     "prepare": "husky"
   },
   "dependencies": {
