@@ -2,6 +2,54 @@
 
 ---
 
+## 2026-04-13 — Fix #33: Matchup card cramped on mobile (390px)
+
+### Objective
+
+Fix cramped padding and spacing in the matchup card at 375px and 390px mobile viewports so move rows are comfortably readable.
+
+### Completed Work
+
+- Added `padding: 5px 0` to `.moveRow` in `MatchupViewer.module.css` for explicit vertical row breathing room
+- Increased `.moveList` `gap` from `6px` to `8px` for better row separation
+- Added `@media (max-width: 480px)` block with increased padding: `.viewerCard` 12px→16px, `.sideCard` 10px→12px, `.sectionCard` 11px→14px
+- Ran design review (Step 1.7) producing concrete spec with exact values before implementation
+- Architecture drift check: CLEAN — no updates needed to `docs/COMPONENT_DESIGN.md`
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (158 tests, 91% stmt coverage)
+- `npx playwright test --project=chromium` — pass (6 tests)
+- Visual QA — approved (computed styles verified via Playwright; 390px and 375px screenshots reviewed by user)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+None. The design spec fully enumerated all values before implementation began.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Missing edge cases — original AC was vague ("adequate row padding", "minimum 14px font") without specific values. Design review converted these to exact, location-bound targets.
+- Scope clarity: Clear once design review produced the spec.
+
+**Feedforward signals:**
+
+- `[issue-template]` — Mobile CSS issues benefit from a design-review step that produces exact px/rem values before the AC is written. Consider adding a "visual issues must include specific CSS values in AC" note to the issue template.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-10 — Feat #47: Add help and feedback links to app header
 
 ### Objective
