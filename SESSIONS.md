@@ -2,6 +2,57 @@
 
 ---
 
+## 2026-04-13 — Feat #21: Add color coding to Pokémon type badges
+
+### Objective
+
+Replace plain gray-bordered type badge pills with canonical Pokémon type colors that meet WCAG AA contrast throughout the app.
+
+### Completed Work
+
+- Created `src/utils/typeColors.ts` — TYPE_COLORS map defining `{ bg, text }` for all 18 types; colors verified ≥ 4.5:1 contrast programmatically
+- Created `src/components/TypeBadge.tsx` — shared leaf component; applies colors via inline styles; normalizes type name to lowercase; falls back to neutral gray for unknown types
+- Updated `src/components/AppView/GymLeaderSelector.tsx` — replaced `<span className={styles.typeBadge}>` with `<TypeBadge>`
+- Updated `src/components/MatchupViewer/PokemonCard.tsx` — same replacement; TypeBadge handles display including title-casing
+- Removed `border: 1px solid #d7dce0` from `.typeBadge` in both `MatchupViewer.module.css` and `App.module.css` — background fill is sufficient visual boundary
+- Updated `docs/COMPONENT_DESIGN.md` — added TypeBadge to component tree and new Shared Primitives section
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (158/158, 91.05% statements; TypeBadge fallback branch uncovered — expected)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — approved (gym list and matchup card both show correct canonical colors; WCAG AA confirmed programmatically)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- "Team chips" referenced in the original AC do not currently display type information; this was scoped out per the design review rather than implemented.
+- Canonical Psychic (#F95587) and Fairy (#D685AD) fall in the WCAG dead zone (fail AA with both white and dark text); adjusted to nearest passing values (#D01A5C and #E878B4). User confirmed these were acceptable at visual QA.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Missing edge cases — "team chips" mentioned in AC but no type data exists at that render point; design review caught and scoped this out.
+- Scope clarity: Had to infer boundaries — "team chips" required investigation to confirm out of scope.
+
+**Feedforward signals:**
+
+- `[issue-template]` — AC items that reference UI locations ("gym leader list, matchup card, team chips") should name the component file or confirm the data is available at that render point, to prevent scope ambiguity at implementation.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Fix #33: Matchup card cramped on mobile (390px)
 
 ### Objective
