@@ -2,6 +2,57 @@
 
 ---
 
+## 2026-04-13 — Test #35: Add swipe gesture coverage to MatchupContainer tests
+
+### Objective
+
+Add Vitest coverage for the `handleTouchStart` / `handleTouchEnd` swipe path in `MatchupContainer`, verifying the three gate conditions: qualifying swipe cycles the index, vertical swipe does not, and sub-threshold swipe does not.
+
+### Completed Work
+
+- Added `fireEvent` to `@testing-library/react` import in `matchupContainer.test.tsx`
+- Added `TWO_MEMBER_PROPS` fixture (two-member team) to enable observable index cycling
+- Added `MatchupContainer — swipe gestures` describe block with three tests:
+  - Left swipe (deltaX = −70, deltaY = 5) → `selectedTeamIndex` cycles from 0 to 1
+  - Vertical swipe (deltaX = 55, deltaY = 100) → `selectedTeamIndex` remains 0
+  - Sub-threshold swipe (deltaX = −40) → `selectedTeamIndex` remains 0
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (161 tests, all pass)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — skipped (test-only change, no visible UI effect)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- TypeScript target does not include `Array.prototype.at()` — used `calls[calls.length - 1]` instead.
+- Asserting on the last `useMatchupMatrix` mock call argument is sufficient to verify index cycling because the hook is called on every render and the final call reflects post-swipe state.
+
+**Course corrections:**
+
+- Initial use of `.at(-1)` caused `tsc` error TS2550 (lib target too old); replaced with `calls[calls.length - 1]`.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Refactor #41: Extract shared MoveList component
 
 ### Objective

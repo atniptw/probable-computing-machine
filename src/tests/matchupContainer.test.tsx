@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 
 import MatchupContainer from '../components/MatchupViewer/MatchupContainer'
 import { useMatchupMatrix } from '../hooks/useMatchupMatrix'
@@ -48,6 +48,22 @@ const FULL_MATCHUP: MatchupViewModel = {
 // ─── Shared callbacks / props ─────────────────────────────────────────────────
 
 const onError = vi.fn()
+
+const TWO_MEMBER_PROPS = {
+  exactMatchFound: true,
+  gameLabel: 'Emerald',
+  generation: 3,
+  nameIndexReady: true,
+  normalizedOpponent: 'manectric',
+  onError,
+  opponentSuggestions: [] as string[],
+  pokemonNameSet: new Set(['swampert', 'manectric', 'blaziken']),
+  teamMembers: [
+    { name: 'swampert', moves: [] },
+    { name: 'blaziken', moves: [] },
+  ] as TeamMemberConfig[],
+  teamNames: ['swampert', 'blaziken'],
+}
 
 const BASE_PROPS = {
   exactMatchFound: true,
@@ -156,5 +172,74 @@ describe('MatchupContainer — render branches', () => {
     expect(
       screen.getByRole('img', { name: /swampert sprite/i }),
     ).toBeInTheDocument()
+  })
+})
+
+describe('MatchupContainer — swipe gestures', () => {
+  afterEach(() => {
+    cleanup()
+    onError.mockReset()
+    vi.mocked(useMatchupMatrix).mockReset()
+  })
+
+  it('cycles to the next index on a left swipe exceeding the threshold', () => {
+    vi.mocked(useMatchupMatrix).mockReturnValue({
+      loading: false,
+      matchup: FULL_MATCHUP,
+    })
+    render(<MatchupContainer {...TWO_MEMBER_PROPS} />)
+
+    const section = screen.getByRole('region', { name: 'Matchup viewer' })
+    // Left swipe: deltaX = 130 - 200 = -70 (> 40 threshold), deltaY = 5 (< |deltaX|)
+    fireEvent.touchStart(section, {
+      changedTouches: [{ clientX: 200, clientY: 50 }],
+    })
+    fireEvent.touchEnd(section, {
+      changedTouches: [{ clientX: 130, clientY: 55 }],
+    })
+
+    // cycle(1) should fire: positiveModulo(0 + 1, 2) = 1
+    const calls = vi.mocked(useMatchupMatrix).mock.calls
+    expect(calls[calls.length - 1][0].selectedTeamIndex).toBe(1)
+  })
+
+  it('does not cycle on a vertical swipe (|deltaY| > |deltaX|)', () => {
+    vi.mocked(useMatchupMatrix).mockReturnValue({
+      loading: false,
+      matchup: FULL_MATCHUP,
+    })
+    render(<MatchupContainer {...TWO_MEMBER_PROPS} />)
+
+    const section = screen.getByRole('region', { name: 'Matchup viewer' })
+    // Vertical swipe: deltaX = 55 (> threshold) but deltaY = 100 (> |deltaX|) → no cycle
+    fireEvent.touchStart(section, {
+      changedTouches: [{ clientX: 200, clientY: 50 }],
+    })
+    fireEvent.touchEnd(section, {
+      changedTouches: [{ clientX: 255, clientY: 150 }],
+    })
+
+    const calls = vi.mocked(useMatchupMatrix).mock.calls
+    expect(calls[calls.length - 1][0].selectedTeamIndex).toBe(0)
+  })
+
+  it('does not cycle on a horizontal swipe at or below the threshold', () => {
+    vi.mocked(useMatchupMatrix).mockReturnValue({
+      loading: false,
+      matchup: FULL_MATCHUP,
+    })
+    render(<MatchupContainer {...TWO_MEMBER_PROPS} />)
+
+    const section = screen.getByRole('region', { name: 'Matchup viewer' })
+    // Sub-threshold swipe: deltaX = 160 - 200 = -40, which is not > 40
+    fireEvent.touchStart(section, {
+      changedTouches: [{ clientX: 200, clientY: 50 }],
+    })
+    fireEvent.touchEnd(section, {
+      changedTouches: [{ clientX: 160, clientY: 52 }],
+    })
+
+    const calls = vi.mocked(useMatchupMatrix).mock.calls
+    expect(calls[calls.length - 1][0].selectedTeamIndex).toBe(0)
   })
 })
