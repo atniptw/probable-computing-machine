@@ -50,11 +50,10 @@ function normalizeMoveName(value: string): string {
 }
 
 function normalizeMoveList(values: string[]): string[] {
-  return values
-    .map(normalizeMoveName)
-    .filter(Boolean)
-    .filter((value, index, list) => list.indexOf(value) === index)
-    .slice(0, MAX_MOVES_PER_MEMBER)
+  return [...new Set(values.map(normalizeMoveName).filter(Boolean))].slice(
+    0,
+    MAX_MOVES_PER_MEMBER,
+  )
 }
 
 function normalizeMember(member: TeamMemberConfig): TeamMemberConfig {
