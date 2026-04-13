@@ -11,6 +11,7 @@ App
 ├── BattleSelectorSection (battle screen)
 │   ├── GameVersionSelect
 │   ├── GymLeaderSelector (gym mode only)
+│   │   └── TypeBadge (gym specialty type)
 │   ├── GymTeamPanel (gym mode + gym selected)
 │   └── SuggestionList (free mode, conditional)
 ├── TeamConfigurationSection (team screen header)
@@ -18,6 +19,7 @@ App
 └── ErrorBoundary (wraps <main> — catches synchronous render errors in the results pane)
     ├── MatchupContainer (battle screen, main pane) [owns selectedTeamIndex: number]
     │   ├── PokemonCard (opponent + active team member)
+    │   │   └── TypeBadge × N (Pokémon types)
     │   ├── OffenseSection
     │   └── DefenseSection
     └── TeamEditorPanel (team screen, main pane)
@@ -75,6 +77,14 @@ hooks: {
 - Game selector controls all autocomplete, validation, and matchup rules.
 - Type effectiveness map is generation-aware for key historical chart differences.
 - Ranking uses `best`, `good`, `neutral`, `risky` buckets.
+
+## Shared Primitives
+
+Reusable presentational components used across module boundaries:
+
+| Component   | Location                       | Purpose                                                                         |
+| ----------- | ------------------------------ | ------------------------------------------------------------------------------- |
+| `TypeBadge` | `src/components/TypeBadge.tsx` | Renders a colored pill for a Pokémon type; reads from `src/utils/typeColors.ts` |
 
 ## Dormant Assets
 

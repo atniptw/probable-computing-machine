@@ -381,7 +381,6 @@
 
 .typeBadge {
   border-radius: 999px;
-  border: 1px solid #d7dce0;
   min-height: 26px;
   display: inline-flex;
   align-items: center;

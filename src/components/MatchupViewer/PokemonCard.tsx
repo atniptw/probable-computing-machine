@@ -1,5 +1,6 @@
 import type { Pokemon } from '../../services/pokeapi'
 import { toTitleCase } from '../../utils/format'
+import TypeBadge from '../TypeBadge'
 import styles from './MatchupViewer.module.css'
 
 interface PokemonCardProps {
@@ -18,9 +19,11 @@ export default function PokemonCard({ label, pokemon }: PokemonCardProps) {
         <h3 className={styles.pokemonName}>{toTitleCase(pokemon.name)}</h3>
         <div className={styles.typeBadgeRow}>
           {pokemon.types.map((typeName) => (
-            <span className={styles.typeBadge} key={typeName}>
-              {toTitleCase(typeName)}
-            </span>
+            <TypeBadge
+              typeName={typeName}
+              className={styles.typeBadge}
+              key={typeName}
+            />
           ))}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { getGymsForGame, type GymLeader } from '../../data/gyms/emerald'
+import TypeBadge from '../TypeBadge'
 import styles from '../../App.module.css'
 
 interface Props {
@@ -34,7 +35,7 @@ export default function GymLeaderSelector({
         >
           <span className={styles.gymBadgeNum}>{gym.badge}.</span>
           <span className={styles.gymLeaderBtnName}>{gym.name}</span>
-          <span className={styles.typeBadge}>{gym.type}</span>
+          <TypeBadge typeName={gym.type} className={styles.typeBadge} />
         </button>
       ))}
     </div>
