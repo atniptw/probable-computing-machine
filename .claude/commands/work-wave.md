@@ -53,8 +53,12 @@ while true; do
         echo "[WAITING] $branch — commits present, SESSIONS.md not yet updated"
       fi
     else
-      # Check if already in main (agent pushed directly)
-      if git -C "$REPO" merge-base --is-ancestor "$branch" main 2>/dev/null; then
+      # "Already in main": agent pushed directly to origin/main, bypassing the branch.
+      # Use GitHub issue state as the authoritative signal — if the issue is CLOSED,
+      # the commit with "Closes #N" landed in main and we just need to clean up.
+      issue_num=$(echo "$branch" | sed 's/feat\/issue-//')
+      issue_state=$(gh issue view "$issue_num" --json state --jq .state 2>/dev/null || echo "OPEN")
+      if [[ "$issue_state" == "CLOSED" ]]; then
         echo "[READY] $branch (already in main)"
         MERGED[$branch]="done"
       fi

@@ -12,7 +12,7 @@ BRANCH="${1:?Usage: auto-merge.sh feat/issue-N}"
 REPO="$(git rev-parse --show-toplevel)"
 
 # Derive worktree path from git worktree list
-WORKTREE_PATH=$(git worktree list --porcelain | awk '/^worktree /{path=$2} /^branch refs\/heads\/'"$BRANCH"'/{print path}')
+WORKTREE_PATH=$(git worktree list --porcelain | awk -v branch="refs/heads/$BRANCH" '/^worktree /{path=$2} $2==branch{print path}')
 
 if [ -z "$WORKTREE_PATH" ]; then
   echo "ERROR: No worktree found for branch $BRANCH" >&2
@@ -25,9 +25,13 @@ git -C "$REPO" fetch origin main --quiet
 # Sync local main with origin/main
 git -C "$REPO" merge --ff-only origin/main --quiet 2>/dev/null || true
 
-# Check if agent already pushed the branch commits to origin/main directly
-if ! git -C "$REPO" merge-base --is-ancestor "main" "$BRANCH" 2>/dev/null || \
-   [ "$(git -C "$REPO" log "main..$BRANCH" --oneline 2>/dev/null | wc -l | tr -d ' ')" -eq 0 ]; then
+# Check if agent already pushed the branch commits to origin/main directly.
+# Use GitHub issue state as the authoritative signal: if the issue is CLOSED,
+# the "Closes #N" commit landed in main and we just need to clean up the worktree.
+AHEAD=$(git -C "$REPO" log "main..$BRANCH" --oneline 2>/dev/null | wc -l | tr -d ' ')
+ISSUE_NUM=$(echo "$BRANCH" | sed 's/feat\/issue-//')
+ISSUE_STATE=$(gh issue view "$ISSUE_NUM" --json state --jq .state 2>/dev/null || echo "OPEN")
+if [ "$AHEAD" -eq 0 ] && [ "$ISSUE_STATE" = "CLOSED" ]; then
   echo "→ Branch commits already in main (agent pushed directly) — cleaning up"
   git -C "$REPO" worktree remove "$WORKTREE_PATH" --force 2>/dev/null || true
   git -C "$REPO" branch -d "$BRANCH" 2>/dev/null || true
