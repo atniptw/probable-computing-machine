@@ -6,7 +6,18 @@ Work the GitHub issue identified by ARGUMENTS from intake through push. Execute 
 gh issue view [ARGUMENTS]
 ```
 
-Summarize: title, acceptance criteria, notes. If no acceptance criteria exist, stop and run `/feature-intake` before continuing.
+Summarize: title, acceptance criteria, notes. If no acceptance criteria exist, produce a feature intake brief inline before continuing:
+
+1. Problem statement.
+2. Target user.
+3. User value.
+4. In scope.
+5. Out of scope.
+6. Acceptance criteria checklist.
+7. Risks and dependencies.
+8. Suggested handoff owner.
+
+Post the brief and wait for explicit user approval before proceeding.
 
 ## Step 1.2 — Mark issue in progress
 

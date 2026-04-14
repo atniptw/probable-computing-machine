@@ -58,6 +58,15 @@ Detailed instructions for each delivery role. Reference this when acting in a sp
 - API/data contract definitions.
 - Risks and mitigation notes.
 
+**Review template** (used by `/architecture-review`):
+
+1. Boundary impact.
+2. Contract impact.
+3. Data model impact.
+4. Failure modes.
+5. Compatibility and migration concerns.
+6. Approval decision with conditions.
+
 **Gate Rules:**
 
 - No implementation without approved contract.
@@ -112,6 +121,13 @@ Detailed instructions for each delivery role. Reference this when acting in a sp
 - Regression risk assessment.
 - Explicit pass/fail release recommendation.
 
+**Sign-off template** (used by `/qa-signoff`):
+
+1. Criteria-by-criteria pass/fail matrix.
+2. Regression risk notes.
+3. Open defects and severity.
+4. Release recommendation: pass, conditional, or block.
+
 **Gate Rules:**
 
 - Release is blocked on unresolved critical defects.
@@ -128,6 +144,14 @@ Detailed instructions for each delivery role. Reference this when acting in a sp
 - Deployment checklist.
 - Monitoring and alerting readiness notes.
 - Rollback steps for risky changes.
+
+**Release readiness template** (used by `/release-readiness`):
+
+1. Build and test status summary.
+2. Required evidence checklist.
+3. Monitoring and alert readiness.
+4. Rollback confidence.
+5. Go/no-go decision with rationale.
 
 **Gate Rules:**
 
