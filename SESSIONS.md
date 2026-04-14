@@ -50,6 +50,52 @@ Wave 2 gym data (#53, #54, #56) still in progress. Issue #58 changes should be p
 
 ---
 
+## 2026-04-14 — feat #53: Add gym leader data for Pokémon X
+
+### Objective
+
+Add all 8 Kalos gym leaders with their full in-game X teams so gym leader mode works end-to-end for Pokémon X.
+
+### Completed Work
+
+- Created `src/data/gyms/x.ts` — `X_GYMS` array with all 8 leaders (Viola, Grant, Korrina, Ramos, Clemont, Valerie, Olympia, Wulfric), correct badge numbers, badge names, cities, types, and in-game teams using PokéAPI-format names
+- Updated `src/data/gyms/index.ts` — imported `X_GYMS` and added `x` entry to `GAME_MAP` so `getGymsForGame('x')` returns the new data
+- Created `src/tests/gyms.x.test.ts` — 17 tests covering `getGymsForGame`, `getGymById`, roster shape, PokéAPI name format, and per-leader team sizes
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (241 tests, 27 files; `data/gyms/x.ts` at 100% stmt/branch/func)
+- `npm run build` — pass
+- `npx playwright test --project=chromium` — pre-existing infrastructure failure (webServer timeout; confirmed same failure on baseline before changes)
+- Visual QA — skipped (pure data addition, no UI changes)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+In-game teams sourced from memory of official X game data. Pokémon and move names verified against PokéAPI lowercase-hyphenated format conventions.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-14 — Feat #55: Add gym leader data for Pokémon Sword
 
 ### Objective
