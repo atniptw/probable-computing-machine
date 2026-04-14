@@ -5,6 +5,7 @@ import { CRYSTAL_GYMS } from './crystal'
 import { EMERALD_GYMS } from './emerald'
 import { PLATINUM_GYMS } from './platinum'
 import { RED_GYMS } from './red'
+import { SCARLET_GYMS } from './scarlet'
 import { SWORD_GYMS } from './sword'
 import { ULTRA_SUN_GYMS } from './ultra-sun'
 import { X_GYMS } from './x'
@@ -16,6 +17,7 @@ const GAME_MAP: Record<string, GymLeader[]> = {
   crystal: CRYSTAL_GYMS,
   platinum: PLATINUM_GYMS,
   red: RED_GYMS,
+  scarlet: SCARLET_GYMS,
   sword: SWORD_GYMS,
   'ultra-sun': ULTRA_SUN_GYMS,
   x: X_GYMS,

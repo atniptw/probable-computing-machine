@@ -2,6 +2,53 @@
 
 ---
 
+## 2026-04-14 — feat #56: add gym leader data for Pokémon Scarlet
+
+### Objective
+
+Add all 8 Paldea gym leaders with their Scarlet in-game teams so gym leader mode works end-to-end for Scarlet.
+
+### Completed Work
+
+- Created `src/data/gyms/scarlet.ts` — `SCARLET_GYMS` array with all 8 gym leaders (Katy, Brassius, Iono, Kofu, Larry, Ryme, Tulip, Grusha) using PokéAPI-format names and moves
+- Updated `src/data/gyms/index.ts` — added `SCARLET_GYMS` import and `scarlet` entry in `GAME_MAP`
+- Created `src/tests/gyms.scarlet.test.ts` — 18 tests covering `getGymsForGame`, `getGymById`, roster shape, badge sequence, team sizes, and PokéAPI name format
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (242 tests, 27 files; `data/gyms/scarlet.ts` at 100% stmt/branch/func)
+- `npm run build` — pass
+- `npx playwright test --project=chromium` — 6/6 pass (port 4173 occupied by pcm-issue-55 dev server; ran against dev server on port 5555 instead)
+- Visual QA — skipped (pure data change, no UI changes)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+Moves are based on known Gen 9 learnsets at the in-game level. The issue did not specify exact per-Pokémon moves; used best available knowledge of the actual Scarlet in-game teams.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+
+- `[tooling]` — `npm run verify` uses `npm run dev` for Playwright webServer but `reuseExistingServer: true` causes silent failure when another worktree's dev server occupies port 4173. Consider a per-worktree port or a dedicated `verify:e2e` script that targets a unique port.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Fix #58: Parallel worker playwright port conflict and broken webServer command
 
 ### Objective
