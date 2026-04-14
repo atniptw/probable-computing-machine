@@ -2,6 +2,51 @@
 
 ---
 
+## 2026-04-14 — Feat #55: Add gym leader data for Pokémon Sword
+
+### Objective
+
+Add the full Galar gym lineup for Pokémon Sword so gym leader mode works end-to-end for that game.
+
+### Completed Work
+
+- Created `src/data/gyms/sword.ts` with all 8 gym leaders: Milo, Nessa, Kabu, Bea, Opal, Gordie, Piers, Raihan
+- Registered `SWORD_GYMS` in `src/data/gyms/index.ts` under the `'sword'` key
+- Added `src/tests/gyms.sword.test.ts` with 15 tests covering roster shape, field completeness, and per-leader team sizes
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (239/239, sword.ts 100% coverage)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — skipped (pure data change; no UI modifications)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+Sword was already registered in `src/data/games.ts` as a game version with `generation: 8`, so no games.ts changes were needed. The gym challenge in Sword is played as singles battles except for Raihan (doubles), but team data is stored per-leader regardless.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — all criteria clearly enumerated.
+- Scope clarity: Clear — Sword-exclusive leaders (Bea, Gordie) called out explicitly.
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-14 — Refactor #57: Extract getGymsForGame into gyms/index.ts
 
 ### Objective

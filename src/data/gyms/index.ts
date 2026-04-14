@@ -5,6 +5,7 @@ import { CRYSTAL_GYMS } from './crystal'
 import { EMERALD_GYMS } from './emerald'
 import { PLATINUM_GYMS } from './platinum'
 import { RED_GYMS } from './red'
+import { SWORD_GYMS } from './sword'
 import type { GymLeader } from './types'
 
 const GAME_MAP: Record<string, GymLeader[]> = {
@@ -13,6 +14,7 @@ const GAME_MAP: Record<string, GymLeader[]> = {
   crystal: CRYSTAL_GYMS,
   platinum: PLATINUM_GYMS,
   red: RED_GYMS,
+  sword: SWORD_GYMS,
 }
 
 export function getGymsForGame(gameVersion: string): GymLeader[] {
