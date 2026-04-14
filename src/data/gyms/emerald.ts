@@ -1,3 +1,5 @@
+import { RED_GYMS } from './red'
+
 export interface GymPokemon {
   name: string // PokéAPI name: lowercase, hyphenated
   level: number
@@ -249,6 +251,7 @@ export const EMERALD_GYMS: GymLeader[] = [
 
 export function getGymsForGame(gameVersion: string): GymLeader[] {
   if (gameVersion === 'emerald') return EMERALD_GYMS
+  if (gameVersion === 'red') return RED_GYMS
   return []
 }
 
