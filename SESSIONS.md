@@ -2881,3 +2881,53 @@ None.
 ### Next Actions
 
 Continue backlog.
+
+---
+
+## 2026-04-14 — feat/issue-54: Add Island Trial captain and kahuna data for Pokémon Ultra Sun
+
+### Objective
+
+Add `src/data/gyms/ultra-sun.ts` with all 8 Ultra Sun Trial Captains and Island Kahunas so gym leader mode works end-to-end for Ultra Sun.
+
+### Completed Work
+
+- Created `src/data/gyms/ultra-sun.ts` with 8 entries (Ilima, Lana, Kiawe, Mallow, Sophocles, Acerola, Nanu, Hapu) using Totem Pokémon teams for captains and full in-game parties for Kahunas
+- Registered `'ultra-sun': ULTRA_SUN_GYMS` in `src/data/gyms/index.ts`
+- Added `src/tests/gyms.ultra-sun.test.ts` with 18 tests covering shape, badge ordering, Z-Crystal badge names, and island city names
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (242 tests, 18 new for Ultra Sun)
+- `npm run build` — pass
+- `npx playwright test --project=chromium` — pass (6 tests)
+- Visual QA — skipped (pure data change, no UI modification)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- For Trial Captains the "team" is the Totem Pokémon only (allies are called during battle, not pre-set), consistent with a 1-Pokémon entry per captain.
+- Totem movesets reconstructed from best available knowledge of Ultra Sun in-game data; no authoritative machine-readable source was consulted.
+- Island name used for `city` field as specified in the issue.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — specific Pokémon and move format requirements stated clearly.
+- Scope clarity: Clear — issue explicitly listed all 8 entries by name and type.
+
+**Feedforward signals:**
+
+- `[issue-template]` — Future data-addition issues could include a sample moveset row to remove ambiguity about which in-game encounter to use (e.g., "day vs night" variants like Gumshoos/Raticate).
+
+### Next Actions
+
+Continue backlog.
