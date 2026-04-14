@@ -56,7 +56,8 @@ probable-computing-machine/
 │   ├── data/
 │   │   ├── games.ts
 │   │   └── gyms/
-│   │       └── emerald.ts
+│   │       ├── emerald.ts
+│   │       └── black-2.ts
 │   ├── hooks/
 │   │   ├── useMatchupMatrix.ts
 │   │   ├── useMoveNameIndex.ts

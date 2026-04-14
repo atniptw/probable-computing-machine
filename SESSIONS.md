@@ -2,6 +2,55 @@
 
 ---
 
+## 2026-04-14 — Feat #52: Add gym leader data for Pokémon Black 2
+
+### Objective
+
+Add all 8 Black 2 gym leaders (Cheren through Marlon) with their in-game teams so that Gym leader mode works for Black 2 in the app.
+
+### Completed Work
+
+- Created `src/data/gyms/black-2.ts` with `BLACK2_GYMS: GymLeader[]` — all 8 leaders, correct badge numbers (1–8), cities, types, and full in-game teams
+- Updated `getGymsForGame` in `src/data/gyms/emerald.ts` to return `BLACK2_GYMS` for `'black-2'`; used `import type` in `black-2.ts` to avoid circular runtime dependency
+- Added `BLACK2_GYMS roster shape` and `getGymsForGame (black-2)` test suites to `src/tests/gyms.test.ts` (17 new tests)
+- Updated `docs/DEVELOPMENT.md` file tree to include `black-2.ts`
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (175 tests; data/gyms 100% branch coverage)
+- `npx playwright test --project=chromium` — pass (6 tests)
+- Visual QA — approved
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- Used `import type` in `black-2.ts` to import the `GymLeader` interface from `emerald.ts`, avoiding a circular runtime dependency. This is the minimal-change approach; a shared `types.ts` would be cleaner but is out of scope.
+- Dev server needed a restart after adding `black-2.ts` — Vite HMR did not automatically pick up the new module referenced by the updated `emerald.ts` import.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+
+- `[tooling]` — dev server must be restarted after adding a new module file that is newly imported by an existing module; Vite HMR does not always catch this automatically. Consider noting this in DEVELOPMENT.md or the QA workflow.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-14 — feat #50: Add gym leader data for Pokémon Crystal
 
 ### Objective
