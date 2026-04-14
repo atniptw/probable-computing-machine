@@ -1,4 +1,4 @@
-import { type GymLeader } from '../../data/gyms/emerald'
+import { type GymLeader } from '../../data/gyms'
 import styles from '../../App.module.css'
 
 interface Props {

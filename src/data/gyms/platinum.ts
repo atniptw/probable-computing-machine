@@ -1,4 +1,4 @@
-import type { GymLeader } from './emerald'
+import type { GymLeader } from './types'
 
 export const PLATINUM_GYMS: GymLeader[] = [
   {

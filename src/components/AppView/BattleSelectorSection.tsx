@@ -1,6 +1,6 @@
 import type { BattleMode } from '../../App'
 import styles from '../../App.module.css'
-import { getGymById } from '../../data/gyms/emerald'
+import { getGymById } from '../../data/gyms'
 import GameVersionSelect from './GameVersionSelect'
 import GymLeaderSelector from './GymLeaderSelector'
 import GymTeamPanel from './GymTeamPanel'

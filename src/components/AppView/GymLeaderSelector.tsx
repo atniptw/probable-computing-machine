@@ -1,4 +1,4 @@
-import { getGymsForGame, type GymLeader } from '../../data/gyms/emerald'
+import { getGymsForGame, type GymLeader } from '../../data/gyms'
 import TypeBadge from '../TypeBadge'
 import styles from '../../App.module.css'
 

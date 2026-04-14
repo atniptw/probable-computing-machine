@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 
 import GymLeaderSelector from '../components/AppView/GymLeaderSelector'
 import GymTeamPanel from '../components/AppView/GymTeamPanel'
-import { type GymLeader } from '../data/gyms/emerald'
+import { type GymLeader } from '../data/gyms'
 
 // ─── GymLeaderSelector ────────────────────────────────────────────────────────
 

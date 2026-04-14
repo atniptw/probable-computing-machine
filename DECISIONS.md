@@ -2,6 +2,35 @@
 
 ---
 
+## DEC-0027
+
+### Date
+
+2026-04-14
+
+### Issue
+
+#57 — refactor: extract getGymsForGame into gyms/index.ts
+
+### Decision
+
+Introduce `src/data/gyms/types.ts` as the home for `GymPokemon` and `GymLeader` interfaces rather than placing them directly in `index.ts`.
+
+### Rationale
+
+`index.ts` imports all game files (`emerald.ts`, `black-2.ts`, …). If game files also imported from `index.ts` (to get the interfaces), a circular dependency would form. Placing interfaces in a standalone `types.ts` breaks the cycle: game files import from `./types`, `index.ts` imports from `./types` and the game files. `index.ts` then re-exports the types via `export type { GymLeader, GymPokemon } from './types'` so all external consumers continue to use a single import path (`gyms` or `gyms/index`).
+
+### Alternatives Considered
+
+- Put interfaces directly in `index.ts` and have game files not import types at all (rely on structural typing / `satisfies`) — rejected because it removes explicit type annotations from data files.
+- Inline interfaces in each game file — rejected because it duplicates the definition and breaks DRY.
+
+### Outcome
+
+Accepted. No negative side-effects; all 223 tests pass and build succeeds.
+
+---
+
 ## DEC-0026
 
 ### Date

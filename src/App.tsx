@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { DEFAULT_GAME_VERSION, getGameDefinition } from './data/games'
-import { getGymById } from './data/gyms/emerald'
+import { getGymById } from './data/gyms'
 import BattleSelectorSection from './components/AppView/BattleSelectorSection'
 import ErrorBoundary from './components/ErrorBoundary'
 

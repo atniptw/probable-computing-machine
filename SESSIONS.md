@@ -2,6 +2,59 @@
 
 ---
 
+## 2026-04-14 — Refactor #57: Extract getGymsForGame into gyms/index.ts
+
+### Objective
+
+Eliminate merge conflicts in parallel gym data waves by moving the shared dispatch function and interfaces out of `emerald.ts` and splitting the monolithic test file into per-game files.
+
+### Completed Work
+
+- Created `src/data/gyms/types.ts` — `GymPokemon` and `GymLeader` interfaces
+- Created `src/data/gyms/index.ts` — `getGymsForGame` (map-based dispatch) and `getGymById`; re-exports types
+- Stripped `src/data/gyms/emerald.ts` to data-only (removed interfaces, cross-game imports, and functions)
+- Updated `black-2.ts`, `crystal.ts`, `platinum.ts`, `red.ts` to import from `./types` instead of `./emerald`
+- Updated all consumers (`App.tsx`, `BattleSelectorSection.tsx`, `GymLeaderSelector.tsx`, `GymTeamPanel.tsx`, `gymComponents.test.tsx`) to import from `./data/gyms` (resolves to `index.ts`)
+- Split `src/tests/gyms.test.ts` into five per-game files: `gyms.emerald.test.ts`, `gyms.black-2.test.ts`, `gyms.crystal.test.ts`, `gyms.platinum.test.ts`, `gyms.red.test.ts`; deleted monolithic file
+- Updated `docs/DEVELOPMENT.md` file tree to reflect the new gyms module layout
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (223 tests, 26 files; `data/gyms` at 100% stmt/branch/func)
+- `npm run build` — pass
+- `npx playwright test --project=chromium` — pre-existing infrastructure failure (webServer timeout unrelated to this change; confirmed same failure on main before changes)
+- Visual QA — skipped (pure data/module refactor, no UI changes)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- Used a `types.ts` intermediary to avoid circular imports (`index.ts` imports game files; game files cannot import from `index.ts`). The issue listed `index.ts` or `types.ts` as valid — chose `types.ts` to keep `index.ts` clean.
+- The `getGymsForGame` implementation switched from if-chain to a `Record` map; the `.toBe()` identity tests still pass because the map returns the same array reference.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+
+- `[instruction]` — The `/architecture-review` command is referenced in CLAUDE.md but has no `.claude/commands/architecture-review.md` file; the review was done inline. Create the command file or remove the reference.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-14 — Feat #52: Add gym leader data for Pokémon Black 2
 
 ### Objective

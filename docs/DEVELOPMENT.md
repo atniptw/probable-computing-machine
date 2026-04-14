@@ -56,8 +56,13 @@ probable-computing-machine/
 │   ├── data/
 │   │   ├── games.ts
 │   │   └── gyms/
+│   │       ├── index.ts       ← getGymsForGame, getGymById
+│   │       ├── types.ts       ← GymPokemon, GymLeader interfaces
+│   │       ├── black-2.ts
+│   │       ├── crystal.ts
 │   │       ├── emerald.ts
-│   │       └── black-2.ts
+│   │       ├── platinum.ts
+│   │       └── red.ts
 │   ├── hooks/
 │   │   ├── useMatchupMatrix.ts
 │   │   ├── useMoveNameIndex.ts
@@ -76,7 +81,11 @@ probable-computing-machine/
 │       ├── getPokemon.test.ts
 │       ├── getPokemonNameIndex.test.ts
 │       ├── gymComponents.test.tsx
-│       ├── gyms.test.ts
+│       ├── gyms.black-2.test.ts
+│       ├── gyms.crystal.test.ts
+│       ├── gyms.emerald.test.ts
+│       ├── gyms.platinum.test.ts
+│       ├── gyms.red.test.ts
 │       ├── importBoundaries.test.ts
 │       ├── matchupContainer.test.tsx
 │       ├── pokeapi.contract.test.ts

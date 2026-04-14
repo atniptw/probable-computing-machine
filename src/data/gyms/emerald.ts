@@ -1,23 +1,4 @@
-import { BLACK2_GYMS } from './black-2'
-import { CRYSTAL_GYMS } from './crystal'
-import { PLATINUM_GYMS } from './platinum'
-import { RED_GYMS } from './red'
-
-export interface GymPokemon {
-  name: string // PokéAPI name: lowercase, hyphenated
-  level: number
-  moves: string[] // PokéAPI move names: lowercase, hyphenated
-}
-
-export interface GymLeader {
-  id: string
-  name: string
-  badge: number
-  badgeName: string
-  city: string
-  type: string
-  team: GymPokemon[]
-}
+import type { GymLeader } from './types'
 
 export const EMERALD_GYMS: GymLeader[] = [
   {
@@ -251,19 +232,3 @@ export const EMERALD_GYMS: GymLeader[] = [
     ],
   },
 ]
-
-export function getGymsForGame(gameVersion: string): GymLeader[] {
-  if (gameVersion === 'emerald') return EMERALD_GYMS
-  if (gameVersion === 'black-2') return BLACK2_GYMS
-  if (gameVersion === 'crystal') return CRYSTAL_GYMS
-  if (gameVersion === 'platinum') return PLATINUM_GYMS
-  if (gameVersion === 'red') return RED_GYMS
-  return []
-}
-
-export function getGymById(
-  gameVersion: string,
-  gymId: string,
-): GymLeader | null {
-  return getGymsForGame(gameVersion).find((g) => g.id === gymId) ?? null
-}
