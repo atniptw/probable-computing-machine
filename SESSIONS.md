@@ -2,6 +2,53 @@
 
 ---
 
+## 2026-04-14 — feat #49: Add gym leader data for Pokémon Red
+
+### Objective
+
+Add all 8 Red/Blue in-game gym leaders to the gym leader mode data layer so `getGymsForGame('red')` returns a full roster.
+
+### Completed Work
+
+- Created `src/data/gyms/red.ts` with `RED_GYMS: GymLeader[]` — all 8 leaders (Brock → Giovanni) with Red/Blue in-game teams, PokéAPI-format names and moves
+- Updated `src/data/gyms/emerald.ts`: added `import { RED_GYMS } from './red'` and `'red'` case in `getGymsForGame`
+- Extended `src/tests/gyms.test.ts` with routing tests, `getGymById` for Red, and full `RED_GYMS` roster shape suite
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (176/176; data/gyms 100% branch)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — skipped (pure data addition, no UI change)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- Red/Blue in-game movesets reconstructed from known level-up moves and trainer TM usage; exact Gen 1 trainer AI move assignment is not machine-readable without ROM analysis, so moves are accurate to Bulbapedia-documented learnsets at each level.
+- `import type { GymLeader }` from `emerald.ts` in `red.ts` avoids a runtime circular dependency while keeping types co-located with the existing pattern.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-13 — Refactor #38: Split pokeapi.ts god module into focused service modules
 
 ### Objective
