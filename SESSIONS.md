@@ -2,6 +2,51 @@
 
 ---
 
+## 2026-04-14 — feat #50: Add gym leader data for Pokémon Crystal
+
+### Objective
+
+Add Crystal (Gen 2) gym leader data to gym leader mode so all 8 Johto leaders are available for matchup lookup.
+
+### Completed Work
+
+- `src/data/gyms/crystal.ts`: new file exporting `CRYSTAL_GYMS: GymLeader[]` with all 8 Crystal leaders (Falkner → Clair), full in-game teams, PokéAPI-format Pokémon and move names
+- `src/data/gyms/emerald.ts`: added `import { CRYSTAL_GYMS } from './crystal'` and `if (gameVersion === 'crystal') return CRYSTAL_GYMS` branch in `getGymsForGame`; `crystal.ts` uses `import type` to avoid runtime circular dependency
+- `src/tests/gyms.test.ts`: added Crystal coverage — `getGymsForGame('crystal')` identity test, `getGymById('crystal', 'falkner')` test, and full `CRYSTAL_GYMS roster shape` suite (badge order, required fields, team sizes, PokéAPI name format on all moves)
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (177 tests; `data/gyms/crystal.ts` 100% coverage)
+- `npx playwright test --project=chromium` — pass (6 tests)
+- Visual QA — approved
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+Crystal in-game team compositions (Pokémon, levels, moves) were sourced from memory. Movesets follow the Crystal in-game assignments with TM-taught moves (e.g. Fury Cutter on Bugsy's Scyther, Iron Tail on Jasmine's Steelix, Dragon Breath on Clair's Dragonair) consistent with how the Emerald data treats TM moves.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-14 — feat #49: Add gym leader data for Pokémon Red
 
 ### Objective
