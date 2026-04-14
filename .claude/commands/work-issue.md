@@ -58,8 +58,12 @@ Implement in role order: Backend/Frontend → QA (tests) → Docs. Apply gate ru
 Run all of the following. Do not proceed to Step 5 if any fails.
 
 ```
-npm run verify
+npm run verify:unit
 ```
+
+This runs lint, tsc, test:coverage, and build — but not playwright. Playwright runs in
+parallel worktrees would race for port 4173 and test each other's builds. Full e2e is
+validated by `npm run verify` on main after merge.
 
 ## Step 4.5 — Visual QA review (UI changes only)
 
