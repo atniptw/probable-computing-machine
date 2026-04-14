@@ -1,3 +1,4 @@
+import { PLATINUM_GYMS } from './platinum'
 import { RED_GYMS } from './red'
 
 export interface GymPokemon {
@@ -251,6 +252,7 @@ export const EMERALD_GYMS: GymLeader[] = [
 
 export function getGymsForGame(gameVersion: string): GymLeader[] {
   if (gameVersion === 'emerald') return EMERALD_GYMS
+  if (gameVersion === 'platinum') return PLATINUM_GYMS
   if (gameVersion === 'red') return RED_GYMS
   return []
 }

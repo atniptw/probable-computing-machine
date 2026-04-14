@@ -2,6 +2,51 @@
 
 ---
 
+## 2026-04-14 — feat #51: Add gym leader data for Pokémon Platinum
+
+### Objective
+
+Add complete Platinum gym leader data so the gym leader mode works end-to-end for Platinum.
+
+### Completed Work
+
+- Created `src/data/gyms/platinum.ts` with all 8 Sinnoh gym leaders (Roark, Gardenia, Maylene, Crasher Wake, Fantina, Byron, Candice, Volkner) and their full Platinum in-game teams using PokéAPI-format names.
+- Updated `src/data/gyms/emerald.ts`: added `import { PLATINUM_GYMS } from './platinum'` and extended `getGymsForGame` to return `PLATINUM_GYMS` for `'platinum'`.
+- Expanded `src/tests/gyms.test.ts` with three new describe blocks covering Platinum: `getGymsForGame`, `getGymById`, and `PLATINUM_GYMS` roster shape (badge sequence, required fields, team sizes, PokéAPI format enforcement).
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (179 tests, platinum.ts 100% coverage)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — skipped (pure data addition, no UI behavior change)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+Used best-available knowledge for Platinum in-game movesets. Specific move names are consistent with Platinum data but could be verified against a datamine if strict accuracy is required.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-14 — feat #49: Add gym leader data for Pokémon Red
 
 ### Objective

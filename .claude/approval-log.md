@@ -122,3 +122,6 @@ Review periodically to find patterns → candidates for new focused scripts or a
 | 2026-04-13T20:52:48Z | `grep "^## DEC-" /home/atnip/projects/pcm-issue-38/DECISIONS.md                                                            | head -5`                                                                            |
 | 2026-04-13T20:53:32Z | `cat /home/atnip/projects/pcm-issue-38/src/services/pokeapi.ts && echo "---NEW FILES---" && cat /home/atnip/projects/p...` |
 | 2026-04-13T20:59:29Z | `git checkout main && git merge --ff-only feat/issue-38 && git push origin main`                                           |
+| 2026-04-14T13:24:34Z | `python3 /home/atnip/projects/probable-computing-machine/.claude/resolve-sessions-conflict.py SESSIONS.md && git add S...` |
+| 2026-04-14T13:25:13Z | `grep -rn "<<<<<<\|=======\|>>>>>>>" src/data/gyms/emerald.ts src/tests/gyms.test.ts SESSIONS.md 2>/dev/null` |
+| 2026-04-14T13:25:24Z | `grep -n "<<<<<<\|=======\|>>>>>>>" .claude/approval-log.md | head -5` |
