@@ -163,6 +163,9 @@ Wait for explicit user approval before proceeding to Step 8.
 
 ## Step 8 — Push
 
+Push the current branch (not main). The coordinator's `auto-merge.sh` owns the
+merge to main — workers must not push directly to `origin/main`.
+
 ```
-git push origin main
+git push origin HEAD
 ```

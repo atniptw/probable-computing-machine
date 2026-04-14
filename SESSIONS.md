@@ -2,6 +2,49 @@
 
 ---
 
+## 2026-04-14 — Process #59/#60/#61: Harden parallel wave merge tooling
+
+### Objective
+
+Fix three compounding issues identified during wave 2 gym data: workers racing to push main, `auto-merge.sh` failing on detached HEAD worktrees, and `git rebase --continue` spuriously refusing to proceed.
+
+### Completed Work
+
+- `work-issue.md` Step 8: changed `git push origin main` to `git push origin HEAD` — workers now push their branch; coordinator owns the merge to main (closes #59)
+- `auto-merge.sh`: replaced `rebase` approach with `cherry-pick` operating on the main repo, avoiding git 2.43+ AUTO_MERGE false-positive on `rebase --continue`; added path-based worktree fallback (`pcm-issue-N`) for detached HEAD / mid-rebase worktrees (closes #60, #61)
+- `resolve-sessions-conflict.py`: guarded `git show :2:SESSIONS.md` — exits cleanly when stage 2 is absent (file was auto-merged by git) instead of crashing (closes #61)
+
+### Validation
+
+- `npm run verify:unit` — pass (274 tests, build clean)
+- Visual QA — skipped (no user-visible changes)
+
+### Retrospective
+
+**Permission requests:** None.
+
+**Assumptions made:**
+
+- `cherry-pick --continue --no-edit` is available in this git version (confirmed: `--no-edit` is valid for cherry-pick, unlike rebase).
+- Workers will still be on `feat/issue-N` when they hit Step 8 (true by construction — worktrees always have the issue branch checked out).
+
+**Course corrections:** None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+
+- `[tooling]` — Consider adding a smoke test for `auto-merge.sh` that simulates a two-branch race to verify the cherry-pick path works end-to-end.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-14 — feat #56: add gym leader data for Pokémon Scarlet
 
 ### Objective
