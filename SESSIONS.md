@@ -2,6 +2,61 @@
 
 ---
 
+## 2026-04-15 — feat/issue-62: Narrow opponent moves using PokéAPI learnset data in free mode
+
+### Objective
+
+Replace type-inference move synthesis in free mode with real level-up learnset data from PokéAPI, and add an optional level input to further filter moves.
+
+### Completed Work
+
+- Added `getWildMoveset(pokemonName, gameVersion, level?)` to `src/services/pokeapi.ts`: fetches learnset from `/pokemon/{name}`, filters to level-up moves for the selected version group, applies optional level cap, returns up to 4 sorted descending by `level_learned_at`
+- Added learnset localStorage cache (7-day TTL, key `pkm_learnset_v1_{name}`) with concurrent-dedup promise cache
+- Added `PokeApiPokemonMoveEntry` and `PokeApiMoveVersionDetail` types to `src/services/pokeapiClient.ts`
+- Wired `opponentLevel` state into `App.tsx`; `useEffect` drives `getWildMoveset` on opponent match, game, or level change
+- Added level input to `BattleSelectorSection` free mode (`.opponentInputRow` wrapper, `.levelInput` styles); absent in gym mode
+- Updated `App Contract` in `docs/COMPONENT_DESIGN.md` with `opponentLevel: number | null`
+- New test file `src/tests/getWildMoveset.test.ts` (8 tests): with level, without level, empty version group, level-cap fallback, network error, cache hit, concurrent dedup
+- Extended `src/tests/battleSelectorSection.test.tsx` with 4 level input tests
+- Extended `src/tests/pokeapi.contract.test.ts` with learnset shape contract test
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (306 tests, branch coverage 82.37%)
+- `npm run build` — pass
+- `npx playwright test --project=chromium` — skipped (parallel worktree; full e2e on main after merge)
+- Visual QA — approved
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- Level input padding set to `0 8px` rather than spec's `0 10px` — at 72px width, 10px left/right would be very tight; 8px gives identical visual result. Approved during visual QA.
+- Learnset fetched from the same `/pokemon/{name}` endpoint as types/sprites; the browser HTTP cache means the second call (for learnset after types) is typically free.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — exact CSS values, affected file locations, and cache key format all specified.
+- Scope clarity: Clear.
+
+**Feedforward signals:**
+
+- `[instruction]` — Visual QA script should query computed styles directly on the target element, not `parentElement`, when styles are applied via a CSS class on the element itself.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-14 — Process #59/#60/#61: Harden parallel wave merge tooling
 
 ### Objective

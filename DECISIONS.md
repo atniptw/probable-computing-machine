@@ -2,6 +2,34 @@
 
 ---
 
+## DEC-0028
+
+### Date
+
+2026-04-15
+
+### Issue
+
+#62 — feat: narrow opponent moves using PokéAPI learnset data in free mode
+
+### Decision
+
+Level input padding set to `0 8px` rather than the design spec's `0 10px`.
+
+### Rationale
+
+At 72px fixed width, 10px horizontal padding leaves only 52px for the number content, which is unnecessarily tight. 8px padding provides identical visual centering while giving the number slightly more room. The change was reviewed and approved during visual QA.
+
+### Alternatives Considered
+
+- Follow the spec exactly at `0 10px` — rejected because the input is narrower than the name input where 10px was derived from, making it visually cramped.
+
+### Consequences
+
+Minor deviation from the design token. No downstream impact — the value is self-contained in `.levelInput` in `App.module.css`.
+
+---
+
 ## DEC-0027
 
 ### Date
