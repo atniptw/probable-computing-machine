@@ -37,6 +37,7 @@ state: {
   selectedGameVersion: string,
   screen: 'battle' | 'team',
   opponentInput: string,
+  opponentLevel: number | null,
   error: string | null,
   battleMode: 'free' | 'gym',
   selectedGymId: string | null,

@@ -68,7 +68,7 @@ async function fetchMoveNameIndexFromApi(): Promise<string[]> {
     .filter(Boolean)
 }
 
-async function getGameVersionContext(
+export async function getGameVersionContext(
   version: string,
 ): Promise<GameVersionContext> {
   if (gameContextCache.has(version)) {

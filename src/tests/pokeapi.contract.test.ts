@@ -236,6 +236,68 @@ describe('Contract: GET /type → TypeRelations', () => {
   })
 })
 
+// ─── GET /pokemon/{name} → moves (learnset) ──────────────────────────────────
+
+describe('Contract: GET /pokemon/{name} → moves (learnset)', () => {
+  beforeEach(() => {
+    vi.resetModules()
+    vi.unstubAllGlobals()
+    vi.stubGlobal('localStorage', new MockStorage())
+  })
+
+  it('maps moves[].move.name, level_learned_at, move_learn_method.name, version_group.name', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => {
+        if ((url as string).includes('/version/red')) {
+          return jsonResponse({ version_group: { name: 'red-blue' } })
+        }
+        if ((url as string).includes('/version-group/red-blue')) {
+          return jsonResponse({
+            generation: { name: 'generation-i' },
+            pokedexes: [{ name: 'kanto' }],
+          })
+        }
+        // /pokemon/pikachu
+        return jsonResponse({
+          name: 'pikachu',
+          types: [{ slot: 1, type: { name: 'electric' } }],
+          past_types: [],
+          sprites: { front_default: null },
+          moves: [
+            {
+              move: { name: 'thunder-shock' },
+              version_group_details: [
+                {
+                  level_learned_at: 1,
+                  move_learn_method: { name: 'level-up' },
+                  version_group: { name: 'red-blue' },
+                },
+              ],
+            },
+            {
+              move: { name: 'thunder' },
+              version_group_details: [
+                {
+                  level_learned_at: 41,
+                  move_learn_method: { name: 'level-up' },
+                  version_group: { name: 'red-blue' },
+                },
+              ],
+            },
+          ],
+        })
+      }),
+    )
+
+    const { getWildMoveset } = await import('../services/pokeapi')
+    const moves = await getWildMoveset('pikachu', 'red')
+
+    // Two moves in descending level order; thunder (41) before thunder-shock (1)
+    expect(moves).toEqual(['thunder', 'thunder-shock'])
+  })
+})
+
 // ─── GET /move/{name} ────────────────────────────────────────────────────────
 
 describe('Contract: GET /move/{name} → string', () => {

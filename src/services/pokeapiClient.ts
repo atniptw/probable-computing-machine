@@ -66,10 +66,22 @@ export interface PokeApiPokemonResponse {
   sprites: {
     front_default: string | null
   }
+  moves: PokeApiPokemonMoveEntry[]
 }
 
 export interface PokeApiMoveResponse {
   type: { name: string }
+}
+
+export interface PokeApiMoveVersionDetail {
+  level_learned_at: number
+  move_learn_method: { name: string }
+  version_group: { name: string }
+}
+
+export interface PokeApiPokemonMoveEntry {
+  move: { name: string }
+  version_group_details: PokeApiMoveVersionDetail[]
 }
 
 export interface PokeApiDamageRelations {

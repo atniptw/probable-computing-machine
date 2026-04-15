@@ -136,6 +136,36 @@
   text-transform: capitalize;
 }
 
+.opponentInputRow {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.levelInput {
+  flex: 0 0 72px;
+  min-height: 52px;
+  border-radius: 12px;
+  border: 1px solid #d7dce0;
+  background: #ffffff;
+  font-size: 1rem;
+  text-align: center;
+  outline: none;
+  padding: 0 8px;
+  color: #1f2933;
+  -moz-appearance: textfield;
+}
+
+.levelInput::-webkit-outer-spin-button,
+.levelInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.levelInput:focus {
+  border-color: #4299e1;
+}
+
 .suggestionList {
   margin-top: 8px;
   border: 1px solid #d7dce0;

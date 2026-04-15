@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { DEFAULT_GAME_VERSION, getGameDefinition } from './data/games'
 import { getGymById } from './data/gyms'
+import { getWildMoveset } from './services/pokeapi'
 import BattleSelectorSection from './components/AppView/BattleSelectorSection'
 import ErrorBoundary from './components/ErrorBoundary'
 
@@ -35,6 +36,8 @@ export default function App() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [battleMode, setBattleMode] = useState<BattleMode>('free')
   const [selectedGymId, setSelectedGymId] = useState<string | null>(null)
+  const [opponentLevel, setOpponentLevel] = useState<number | null>(null)
+  const [wildOpponentMoves, setWildOpponentMoves] = useState<string[]>([])
 
   const selectedGame = useMemo(() => {
     return (
@@ -62,12 +65,48 @@ export default function App() {
   )
   const exactMatchFound = pokemonNameSet.has(normalizedOpponent)
 
+  useEffect(() => {
+    if (battleMode !== 'free' || !exactMatchFound || !normalizedOpponent) return
+    let cancelled = false
+    getWildMoveset(
+      normalizedOpponent,
+      selectedGameVersion,
+      opponentLevel ?? undefined,
+    )
+      .then((moves) => {
+        if (!cancelled) setWildOpponentMoves(moves)
+      })
+      .catch(() => {
+        if (!cancelled) setWildOpponentMoves([])
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [
+    battleMode,
+    exactMatchFound,
+    normalizedOpponent,
+    selectedGameVersion,
+    opponentLevel,
+  ])
+
   const opponentMoves = useMemo(() => {
-    if (battleMode !== 'gym' || !selectedGymId || !normalizedOpponent) return []
-    const gym = getGymById(selectedGameVersion, selectedGymId)
-    const gymPokemon = gym?.team.find((p) => p.name === normalizedOpponent)
-    return gymPokemon?.moves ?? []
-  }, [battleMode, selectedGymId, normalizedOpponent, selectedGameVersion])
+    if (battleMode === 'gym') {
+      if (!selectedGymId || !normalizedOpponent) return []
+      const gym = getGymById(selectedGameVersion, selectedGymId)
+      return gym?.team.find((p) => p.name === normalizedOpponent)?.moves ?? []
+    }
+    // Only return wild moves when there is an exact match to prevent showing
+    // stale moves from a previous opponent while a new name is being typed.
+    return exactMatchFound ? wildOpponentMoves : []
+  }, [
+    battleMode,
+    selectedGymId,
+    normalizedOpponent,
+    selectedGameVersion,
+    wildOpponentMoves,
+    exactMatchFound,
+  ])
 
   const {
     activeTeamSlot,
@@ -117,6 +156,8 @@ export default function App() {
     setBattleMode('free')
     setSelectedGymId(null)
     setOpponentInput('')
+    setOpponentLevel(null)
+    setWildOpponentMoves([])
     setError(null)
     resetTeam(nextGame.version, nextGame.defaultTeam)
   }
@@ -124,7 +165,15 @@ export default function App() {
   function handleBattleModeChange(mode: BattleMode): void {
     setBattleMode(mode)
     setOpponentInput('')
+    setOpponentLevel(null)
+    setWildOpponentMoves([])
     setSelectedGymId(null)
+  }
+
+  function handleOpponentInputChange(value: string): void {
+    setOpponentInput(value)
+    setOpponentLevel(null)
+    setWildOpponentMoves([])
   }
 
   function handleSave(): void {
@@ -276,11 +325,13 @@ export default function App() {
           selectedGymId={selectedGymId}
           onGymSelect={setSelectedGymId}
           opponentInput={opponentInput}
-          onOpponentInputChange={setOpponentInput}
+          onOpponentInputChange={handleOpponentInputChange}
           normalizedOpponent={normalizedOpponent}
           exactMatchFound={exactMatchFound}
           opponentSuggestions={opponentSuggestions}
           onSuggestionSelect={setOpponentInput}
+          opponentLevel={opponentLevel}
+          onOpponentLevelChange={setOpponentLevel}
         />
       ) : (
         <TeamConfigurationSection

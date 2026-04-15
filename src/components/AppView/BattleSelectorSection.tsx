@@ -19,6 +19,8 @@ interface BattleSelectorSectionProps {
   exactMatchFound: boolean
   opponentSuggestions: string[]
   onSuggestionSelect: (name: string) => void
+  opponentLevel?: number | null
+  onOpponentLevelChange?: (level: number | null) => void
 }
 
 export default function BattleSelectorSection({
@@ -34,6 +36,8 @@ export default function BattleSelectorSection({
   exactMatchFound,
   opponentSuggestions,
   onSuggestionSelect,
+  opponentLevel,
+  onOpponentLevelChange,
 }: BattleSelectorSectionProps) {
   const selectedGym = selectedGymId
     ? getGymById(selectedGameVersion, selectedGymId)
@@ -67,16 +71,35 @@ export default function BattleSelectorSection({
       {battleMode === 'free' ? (
         <>
           <div className={styles.selectorLabel}>Opponent</div>
-          <label className={styles.selectorRow} htmlFor="opponent-input">
+          <div className={styles.opponentInputRow}>
+            <label
+              className={styles.selectorRow}
+              htmlFor="opponent-input"
+              style={{ flex: 1, width: 'auto' }}
+            >
+              <input
+                id="opponent-input"
+                className={styles.selectorInput}
+                value={opponentInput}
+                onChange={(event) => onOpponentInputChange(event.target.value)}
+                placeholder="Search Pokémon…"
+                aria-label="Opponent Pokemon"
+              />
+            </label>
             <input
-              id="opponent-input"
-              className={styles.selectorInput}
-              value={opponentInput}
-              onChange={(event) => onOpponentInputChange(event.target.value)}
-              placeholder="Search Pokémon…"
-              aria-label="Opponent Pokemon"
+              type="number"
+              min={1}
+              max={100}
+              className={styles.levelInput}
+              value={opponentLevel ?? ''}
+              onChange={(event) => {
+                const raw = event.target.value
+                onOpponentLevelChange?.(raw === '' ? null : parseInt(raw, 10))
+              }}
+              placeholder="Lv"
+              aria-label="Opponent level (optional)"
             />
-          </label>
+          </div>
 
           {!!normalizedOpponent &&
             !exactMatchFound &&

@@ -11,6 +11,7 @@ const onBattleModeChange = vi.fn()
 const onGymSelect = vi.fn()
 const onOpponentInputChange = vi.fn()
 const onSuggestionSelect = vi.fn()
+const onOpponentLevelChange = vi.fn()
 
 function resetMocks() {
   onGameChange.mockReset()
@@ -18,6 +19,7 @@ function resetMocks() {
   onGymSelect.mockReset()
   onOpponentInputChange.mockReset()
   onSuggestionSelect.mockReset()
+  onOpponentLevelChange.mockReset()
 }
 
 function renderSection(
@@ -36,6 +38,8 @@ function renderSection(
     exactMatchFound: false,
     opponentSuggestions: [],
     onSuggestionSelect,
+    opponentLevel: null,
+    onOpponentLevelChange,
   }
   render(<BattleSelectorSection {...defaults} {...overrides} />)
 }
@@ -114,6 +118,39 @@ describe('BattleSelectorSection — free battle mode', () => {
     expect(onSuggestionSelect).toHaveBeenCalledOnce()
     expect(onSuggestionSelect).toHaveBeenCalledWith('salamence')
   })
+
+  it('renders the level input in free mode', () => {
+    renderSection()
+    expect(
+      screen.getByLabelText('Opponent level (optional)'),
+    ).toBeInTheDocument()
+  })
+
+  it('shows the current opponentLevel value in the level input', () => {
+    renderSection({ opponentLevel: 42 })
+    const input = screen.getByLabelText(
+      'Opponent level (optional)',
+    ) as HTMLInputElement
+    expect(input.value).toBe('42')
+  })
+
+  it('calls onOpponentLevelChange with parsed integer on valid input', () => {
+    renderSection()
+    fireEvent.change(screen.getByLabelText('Opponent level (optional)'), {
+      target: { value: '35' },
+    })
+    expect(onOpponentLevelChange).toHaveBeenCalledOnce()
+    expect(onOpponentLevelChange).toHaveBeenCalledWith(35)
+  })
+
+  it('calls onOpponentLevelChange with null when level input is cleared', () => {
+    renderSection({ opponentLevel: 35 })
+    fireEvent.change(screen.getByLabelText('Opponent level (optional)'), {
+      target: { value: '' },
+    })
+    expect(onOpponentLevelChange).toHaveBeenCalledOnce()
+    expect(onOpponentLevelChange).toHaveBeenCalledWith(null)
+  })
 })
 
 describe('BattleSelectorSection — gym leader mode', () => {
@@ -128,6 +165,13 @@ describe('BattleSelectorSection — gym leader mode', () => {
     // GymLeaderSelector renders all 8 Emerald leaders
     expect(screen.getByRole('button', { name: /Roxanne/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Juan/i })).toBeInTheDocument()
+  })
+
+  it('does not render the level input in gym mode', () => {
+    renderSection({ battleMode: 'gym' })
+    expect(
+      screen.queryByLabelText('Opponent level (optional)'),
+    ).not.toBeInTheDocument()
   })
 
   it('renders GymTeamPanel when a gym is selected', () => {
