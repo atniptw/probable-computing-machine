@@ -3223,3 +3223,52 @@ None.
 ### Next Actions
 
 Continue backlog.
+
+---
+
+## 2026-04-16 — issue #65: implement auto-merge step in work-issue skill
+
+### Objective
+
+Replace the placeholder "push to feature branch and await coordinator" Step 8 in the `/work-issue` skill with a self-contained merge, sync, worktree-removal, and issue-close sequence.
+
+### Completed Work
+
+- Updated `.claude/commands/work-issue.md` Step 8: replaced `git push origin HEAD` + coordinator reference with four sub-steps:
+  - 8.1 Push directly to `origin/main` via `git push origin HEAD:main`; stop on failure
+  - 8.2 Sync local `main` via `cd "$(git rev-parse --git-common-dir)/.." && git fetch origin && git merge --ff-only origin/main`
+  - 8.3 Remove worktree and delete feature branch
+  - 8.4 Close GitHub issue with `gh issue close N`
+- Removed all references to `auto-merge.sh` and "coordinator"
+- Step 7 user sign-off preserved
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (306/306 tests; 82.37% branch)
+- `npx playwright test --project=chromium` — skipped (no UI changes)
+- Visual QA — skipped (no UI changes)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+None. Issue was complete and unambiguous.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — all sub-steps and failure behavior explicitly specified.
+- Scope clarity: Clear — agreed approach was fully described in the issue body.
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
