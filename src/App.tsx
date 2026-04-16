@@ -189,8 +189,9 @@ export default function App() {
       <header className={styles.header}>
         <h1>Pokémon Matchup Helper</h1>
         <div className={styles.headerActions}>
+          {import.meta.env.VITE_GITHUB_REPO && (
           <a
-            href="https://github.com/atniptw/probable-computing-machine/blob/main/docs/USER_GUIDE.md"
+            href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO}/blob/main/docs/USER_GUIDE.md`}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.headerIconLink}
@@ -219,8 +220,10 @@ export default function App() {
               <circle cx="9" cy="13" r=".75" fill="currentColor" />
             </svg>
           </a>
+          )}
+          {import.meta.env.VITE_GITHUB_REPO && (
           <a
-            href="https://github.com/atniptw/probable-computing-machine/issues"
+            href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO}/issues`}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.headerIconLink}
@@ -304,6 +307,7 @@ export default function App() {
               />
             </svg>
           </a>
+          )}
           {screen === 'battle' && (
             <button
               type="button"

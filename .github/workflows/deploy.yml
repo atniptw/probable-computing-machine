@@ -47,7 +47,12 @@ jobs:
       - run: npm run format:check
       - run: npm run tsc
       - run: npm run test:coverage
-      - run: npm run build
+      - name: Build
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /probable-computing-machine/
+          VITE_APP_URL: https://atniptw.github.io/probable-computing-machine
+          VITE_GITHUB_REPO: atniptw/probable-computing-machine
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
       - uses: actions/configure-pages@v5
