@@ -161,11 +161,40 @@ Present to the user:
 
 Wait for explicit user approval before proceeding to Step 8.
 
-## Step 8 — Push
+## Step 8 — Merge, sync, and clean up
 
-Push the current branch (not main). The coordinator's `auto-merge.sh` owns the
-merge to main — workers must not push directly to `origin/main`.
+After explicit user approval in Step 7, perform the full merge and clean-up from the feature worktree.
+
+### 8.1 — Push to main
 
 ```
-git push origin HEAD
+git push origin HEAD:main
+```
+
+If this fails (remote has diverged / not fast-forward), **stop immediately** and surface the error to the user. Do not proceed with the remaining sub-steps.
+
+### 8.2 — Sync the local main branch
+
+Resolve the main worktree root (works correctly from any worktree) and fast-forward the local `main` branch:
+
+```bash
+cd "$(git rev-parse --git-common-dir)/.."
+git fetch origin && git merge --ff-only origin/main
+```
+
+### 8.3 — Remove the worktree and feature branch
+
+From the main worktree root, replace `feat/issue-N` with the actual branch name:
+
+```bash
+git worktree remove ../feat/issue-N
+git branch -D feat/issue-N
+```
+
+### 8.4 — Close the issue
+
+Replace `N` with the issue number:
+
+```
+gh issue close N
 ```
