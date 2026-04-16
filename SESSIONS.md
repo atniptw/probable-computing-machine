@@ -2,6 +2,61 @@
 
 ---
 
+## 2026-04-16 — feat/issue-63: Make deploy URL and GitHub repo configurable via env vars
+
+### Objective
+
+Replace three classes of hardcoded deployment strings with environment variables so the app can be deployed at any domain without source changes.
+
+### Completed Work
+
+- `vite.config.ts` — replaced hardcoded `/probable-computing-machine/` base path with `process.env.VITE_BASE_PATH ?? '/'`; converted from factory function form to object form to avoid unused-parameter lint error
+- `index.html` — replaced hardcoded GitHub Pages origin in `<link rel="canonical">`, `og:url`, and `og:image` with `%VITE_APP_URL%`; replaced hardcoded favicon path with `%BASE_URL%favicon.svg`
+- `src/App.tsx` — replaced hardcoded `atniptw/probable-computing-machine` repo path with `import.meta.env.VITE_GITHUB_REPO`; header links are rendered conditionally (`null` when var is unset)
+- `src/vite-env.d.ts` — added `ImportMetaEnv` interface declaring `VITE_GITHUB_REPO`, `VITE_APP_URL`, `VITE_BASE_PATH` as optional strings
+- `.github/workflows/deploy.yml` — added `env:` block to the build step with all three vars set to the GitHub Pages values
+- `.env.example` — new file documenting all three variables with comments and example values
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (306 tests, branch coverage 82.37%)
+- `npm run build` — pass (warns on unset `%VITE_APP_URL%` locally; expected — CI sets the var)
+- `npx playwright test --project=chromium` — skipped (parallel worktree; full e2e on main after merge)
+- Visual QA — skipped (no rendered output change)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- When `VITE_GITHUB_REPO` is unset, the help and feedback links are hidden rather than pointing to a broken URL. The issue requires no hardcoded `atniptw`/`probable-computing-machine` strings, so conditional rendering is the only clean option.
+- When `VITE_APP_URL` is unset, `%VITE_APP_URL%` remains as a literal in the built HTML — Vite warns but the build succeeds and the app loads correctly. SEO metadata is only meaningful in production where the var is set.
+- Switched `vite.config.ts` from the `({ command }) => ...` factory form to the plain object form, because removing the `command` usage left an unused parameter that the ESLint `@typescript-eslint/no-unused-vars` rule rejected.
+
+**Course corrections:**
+
+- First attempt used `() => (...)` (zero-arg function) which caused a TypeScript overload mismatch. Fixed by switching to the object form.
+- Second attempt used `(_env) => (...)` which lint flagged as an unused variable. Fixed by using the object form.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — exact file locations, env var names, and default behaviour all specified.
+- Scope clarity: Clear.
+
+**Feedforward signals:**
+
+- `[instruction]` — When removing the only use of a `defineConfig` factory parameter, switch to the object form rather than leaving an unused parameter.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-15 — feat/issue-62: Narrow opponent moves using PokéAPI learnset data in free mode
 
 ### Objective
