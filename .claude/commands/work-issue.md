@@ -191,10 +191,4 @@ git worktree remove ../feat/issue-N
 git branch -D feat/issue-N
 ```
 
-### 8.4 — Close the issue
-
-Replace `N` with the issue number:
-
-```
-gh issue close N
-```
+> **Note:** GitHub auto-closes issues when a commit containing `Closes #N` is pushed to main. Do not run `gh issue close` manually — it is redundant and contradicts CLAUDE.md policy.

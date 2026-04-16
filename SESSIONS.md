@@ -2,6 +2,50 @@
 
 ---
 
+## 2026-04-16 — chore/issue-65: Replace Step 8 with direct merge, sync, and clean-up
+
+### Objective
+
+Replace the placeholder `git push origin HEAD` (which deferred to a non-existent `auto-merge.sh` coordinator) with a complete merge-to-main sequence that workers can execute autonomously from a feature worktree.
+
+### Completed Work
+
+- `.claude/commands/work-issue.md` — replaced Step 8 with four sub-steps: push to `origin/main` via `HEAD:main`, sync local main via `git rev-parse --git-common-dir` + `ff-only` merge, remove worktree + delete branch, and a note that GitHub auto-closes the issue via `Closes #N` in the commit message (no `gh issue close` needed)
+
+### Validation
+
+- `npm run lint` — pass (docs-only change)
+- `npm run tsc` — pass (no TypeScript touched)
+- `npm run test:coverage` — pass (no logic changed)
+- `npm run build` — pass
+- `npx playwright test --project=chromium` — skipped (parallel worktree; full e2e on main after merge)
+- Visual QA — skipped (no user-visible effect)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+Assumed `git rev-parse --git-common-dir/..` reliably resolves to the main worktree root for any worktree configuration used in this repo.
+
+**Course corrections:**
+Step 8.4 (`gh issue close N`) removed — contradicts CLAUDE.md policy ("do not also close it manually with `gh issue close`"); `Closes #N` in commit message handles auto-close.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-16 — chore/issue-64: Add format:check to verify:unit and verify scripts
 
 ### Objective
