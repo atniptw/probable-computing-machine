@@ -190,123 +190,123 @@ export default function App() {
         <h1>Pokémon Matchup Helper</h1>
         <div className={styles.headerActions}>
           {import.meta.env.VITE_GITHUB_REPO && (
-          <a
-            href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO}/blob/main/docs/USER_GUIDE.md`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.headerIconLink}
-            aria-label="Open user guide"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              aria-hidden="true"
+            <a
+              href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO}/blob/main/docs/USER_GUIDE.md`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.headerIconLink}
+              aria-label="Open user guide"
             >
-              <circle
-                cx="9"
-                cy="9"
-                r="8"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <path
-                d="M7 7c0-1.1.9-2 2-2s2 .9 2 2c0 .8-.5 1.5-1.2 1.8L9 11"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <circle cx="9" cy="13" r=".75" fill="currentColor" />
-            </svg>
-          </a>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                fill="none"
+                aria-hidden="true"
+              >
+                <circle
+                  cx="9"
+                  cy="9"
+                  r="8"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M7 7c0-1.1.9-2 2-2s2 .9 2 2c0 .8-.5 1.5-1.2 1.8L9 11"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <circle cx="9" cy="13" r=".75" fill="currentColor" />
+              </svg>
+            </a>
           )}
           {import.meta.env.VITE_GITHUB_REPO && (
-          <a
-            href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO}/issues`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.headerIconLink}
-            aria-label="Report an issue"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              aria-hidden="true"
+            <a
+              href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO}/issues`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.headerIconLink}
+              aria-label="Report an issue"
             >
-              <ellipse
-                cx="9"
-                cy="10.5"
-                rx="3.5"
-                ry="4.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <circle
-                cx="9"
-                cy="5"
-                r="1.75"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <line
-                x1="5.5"
-                y1="8.5"
-                x2="2.5"
-                y2="7.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <line
-                x1="5.5"
-                y1="11"
-                x2="2.5"
-                y2="11"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <line
-                x1="5.5"
-                y1="13.5"
-                x2="2.5"
-                y2="14.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <line
-                x1="12.5"
-                y1="8.5"
-                x2="15.5"
-                y2="7.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <line
-                x1="12.5"
-                y1="11"
-                x2="15.5"
-                y2="11"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-              <line
-                x1="12.5"
-                y1="13.5"
-                x2="15.5"
-                y2="14.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
-          </a>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                fill="none"
+                aria-hidden="true"
+              >
+                <ellipse
+                  cx="9"
+                  cy="10.5"
+                  rx="3.5"
+                  ry="4.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <circle
+                  cx="9"
+                  cy="5"
+                  r="1.75"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <line
+                  x1="5.5"
+                  y1="8.5"
+                  x2="2.5"
+                  y2="7.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="5.5"
+                  y1="11"
+                  x2="2.5"
+                  y2="11"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="5.5"
+                  y1="13.5"
+                  x2="2.5"
+                  y2="14.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="12.5"
+                  y1="8.5"
+                  x2="15.5"
+                  y2="7.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="12.5"
+                  y1="11"
+                  x2="15.5"
+                  y2="11"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="12.5"
+                  y1="13.5"
+                  x2="15.5"
+                  y2="14.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </a>
           )}
           {screen === 'battle' && (
             <button
