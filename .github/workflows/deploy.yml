@@ -50,8 +50,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_BASE_PATH: /probable-computing-machine/
-          VITE_APP_URL: https://atniptw.github.io/probable-computing-machine
+          VITE_BASE_PATH: /
+          VITE_APP_URL: https://pokemon.pootzandboogie.com
           VITE_GITHUB_REPO: atniptw/probable-computing-machine
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
