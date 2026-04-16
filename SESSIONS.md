@@ -2,6 +2,52 @@
 
 ---
 
+## 2026-04-16 — chore/issue-64: Add format:check to verify:unit and verify scripts
+
+### Objective
+
+Unify local and CI pre-push checks by adding `npm run format:check` to both `verify:unit` and `verify` scripts so Prettier violations are caught locally before pushing.
+
+### Completed Work
+
+- `package.json` — inserted `npm run format:check` after `npm run lint` in both `verify` and `verify:unit` scripts; check order is now lint → format:check → tsc → test:coverage → build (→ playwright in `verify`)
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run format:check` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (306 tests, branch coverage 82.37%)
+- `npm run build` — pass
+- `npx playwright test --project=chromium` — skipped (parallel worktree; full e2e on main after merge)
+- Visual QA — skipped (no user-visible effect)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+None. The AC specified exact placement (before build) and the scripts were unambiguous.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+
+- `[instruction]` — Update CLAUDE.md Step 4 note to reflect that `verify:unit` now includes format:check; the separate reminder to run `npm run format:check` before pushing is no longer needed.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-16 — feat/issue-63: Make deploy URL and GitHub repo configurable via env vars
 
 ### Objective
