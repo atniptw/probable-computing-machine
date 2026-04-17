@@ -2,6 +2,52 @@
 
 ---
 
+## 2026-04-17 — chore/issue-67: Add missing GitHub labels to match conventional commit prefixes
+
+### Objective
+
+Create the 6 missing type labels (`chore`, `refactor`, `test`, `docs`, `perf`, `a11y`), apply them to all open issues, and document the label-to-prefix mapping in CLAUDE.md.
+
+### Completed Work
+
+- Created 6 new GitHub labels via `gh label create`: `chore`, `refactor`, `test`, `docs`, `perf`, `a11y`
+- Applied type labels to all 10 open issues matching their title prefix (`chore` for 9 issues, `docs` for #75)
+- Added `## GitHub Label Convention` section to `CLAUDE.md` with a label-to-prefix mapping table and the `bug`/`fix:` distinction note
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (306 tests, 95.32% statements, 82.37% branch)
+- `npm run build` — pass
+- `npx playwright test --project=chromium` — skipped (parallel worktree; full e2e on main after merge)
+- Visual QA — skipped (no user-visible effect)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+All open issues with `chore:` prefix should get the `chore` label, and `docs:` prefix should get the `docs` label. No ambiguous prefixes were found among the 10 open issues.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-16 — chore/issue-65: Replace Step 8 with direct merge, sync, and clean-up
 
 ### Objective
