@@ -2,6 +2,56 @@
 
 ---
 
+## 2026-04-17 — chore/issue-69: Fix e2e port conflicts in parallel worktrees
+
+### Objective
+
+Replace the hardcoded port 4173 in `playwright.config.ts` with a deterministic hash-derived port so each worktree runs e2e tests on its own port without conflicting with other parallel worktrees.
+
+### Completed Work
+
+- Added `fileURLToPath`/`import.meta.url`-based directory hash in `playwright.config.ts` to derive a unique port per worktree (range 4173–5172)
+- Replaced all three hardcoded `4173` references (`baseURL`, `webServer.url`, `webServer.command`) with the dynamic `port` variable
+- Inlined the vite command in `playwright.config.ts` (`vite --host 127.0.0.1 --port ${port}`) instead of calling `npm run dev:qa`
+- Removed dead `dev:qa` script from `package.json`
+- Updated `.claude/commands/work-issue.md` Step 4 to run `npm run verify` (full suite including playwright) instead of `verify:unit`; removed the "skip Playwright in worktrees" note
+- Updated Step 4.5 in `work-issue.md` to use `npm run dev` instead of `npm run dev:qa`
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (95.32% statements, 82.37% branch)
+- `npx playwright test --project=chromium` — pass (6/6)
+- `npm run verify` — pass
+- Visual QA — skipped (no user-visible changes)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+The issue's technical direction specified `__dirname` and noted "package.json has no `"type": "module"`". The actual `package.json` does have `"type": "module"`, so Playwright loads the config as native ESM and `__dirname` is undefined. Used `fileURLToPath(new URL('.', import.meta.url))` instead — semantically equivalent, ESM-compatible.
+
+**Course corrections:**
+Switched from `__dirname` to `import.meta.url` after playwright threw `ReferenceError: __dirname is not defined in ES module scope`. The issue's prerequisite note was incorrect about the package module type.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear | Had to infer boundaries (issue said `__dirname` works but that was factually wrong — package has `"type": "module"`)
+
+**Feedforward signals:**
+
+- `[issue-template]` — Technical direction notes that rely on package.json state should be verified against the actual file before writing.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-17 — chore/issue-67: Add missing GitHub labels to match conventional commit prefixes
 
 ### Objective

@@ -58,12 +58,10 @@ Implement in role order: Backend/Frontend → QA (tests) → Docs. Apply gate ru
 Run all of the following. Do not proceed to Step 5 if any fails.
 
 ```
-npm run verify:unit
+npm run verify
 ```
 
-This runs lint, tsc, test:coverage, and build — but not playwright. Playwright runs in
-parallel worktrees would race for port 4173 and test each other's builds. Full e2e is
-validated by `npm run verify` on main after merge.
+This runs lint, format:check, tsc, test:coverage, build, and playwright e2e.
 
 ## Step 4.5 — Visual QA review (UI changes only)
 
@@ -72,7 +70,7 @@ If the change affects any visible UI behavior:
 1. Start the dev server:
 
 ```
-npm run dev:qa
+npm run dev
 ```
 
 2. Run `/visual-qa [issue number]` to pre-screen visual acceptance criteria via screenshots. The command will:
