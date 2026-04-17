@@ -2,6 +2,54 @@
 
 ---
 
+## 2026-04-17 — chore/issue-70: Simplify work-issue skill for single-agent serial execution
+
+### Objective
+
+Remove multi-agent ceremony from the `/work-issue` skill and fix structural issues that accumulated since earlier partial fixes.
+
+### Completed Work
+
+- Renumbered Step 1.7 (design review) to Step 1.3 so the sequence reads 1 → 1.2 → 1.3 → 1.5 → 2 → 3 in execution order
+- Made Step 1.5 (architecture drift) conditional: skip for isolated bug fixes, a11y fixes, test additions, and doc-only changes, with explicit skip reasoning required
+- Added `npm ci` before `npm run verify` in Step 4 to ensure `node_modules` are present in fresh worktrees
+- Removed `/role-guide` reference from Step 3; replaced with inline gate rule: "Write tests alongside implementation; update docs in the same commit."
+- Removed "Suggested handoff owner" from the feature intake brief (item 8)
+- No `verify:unit` references remain in the skill; `verify:unit` retained in `package.json`
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (95.32% statements, 82.37% branch)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — skipped (no user-visible changes; docs-only change)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+None. The issue was complete and unambiguous.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-17 — chore/issue-69: Fix e2e port conflicts in parallel worktrees
 
 ### Objective
