@@ -15,7 +15,6 @@ Summarize: title, acceptance criteria, notes. If no acceptance criteria exist, p
 5. Out of scope.
 6. Acceptance criteria checklist.
 7. Risks and dependencies.
-8. Suggested handoff owner.
 
 Post the brief and wait for explicit user approval before proceeding.
 
@@ -31,7 +30,7 @@ If the label does not exist, create it first:
 gh label create "in progress" --color "0075ca" --description "Actively being worked"
 ```
 
-## Step 1.7 — Design review (visual issues only)
+## Step 1.3 — Design review (visual issues only)
 
 Run `/design-review [ARGUMENTS]` if the issue touches visible UI layout, color, typography, spacing, or interactive states. The command will audit all affected locations, produce a concrete design spec with exact values, and update the issue before implementation begins.
 
@@ -39,7 +38,9 @@ Skip for: pure logic, data, or test changes; a11y attribute-only fixes; refactor
 
 Do not begin Step 3 (Implementation) for a qualifying visual issue until the Design Spec is appended to the issue.
 
-## Step 1.5 — Architecture drift check
+## Step 1.5 — Architecture drift check (conditional)
+
+Skip for isolated bug fixes, a11y fixes, test additions, and doc-only changes. State explicitly which applies and why you are skipping or not.
 
 Run `/architecture-drift`. If the verdict is `DRIFT DETECTED`, resolve all findings (update `docs/COMPONENT_DESIGN.md` to match the live codebase) and commit the fix before proceeding to Step 2. Do not carry pre-existing drift into the implementation.
 
@@ -51,13 +52,14 @@ Skip for isolated bug fixes, a11y fixes, test additions, and doc-only changes. S
 
 ## Step 3 — Implementation
 
-Implement in role order: Backend/Frontend → QA (tests) → Docs. Apply gate rules from `/role-guide` at each phase. Include `Closes #N` in each commit message body that closes the issue.
+Implement in role order: Backend/Frontend → QA (tests) → Docs. Write tests alongside implementation; update docs in the same commit. Include `Closes #N` in each commit message body that closes the issue.
 
 ## Step 4 — Verification
 
 Run all of the following. Do not proceed to Step 5 if any fails.
 
 ```
+npm ci
 npm run verify
 ```
 
