@@ -152,6 +152,25 @@ To work an issue from intake to push, invoke `/work-issue [number]`. Do not begi
 
 ---
 
+## GitHub Label Convention
+
+Issue labels must match the conventional commit prefix used in the issue title. Apply exactly one type label per issue.
+
+| Label      | Commit prefix | When to use                                       |
+| ---------- | ------------- | ------------------------------------------------- |
+| `feat`     | `feat:`       | New user-facing feature                           |
+| `bug`      | `fix:`        | Bug fix (`bug` is the label; `fix:` is the commit prefix — intentionally different) |
+| `chore`    | `chore:`      | Maintenance, tooling, or configuration change     |
+| `refactor` | `refactor:`   | Code restructuring without behavior change        |
+| `test`     | `test:`       | Test additions or changes                         |
+| `docs`     | `docs:`       | Documentation changes                             |
+| `perf`     | `perf:`       | Performance improvements                          |
+| `a11y`     | `a11y:`       | Accessibility improvements                        |
+
+> **Note:** Do not create a `fix` label. `bug` is the correct label for fix-type issues.
+
+---
+
 ## Task Tracking Within a Session
 
 For features spanning more than two implementation steps, use TaskCreate to track progress:
