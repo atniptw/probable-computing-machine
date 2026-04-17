@@ -173,22 +173,12 @@ git push origin HEAD:main
 
 If this fails (remote has diverged / not fast-forward), **stop immediately** and surface the error to the user. Do not proceed with the remaining sub-steps.
 
-### 8.2 — Sync the local main branch
+### 8.2 — Sync, remove worktree, and delete branch
 
-Resolve the main worktree root (works correctly from any worktree) and fast-forward the local `main` branch:
-
-```bash
-cd "$(git rev-parse --git-common-dir)/.."
-git fetch origin && git merge --ff-only origin/main
-```
-
-### 8.3 — Remove the worktree and feature branch
-
-From the main worktree root, replace `feat/issue-N` with the actual branch name:
+Do this in a single command so the shell never loses its cwd. Capture the worktree path first, then navigate to main before removing it. Replace `feat/issue-N` with the actual branch name:
 
 ```bash
-git worktree remove ../feat/issue-N
-git branch -D feat/issue-N
+WORKTREE=$(pwd) && cd "$(git rev-parse --git-common-dir)/.." && git fetch origin && git merge --ff-only origin/main && git worktree remove "$WORKTREE" && git branch -D feat/issue-N
 ```
 
 > **Note:** GitHub auto-closes issues when a commit containing `Closes #N` is pushed to main. Do not run `gh issue close` manually — it is redundant and contradicts CLAUDE.md policy.
