@@ -43,10 +43,15 @@ This is an unofficial fan tool. Pokémon and all related names are trademarks of
 
 ## Development
 
+### Local setup
+
 ```bash
-npm install       # install dependencies
-npm run dev       # start dev server → http://localhost:5173
+npm install                  # install dependencies
+cp .env.example .env.local   # seed local env vars (dev-ready defaults)
+npm run dev                  # start dev server → http://localhost:5173
 ```
+
+`.env.local` is gitignored. The dev-ready defaults in `.env.example` make the app render the same header links locally that you see in production — override them when deploying.
 
 ### Validation
 
