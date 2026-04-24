@@ -2,6 +2,56 @@
 
 ---
 
+## 2026-04-24 — chore/issue-68: Dev-ready defaults in .env.example for local setup
+
+### Objective
+
+Make `cp .env.example .env.local` a one-command local setup so a developer (or agent) running the app locally sees the same header links (help, feedback) as production.
+
+### Completed Work
+
+- Replaced `.env.example` generic placeholders with dev-ready defaults:
+  - `VITE_GITHUB_REPO=atniptw/probable-computing-machine` (was `owner/repo`) so header links render out of the box
+  - `VITE_APP_URL` now commented/blank (was `https://example.com`, which produced an invalid canonical URL)
+  - `VITE_BASE_PATH=/` unchanged
+- Rewrote per-var comments to call out "override for production" explicitly.
+- README.md Development section gains a Local setup block with the `cp .env.example .env.local` step and a note that `.env.local` is gitignored.
+- Verified `.env.*` rule in `.gitignore` already covers `.env.local`; no change needed.
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — skipped (no user-visible UI change; `.env.example` and README edits only)
+
+### Retrospective
+
+**Permission requests:**
+None.
+
+**Assumptions made:**
+
+- Assumed commenting out `VITE_APP_URL` is preferred over setting it to a local origin (e.g. `http://localhost:5173`) since local canonical URLs in `<link rel="canonical">` are not meaningful. The existing Vite warning for undefined `%VITE_APP_URL%` is a pre-existing behavior that already appears whenever the var is unset.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog.
+
+---
+
 ## 2026-04-17 — chore/issue-70: Simplify work-issue skill for single-agent serial execution
 
 ### Objective
