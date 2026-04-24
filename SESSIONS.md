@@ -2,6 +2,57 @@
 
 ---
 
+## 2026-04-24 — docs/issue-75: add QUALITY.md tracking coverage and known gaps per domain
+
+### Objective
+
+Create a persistent, human-readable quality ledger so agents adding tests can target the highest-value gaps and reviewers can distinguish accepted gaps from accidental debt.
+
+### Completed Work
+
+- Added `docs/QUALITY.md` with:
+  - Purpose + scope (unit/component tests; e2e called out where relevant).
+  - Aggregation method: per-domain percentages weighted by statement count per file (prevents tiny 100%-covered helpers from masking large mostly-uncovered modules).
+  - Domain table for `components/AppView`, `components/MatchupViewer`, `hooks`, `services`, `data` with weighted statement %, branch %, known-gap summary, and `accepted | debt | blocked` status.
+  - Per-domain detail sections with specific files, uncovered line ranges, and an honest default to `debt` over `accepted` when intent was unclear.
+  - Forward reference to issue #73 (doc-gardening agent will refresh numbers); manual refresh steps until then.
+- One-line addition to `.claude/commands/work-issue.md` Step 3 pointing agents at `docs/QUALITY.md` before writing tests.
+
+### Validation
+
+- `npm ci` — pass
+- `npm run test:coverage` — pass (306/306, 95.32 % stmts, 82.37 % branches)
+- `npm run verify` — see Step 4 results in the final report
+- Visual QA — skipped (docs-only change, no UI)
+
+### Retrospective
+
+**Permission requests:**
+See final report section 7.
+
+**Assumptions made:**
+
+- Weighted-by-statements aggregation chosen over simple per-file average. Logged in DECISIONS.md because it is a non-obvious trade-off that will bias future reads of this doc.
+- `gyms/types.ts` coverage (0 %) classified as `accepted` — type-only file, reporter artifact, not a real gap.
+- `TeamEditorPanel.tsx` gap classified as `accepted` because e2e exercises the focus/blur flows jsdom cannot model. All other low-branch files default to `debt` per instruction.
+
+**Course corrections:**
+None.
+
+**Issue quality signal:**
+
+- AC completeness: Complete
+- Scope clarity: Clear
+
+**Feedforward signals:**
+None.
+
+### Next Actions
+
+Continue backlog. Issue #73 (doc-gardening agent) is the natural follow-up — it will keep the numbers in QUALITY.md fresh.
+
+---
+
 ## 2026-04-24 — chore/issue-68: Dev-ready defaults in .env.example for local setup
 
 ### Objective

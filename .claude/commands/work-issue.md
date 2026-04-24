@@ -54,6 +54,8 @@ Skip for isolated bug fixes, a11y fixes, test additions, and doc-only changes. S
 
 Implement in role order: Backend/Frontend → QA (tests) → Docs. Write tests alongside implementation; update docs in the same commit. Include `Closes #N` in each commit message body that closes the issue.
 
+Before writing tests, consult `docs/QUALITY.md` to target the highest-value coverage gaps (prefer `debt`-status domains over already-high percentages).
+
 ## Step 4 — Verification
 
 Run all of the following. Do not proceed to Step 5 if any fails.

@@ -2,6 +2,36 @@
 
 ---
 
+## DEC-0029
+
+### Date
+
+2026-04-24
+
+### Issue
+
+#75 — docs: add QUALITY.md tracking coverage and known gaps per domain
+
+### Decision
+
+Aggregate per-domain coverage percentages in `docs/QUALITY.md` by **weighting by statement count per file**, not by a simple arithmetic average across files.
+
+### Rationale
+
+Arithmetic averages treat every file equally, so a 10-line 100%-covered helper can cancel out a 300-line 70%-covered module in the same domain. Weighting by statement count makes the domain percentage reflect the real probability that a random executed line in that domain is covered. This is the same method `v8` uses for its `All files` total row, so the domain numbers and the total row are computed consistently.
+
+### Alternatives Considered
+
+- **Simple per-file average.** Rejected — see above; hides risk in large files.
+- **Report only per-file numbers and skip domain aggregation.** Rejected — the whole point of the ledger is a single at-a-glance grade per domain.
+- **Weight by lines executed at runtime (instead of statements).** Rejected — requires runtime instrumentation we do not have; statements is what v8 already emits.
+
+### Consequences
+
+The domain numbers in QUALITY.md will diverge from a mental arithmetic-average calculation if anyone tries to cross-check. The aggregation method section in QUALITY.md is explicit about this so the divergence is not surprising. The doc-gardening agent (#73) must use the same weighting.
+
+---
+
 ## DEC-0028
 
 ### Date
