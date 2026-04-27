@@ -56,6 +56,16 @@ Implement in role order: Backend/Frontend → QA (tests) → Docs. Write tests a
 
 Before writing tests, consult `docs/QUALITY.md` to target the highest-value coverage gaps (prefer `debt`-status domains over already-high percentages).
 
+### Optional: Parallel sub-agent dispatch
+
+For issues with multiple independent strands (e.g. several dependency bumps, or backend + frontend work that doesn't share code), dispatch sub-agents with `isolation: "worktree"` to work them in parallel. Brief each agent to:
+
+- Run `npm run verify:unit` (not the full `verify`) before committing — skips Playwright e2e, which the integrator runs once on the merged state in Step 4.
+- Commit on the auto-assigned worktree branch; do not push, do not comment on remote issues, do not open PRs.
+- Report back with branch name, commit SHA(s), `verify:unit` outcome, and files modified beyond `package.json` / `package-lock.json`.
+
+The integrator then merges branches in dependency order, resolves any `package.json` / `package-lock.json` conflicts (running `npm install` regenerates the lockfile from the merged manifest), and proceeds to Step 4 for the single full `verify` run. Keep remote operations (push, PR comments, issue closes) with the integrator — single point of control for irreversible actions.
+
 ## Step 4 — Verification
 
 Run all of the following. Do not proceed to Step 5 if any fails.
