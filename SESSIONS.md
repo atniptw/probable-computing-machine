@@ -2,6 +2,61 @@
 
 ---
 
+## 2026-04-27 — chore/issue-81: consolidate dependabot updates (TS-eslint, React 19, TS 6) and group dependabot config
+
+### Objective
+
+Absorb 5 open dependabot PRs (#76-#80) in one coordinated pass, since our delivery model is direct push to `main` and PRs are never merged. Restructure dependabot to reduce future absorption load.
+
+### Completed Work
+
+Dispatched three sub-agents in parallel worktrees so the risk-tiered work could run concurrently and integrate sequentially:
+
+- **Agent A (tooling cluster):** typescript-eslint 8.57.2 → 8.58.2 (closes #77); restructured `.github/dependabot.yml` to group npm updates as `minor-and-patch` and `major-updates` (caps open PRs at 5); logged the grouping decision as DEC-0030.
+- **Agent B (React 19):** react + react-dom 18.3.1 → 19.2.5; @types/react 18 → 19.2.14; @types/react-dom 18 → 19.2.3 (closes #78, #80). Sole source change: added `import type { JSX } from 'react'` in `src/components/MatchupViewer/MoveList.tsx` because React 19 moved the `JSX` namespace out of global scope.
+- **Agent C (TypeScript 6):** typescript 5.7 → 6.0.3 (closes #76). Zero source-code changes — strictness profile was already explicit, codebase compiled clean.
+- **PR #79 (`@vitejs/plugin-react` 4 → 6):** intentionally dropped from this issue. plugin-react 6 requires Vite 8+, and we're on Vite 6. Will close #79 with a comment pointing at the Vite 8 prerequisite so it surfaces again as part of a coherent Vite 8 migration.
+
+### Validation
+
+- `npm ci` — pass
+- `npm run lint` — pass (after worktree cleanup; see Course corrections)
+- `npm run tsc` — pass (TypeScript 6.0.3, zero errors)
+- `npm run test:coverage` — pass (306/306 tests across 31 files)
+- `npx playwright test --project=chromium` — pass (6/6)
+- `npm run verify` — pass on integrated state
+- Visual QA — see Step 7 (user browser spot-check before push, per issue notes)
+
+### Retrospective
+
+**Permission requests:**
+None during agent dispatch. Will pause for explicit approval before pushing to main (Step 7 of the work-issue workflow).
+
+**Assumptions made:**
+
+- **Dropped PR #79 from scope** without confirmation, on the basis that bundling Vite 6 → 8 into a "consolidate dependabot updates" issue would silently double the work and obscure the Vite migration's own complexity. User said "do what you think is best" — flagging this here so the trade-off is visible.
+- Dependabot grouping config: `minor+patch` and `major` as separate groups, cap at 5 open PRs. The exact grouping shape was a judgment call (alternatives: single group, or security-only).
+
+**Course corrections:**
+
+- After merging Agent A and B branches, `npm run lint` reported 1681 errors against minified `dist/*.js` files inside `.claude/worktrees/agent-*/dist/`. Cause: the agents' verify runs left build artifacts in their worktrees, and ESLint descended into them from the parent. Fix: removed the agent worktrees with `git worktree remove -f -f` (they were locked by the harness) and re-ran verify clean. Worth noting because future parallel-worktree workflows may hit the same trap.
+
+**Issue quality signal:**
+
+- AC completeness: Complete — every checkbox mapped to concrete work.
+- Scope clarity: Clear, with one implicit prerequisite the issue didn't call out (plugin-react 6 needs Vite 8).
+
+**Feedforward signals:**
+
+- `[tooling]` — `eslint.config.js` should add `.claude/worktrees/**` to its ignores. Otherwise any time we use parallel agent worktrees and run lint from the parent, we eat the dist artifacts of every worktree. Cheap one-line fix; deferring to its own follow-up since it's outside this issue's scope.
+- `[issue-template]` — for "consolidate dependabot updates" style issues, the template could prompt for "any prerequisites we've discovered while reading the PRs" so dependencies like Vite 8 surface during intake rather than mid-implementation.
+
+### Next Actions
+
+After user sign-off and push: comment on #79 with the Vite 8 prerequisite and close it; verify dependabot honors the new grouping config on its next run; consider opening a dedicated Vite 8 + plugin-react 6 issue if we want it tracked.
+
+---
+
 ## 2026-04-24 — docs/issue-75: add QUALITY.md tracking coverage and known gaps per domain
 
 ### Objective
