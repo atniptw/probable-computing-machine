@@ -2,6 +2,38 @@
 
 ---
 
+## DEC-0030
+
+### Date
+
+2026-04-27
+
+### Issue
+
+#81 — chore: consolidate open dependabot updates and align with no-PR delivery model
+
+### Decision
+
+Group dependabot npm updates into two PRs per week: one for minor+patch, one for major bumps. Cap open PRs at 5.
+
+### Rationale
+
+Our delivery model pushes directly to `main`; dependabot PRs are never merged, only absorbed by hand. Five separate PRs per week (one per dependency) generated maximum noise for minimum signal — engineers had to triage and close each individually. Grouping by update type means one weekly batch of low-risk minor+patch bumps and one batch of higher-risk majors, each landed as a single coordinated commit rather than five.
+
+### Alternatives Considered
+
+- **Disable dependabot entirely.** Rejected — we'd lose visibility into security updates and have no prompt to keep dependencies fresh.
+- **Security-only via `open-pull-requests-limit: 0`.** Rejected — too aggressive; we still want routine dependency hygiene, not just CVE response.
+- **Single group for everything.** Rejected — bundling majors with minors makes a failed major bump (e.g. React 19) block routine minor updates.
+
+### Consequences
+
+- Up to 2 dependabot PRs open per week instead of up to 10.
+- Each PR is still absorbed manually; the absorbing commit references the PR with `Closes #N` so dependabot's bot closes it.
+- If a major bump is risky enough to defer, it stays in the major-updates group until handled — which keeps it visible rather than scattering it across five stale PRs.
+
+---
+
 ## DEC-0029
 
 ### Date
