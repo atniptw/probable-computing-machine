@@ -1,3 +1,5 @@
+import type { JSX } from 'react'
+
 import styles from './MatchupViewer.module.css'
 
 export interface MoveRow {
