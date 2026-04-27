@@ -6,122 +6,104 @@ Populated automatically by the `PreToolUse` hook in `settings.json`.
 Review periodically to find patterns → candidates for new focused scripts or allowlist entries.
 
 | Timestamp            | Command                                                                                                                    |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------- |
-| 2026-04-13T14:51:40Z | `chmod +x /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh && git add .claude/auto-merge.sh .clau...` |
-| 2026-04-13T14:53:51Z | `gh pr list --author "app/dependabot" --state open --json number,title,body`                                               |
-| 2026-04-13T14:56:17Z | `npm audit 2>&1`                                                                                                           |
-| 2026-04-13T14:58:35Z | `gh milestone list && gh label list`                                                                                       |
-| 2026-04-13T15:00:02Z | `gh api repos/$(gh repo view --json nameWithOwner --jq .nameWithOwner)/milestones --jq '.[].title' && gh label list`       |
-| 2026-04-13T15:00:20Z | `gh api repos/$(gh repo view --json nameWithOwner --jq .nameWithOwner)/milestones --jq '.[]                                | "\(.number) \(.title)"'`                                                            |
-| 2026-04-13T15:05:29Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-32 2>&1                             | tail -5`                                                                            |
-| 2026-04-13T16:01:53Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-42 2>&1                             | tail -5`                                                                            |
-| 2026-04-13T16:01:54Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-48 2>&1                             | tail -5`                                                                            |
-| 2026-04-13T16:02:21Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-32 2>&1                             | tail -3`                                                                            |
-| 2026-04-13T16:02:27Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-42 2>&1                             | tail -3`                                                                            |
-| 2026-04-13T16:02:29Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-48 2>&1                             | tail -3`                                                                            |
-| 2026-04-13T16:03:00Z | `git -C /home/atnip/projects/probable-computing-machine worktree list`                                                     |
-| 2026-04-13T16:07:01Z | `curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4173 2>/dev/null                                                  |                                                                                     | echo "NOT_RUNNING"`                                |
-| 2026-04-13T16:07:19Z | `find /home/atnip/projects/pcm-issue-42/src/components -name "\*.tsx"                                                      | sort && echo "---" && find /home/atnip/projects...`                                 |
-| 2026-04-13T16:07:24Z | `find /home/atnip/projects/pcm-issue-48/src/components -name "\*.tsx"                                                      | sort && echo "---" && find /home/atnip/projects...`                                 |
-| 2026-04-13T16:07:28Z | `for name in BattleSelectorSection GameVersionSelect GymLeaderSelector GymTeamPanel SuggestionList TeamConfigurationSe...` |
-| 2026-04-13T16:07:43Z | `ls node_modules                                                                                                           | grep -i playwright; npx playwright --version 2>&1                                   | head -3`                                           |
-| 2026-04-13T16:07:46Z | `npm audit 2>&1`                                                                                                           |
-| 2026-04-13T16:07:53Z | `npm audit fix 2>&1`                                                                                                       |
-| 2026-04-13T16:07:58Z | `npm install 2>&1                                                                                                          | tail -5`                                                                            |
-| 2026-04-13T16:08:06Z | `find /home/atnip -name "node_modules" -maxdepth 4 -type d 2>/dev/null                                                     | head -5`                                                                            |
-| 2026-04-13T16:08:54Z | `cd /home/atnip/projects/probable-computing-machine && node /tmp/design-review-32.mjs 2>&1`                                |
-| 2026-04-13T16:08:58Z | `npm audit 2>&1`                                                                                                           |
-| 2026-04-13T16:09:54Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-42 2>&1`                            |
-| 2026-04-13T16:11:41Z | `gh pr list --state open --label "dependencies" 2>&1`                                                                      |
-| 2026-04-13T16:12:28Z | `cat /home/atnip/projects/pcm-issue-48/package.json`                                                                       |
-| 2026-04-13T16:12:31Z | `npm ls vite picomatch brace-expansion 2>&1                                                                                | head -30`                                                                           |
-| 2026-04-13T16:12:56Z | `cd /home/atnip/projects/probable-computing-machine && node /tmp/design-review-32b.mjs 2>&1`                               |
-| 2026-04-13T16:13:28Z | `cd /home/atnip/projects/probable-computing-machine && node /tmp/design-review-32c.mjs 2>&1`                               |
-| 2026-04-13T16:13:45Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-32 2>&1`                            |
-| 2026-04-13T16:13:57Z | `cd /home/atnip/projects/probable-computing-machine && node /tmp/design-review-32d.mjs 2>&1`                               |
-| 2026-04-13T16:17:35Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-48 2>&1`                            |
-| 2026-04-13T16:21:17Z | `find /home/atnip/projects/pcm-issue-32/src/components -name "\*.tsx"                                                      | sort && echo "---" && find /home/atnip/projects...`                                 |
-| 2026-04-13T16:21:21Z | `for f in BattleSelectorSection GameVersionSelect GymLeaderSelector GymTeamPanel SuggestionList TeamConfigurationSecti...` |
-| 2026-04-13T16:21:38Z | `find /home/atnip/projects/pcm-issue-48/src/components -name "\*.tsx"                                                      | grep -v "\.test\."                                                                  | sort`                                              |
-| 2026-04-13T16:21:39Z | `find /home/atnip/projects/pcm-issue-48/src/hooks -name "\*.ts"                                                            | grep -v "\.test\."                                                                  | sort`                                              |
-| 2026-04-13T16:21:43Z | `for f in BattleSelectorSection GameVersionSelect GymLeaderSelector GymTeamPanel SuggestionList TeamConfigurationSecti...` |
-| 2026-04-13T16:22:56Z | `for f in useMatchupMatrix useMoveNameIndex usePokemonNameIndex usePokemonSuggestions useTeamConfiguration; do count=$...` |
-| 2026-04-13T16:26:06Z | `npm audit 2>&1`                                                                                                           |
-| 2026-04-13T16:26:22Z | `npm install 2>&1                                                                                                          | tail -5`                                                                            |
-| 2026-04-13T16:28:58Z | `npm audit fix 2>&1`                                                                                                       |
-| 2026-04-13T16:29:42Z | `cat /tmp/dev-qa.log`                                                                                                      |
-| 2026-04-13T16:29:53Z | `npm audit 2>&1`                                                                                                           |
-| 2026-04-13T16:32:10Z | `gh pr list --state open 2>&1`                                                                                             |
-| 2026-04-13T16:32:34Z | `cat /home/atnip/projects/pcm-issue-48/package.json`                                                                       |
-| 2026-04-13T16:32:34Z | `gh pr view 5 --json title,body,headRefName 2>&1                                                                           | head -40`                                                                           |
-| 2026-04-13T16:34:29Z | `ls /home/atnip/projects/pcm-issue-32/node_modules/.bin/playwright 2>/dev/null && ls /home/atnip/projects/pcm-issue-32...` |
-| 2026-04-13T16:34:32Z | `gh pr view 3 --json title,body 2>&1                                                                                       | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['title']); print(d...` |
-| 2026-04-13T16:36:01Z | `git -C /home/atnip/projects/pcm-issue-32 log main..feat/issue-32 --oneline && git -C /home/atnip/projects/pcm-issue-3...` |
-| 2026-04-13T16:43:07Z | `gh pr close 1 --comment "Closing as out-of-scope for #48. The security vulnerabilities (brace-expansion, picomatch, v...` |
-| 2026-04-13T16:43:14Z | `curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4182/ 2>&1`                                                       |
-| 2026-04-13T16:48:17Z | `gh pr close 2 --comment "Closing as out-of-scope for #48. Security vulnerabilities fixed via \`npm audit fix\`. @vite...` |
-| 2026-04-13T16:48:56Z | `grep -r "opponentInput\|opponent\|typeahead\|aria-label" /home/atnip/projects/pcm-issue-32/src/components/AppView/Bat...` |
-| 2026-04-13T16:49:04Z | `tail -20 /home/atnip/projects/pcm-issue-48/SESSIONS.md`                                                                   |
-| 2026-04-13T16:49:04Z | `head -20 /home/atnip/projects/pcm-issue-48/DECISIONS.md`                                                                  |
-| 2026-04-13T16:52:30Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-48 2>&1`                            |
-| 2026-04-13T16:53:21Z | `git -C /home/atnip/projects/probable-computing-machine log main..feat/issue-32 --oneline`                                 |
-| 2026-04-13T16:53:43Z | `grep -r "localStorage" /home/atnip/projects/pcm-issue-32/src --include="_.ts" --include="_.tsx"                           | grep -v test                                                                        | head...`                                           |
-| 2026-04-13T16:53:45Z | `grep -n "getTeamKey\|pmh_team\|teamKey" /home/atnip/projects/pcm-issue-32/src/hooks/useTeamConfiguration.ts               | head -15`                                                                           |
-| 2026-04-13T16:55:15Z | `git -C /home/atnip/projects/pcm-issue-32 log --oneline -5 && git -C /home/atnip/projects/pcm-issue-32 status --short`     |
-| 2026-04-13T16:55:44Z | `grep -n "StoredTeamPayload\|toMembersFromNames\|normalizeMember" /home/atnip/projects/pcm-issue-32/src/hooks/useTeamC...` |
-| 2026-04-13T17:00:32Z | `rm -f /tmp/visual-qa-32.mjs /tmp/visual-qa-32-measure.mjs /tmp/vqa-32-*.png`                                              |
-| 2026-04-13T17:02:53Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-32 2>&1`                            |
-| 2026-04-13T17:41:56Z | `find /home/atnip/projects/pcm-issue-41/src/components -name "\*.tsx"                                                      | grep -v "\.test\."                                                                  | sort && echo "---" && find...`                     |
-| 2026-04-13T17:41:58Z | `find /home/atnip/projects/pcm-issue-43/src/components -name "\*.tsx"                                                      | sort && echo "---" && find /home/atnip/projects...`                                 |
-| 2026-04-13T17:42:04Z | `for name in BattleSelectorSection GameVersionSelect GymLeaderSelector GymTeamPanel SuggestionList TeamConfigurationSe...` |
-| 2026-04-13T17:42:05Z | `for f in BattleSelectorSection GameVersionSelect GymLeaderSelector GymTeamPanel SuggestionList TeamConfigurationSecti...` |
-| 2026-04-13T17:42:10Z | `for f in useMatchupMatrix useMoveNameIndex usePokemonNameIndex usePokemonSuggestions useTeamConfiguration; do ↵   cou...` |
-| 2026-04-13T17:42:11Z | `grep -r "GameVersionSelect\|SuggestionList\|DefenseSection\|OffenseSection\|PokemonCard\|TypeBadge" /home/atnip/proje...` |
-| 2026-04-13T17:42:14Z | `find /home/atnip/projects/pcm-issue-35/src/components -type f -name "\*.tsx"                                              | sort`                                                                               |
-| 2026-04-13T17:42:14Z | `find /home/atnip/projects/pcm-issue-35/src/hooks -type f -name "\*.ts"                                                    | sort`                                                                               |
-| 2026-04-13T17:42:15Z | `ls -la /home/atnip/projects/pcm-issue-35/src/                                                                             | grep -v "test\|node_modules"`                                                       |
-| 2026-04-13T17:42:20Z | `grep -l "BattleSelectorSection\|GameVersionSelect\|GymLeaderSelector\|GymTeamPanel\|SuggestionList\|TeamConfiguration...` |
-| 2026-04-13T17:42:29Z | `for name in useMatchupMatrix useMoveNameIndex usePokemonNameIndex usePokemonSuggestions useTeamConfiguration; do ↵   ...` |
-| 2026-04-13T17:43:27Z | `npm install 2>&1                                                                                                          | tail -5`                                                                            |
-| 2026-04-13T17:44:37Z | `npm install 2>&1                                                                                                          | tail -5`                                                                            |
-| 2026-04-13T17:45:09Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-43 2>&1`                            |
-| 2026-04-13T17:49:34Z | `npm install 2>&1                                                                                                          | tail -5`                                                                            |
-| 2026-04-13T17:50:33Z | `git show origin/main:src/hooks/usePokemonNameIndex.ts                                                                     | head -15`                                                                           |
-| 2026-04-13T17:50:54Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-41 2>&1`                            |
-| 2026-04-13T17:52:04Z | `git stash && git rebase origin/main 2>&1`                                                                                 |
-| 2026-04-13T17:52:13Z | `git stash pop 2>&1`                                                                                                       |
-| 2026-04-13T17:54:20Z | `grep -n "<<<<<<\|=======\|>>>>>>>" /home/atnip/projects/pcm-issue-35/SESSIONS.md`                                         |
-| 2026-04-13T17:56:39Z | `bash /home/atnip/projects/probable-computing-machine/.claude/auto-merge.sh feat/issue-35 2>&1`                            |
-| 2026-04-13T18:44:51Z | `for name in BattleSelectorSection GameVersionSelect GymLeaderSelector GymTeamPanel SuggestionList TeamConfigurationSe...` |
-| 2026-04-13T19:01:30Z | `cat -n /home/atnip/projects/pcm-issue-39/src/tests/matchupContainer.test.tsx`                                             |
-| 2026-04-13T19:01:31Z | `cat -n /home/atnip/projects/pcm-issue-39/src/tests/useMatchupMatrix.test.ts`                                              |
-| 2026-04-13T19:01:32Z | `cat -n /home/atnip/projects/pcm-issue-39/src/tests/useTeamConfiguration.test.ts`                                          |
-| 2026-04-13T19:01:37Z | `grep -l "TeamMemberConfig\|MatchupViewModel\|BASE_PROPS\|makeTeamMember\|makeMatchup" /home/atnip/projects/pcm-issue-...` |
-| 2026-04-13T19:01:52Z | `cat -n /home/atnip/projects/pcm-issue-39/src/tests/battleSelectorSection.test.tsx`                                        |
-| 2026-04-13T19:01:52Z | `cat -n /home/atnip/projects/pcm-issue-39/src/tests/teamConfigurationSection.test.tsx && echo "---" && cat -n /home/at...` |
-| 2026-04-13T19:02:15Z | `cat -n /home/atnip/projects/pcm-issue-39/src/tests/gymComponents.test.tsx`                                                |
-| 2026-04-13T19:02:17Z | `cat -n /home/atnip/projects/pcm-issue-39/src/tests/usePokemonSuggestions.test.ts && echo "---" && cat -n /home/atnip/...` |
-| 2026-04-13T19:02:17Z | `cat -n /home/atnip/projects/pcm-issue-39/src/tests/useMoveNameIndex.test.ts`                                              |
-| 2026-04-13T19:02:51Z | `grep -n "MatchupViewModel\|TeamMemberConfig" /home/atnip/projects/pcm-issue-39/src/hooks/useMatchupMatrix.ts              | head -...`                                                                          |
-| 2026-04-13T19:02:52Z | `cat -n /home/atnip/projects/pcm-issue-39/vite.config.ts 2>/dev/null                                                       |                                                                                     | cat -n /home/atnip/projects/pcm-issue-39/vites...` |
-| 2026-04-13T19:03:11Z | `grep -n "export.*Pokemon\|interface Pokemon\|type Pokemon" /home/atnip/projects/pcm-issue-39/src/services/pokeapi.ts ...` |
-| 2026-04-13T20:18:55Z | `ls node_modules/.bin/eslint 2>/dev/null && echo "found"                                                                   |                                                                                     | echo "not found"`                                  |
-| 2026-04-13T20:18:57Z | `npm install 2>&1                                                                                                          | tail -5`                                                                            |
-| 2026-04-13T20:19:26Z | `tail -20 /home/atnip/projects/pcm-issue-39/SESSIONS.md`                                                                   |
-| 2026-04-13T20:19:27Z | `head -15 /home/atnip/projects/pcm-issue-39/DECISIONS.md`                                                                  |
-| 2026-04-13T20:23:35Z | `git -C /home/atnip/projects/pcm-issue-39 add src/tests/testUtils.ts src/tests/matchupContainer.test.tsx src/tests/use...` |
-| 2026-04-13T20:26:13Z | `git -C /home/atnip/projects/pcm-issue-39 commit -m "$(cat <<'EOF' ↵ chore: extract shared test utilities into testUti...` |
-| 2026-04-13T20:27:24Z | `git -C /home/atnip/projects/pcm-issue-39 push origin feat/issue-39:main`                                                  |
-| 2026-04-13T20:37:18Z | `for f in BattleSelectorSection GameVersionSelect GymLeaderSelector GymTeamPanel SuggestionList TeamConfigurationSecti...` |
-| 2026-04-13T20:38:24Z | `grep -r "from.*services/pokeapi\|from.*pokeapi" /home/atnip/projects/pcm-issue-38/src --include="*.ts" --include="*.t...` |
-| 2026-04-13T20:50:36Z | `npm install 2>&1                                                                                                          | tail -5`                                                                            |
-| 2026-04-13T20:51:04Z | `wc -l /home/atnip/projects/pcm-issue-38/src/services/pokeapiClient.ts /home/atnip/projects/pcm-issue-38/src/services/...` |
-| 2026-04-13T20:52:00Z | `wc -l /home/atnip/projects/pcm-issue-38/src/services/pokeapiClient.ts /home/atnip/projects/pcm-issue-38/src/services/...` |
-| 2026-04-13T20:52:45Z | `tail -30 /home/atnip/projects/pcm-issue-38/SESSIONS.md`                                                                   |
-| 2026-04-13T20:52:46Z | `head -20 /home/atnip/projects/pcm-issue-38/DECISIONS.md`                                                                  |
-| 2026-04-13T20:52:48Z | `grep "^## DEC-" /home/atnip/projects/pcm-issue-38/DECISIONS.md                                                            | head -5`                                                                            |
-| 2026-04-13T20:53:32Z | `cat /home/atnip/projects/pcm-issue-38/src/services/pokeapi.ts && echo "---NEW FILES---" && cat /home/atnip/projects/p...` |
-| 2026-04-13T20:59:29Z | `git checkout main && git merge --ff-only feat/issue-38 && git push origin main`                                           |
-| 2026-04-14T13:24:34Z | `python3 /home/atnip/projects/probable-computing-machine/.claude/resolve-sessions-conflict.py SESSIONS.md && git add S...` |
-| 2026-04-14T13:25:13Z | `grep -rn "<<<<<<\|=======\|>>>>>>>" src/data/gyms/emerald.ts src/tests/gyms.test.ts SESSIONS.md 2>/dev/null` |
-| 2026-04-14T13:25:24Z | `grep -n "<<<<<<\|=======\|>>>>>>>" .claude/approval-log.md | head -5` |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------ | ----------------------------- | ----------------------------- | ----- |
+| 2026-04-24T15:13:49Z | `ls -la /home/atnip/projects/pcm-issue-68/.env.example /home/atnip/projects/pcm-issue-68/.gitignore /home/atnip/projec...` |
+| 2026-04-24T15:13:53Z | `ls -la /home/atnip/projects/pcm-issue-68/`                                                                                |
+| 2026-04-24T15:17:19Z | `cd /home/atnip/projects/pcm-issue-68 && git status && echo "---" && git log --oneline -5`                                 |
+| 2026-04-24T15:17:37Z | `find /home/atnip/.claude -name "work-issue*" 2>/dev/null; find /home/atnip/projects/probable-computing-machine/.claud...` |
+| 2026-04-24T15:18:20Z | `cd /home/atnip/projects/pcm-issue-68 && pwd && git status && git branch --show-current`                                   |
+| 2026-04-24T15:19:23Z | `cd /home/atnip/projects/pcm-issue-68 && gh issue view 68`                                                                 |
+| 2026-04-24T15:19:31Z | `cd /home/atnip/projects/pcm-issue-68 && cat .gitignore                                                                    | grep -i env`                   |
+| 2026-04-24T15:20:23Z | `cd /home/atnip/projects/pcm-issue-68 && git status && git diff`                                                           |
+| 2026-04-24T15:20:57Z | `cd /home/atnip/projects/pcm-issue-68 && git add .env.example README.md && git commit -m "$(cat <<'EOF' ↵ chore: add d...` |
+| 2026-04-24T16:25:26Z | `cd /home/atnip/projects/pcm-issue-68 && npm ci 2>&1                                                                       | tail -30`                      |
+| 2026-04-24T16:25:42Z | `cd /home/atnip/projects/pcm-issue-68 && npm run verify 2>&1                                                               | tail -80`                      |
+| 2026-04-24T16:26:12Z | `cd /home/atnip/projects/pcm-issue-68 && grep -n 'VITE_APP_URL' index.html vite.config.ts 2>/dev/null`                     |
+| 2026-04-24T16:26:40Z | `cd /home/atnip/projects/pcm-issue-68 && git add SESSIONS.md && git commit -m "$(cat <<'EOF' ↵ docs: session log for i...` |
+| 2026-04-24T16:27:01Z | `cd /home/atnip/projects/pcm-issue-68 && git log origin/main..HEAD --oneline && echo "---" && git diff origin/main..HEAD`  |
+| 2026-04-24T16:27:22Z | `cd /home/atnip/projects/pcm-issue-68 && git diff origin/main..HEAD`                                                       |
+| 2026-04-24T16:35:18Z | `cd /home/atnip/projects/pcm-issue-68 && git log --oneline -5 && echo "---reflog---" && git reflog -10 && echo "---sta...` |
+| 2026-04-24T16:38:06Z | `WORKTREE=$(pwd) && cd "$(git rev-parse --git-common-dir)/.." && git fetch origin && git merge --ff-only origin/main &...` |
+| 2026-04-24T16:40:16Z | `cd /home/atnip/projects/pcm-issue-75 && git status && git log --oneline -5`                                               |
+| 2026-04-24T16:40:19Z | `ls /home/atnip/projects/pcm-issue-75/`                                                                                    |
+| 2026-04-24T16:40:22Z | `cd /home/atnip/projects/pcm-issue-75 && ls`                                                                               |
+| 2026-04-24T16:41:46Z | `ls -la /home/atnip/projects/probable-computing-machine/.claude/ && echo "---" && ls -la /home/atnip/.claude/ 2>&1         | h...`                          |
+| 2026-04-24T16:43:51Z | `ls /home/atnip/projects/pcm-issue-75/`                                                                                    |
+| 2026-04-24T16:44:08Z | `ls /home/atnip/projects/pcm-issue-75/docs/`                                                                               |
+| 2026-04-24T16:44:11Z | `ls /home/atnip/projects/pcm-issue-75/src/`                                                                                |
+| 2026-04-24T16:44:12Z | `ls /home/atnip/projects/pcm-issue-75/src/components/ /home/atnip/projects/pcm-issue-75/src/hooks/ /home/atnip/project...` |
+| 2026-04-24T16:44:16Z | `npm --prefix /home/atnip/projects/pcm-issue-75 ci 2>&1                                                                    | tail -20`                      |
+| 2026-04-24T16:45:10Z | `npm --prefix /home/atnip/projects/pcm-issue-75 run test:coverage 2>&1                                                     | tail -120`                     |
+| 2026-04-24T16:46:30Z | `ls /home/atnip/projects/pcm-issue-75/coverage/ 2>/dev/null`                                                               |
+| 2026-04-24T16:46:31Z | `ls /home/atnip/projects/pcm-issue-75/src/components/AppView/ /home/atnip/projects/pcm-issue-75/src/components/Matchup...` |
+| 2026-04-24T16:46:40Z | `node -e " ↵ const data = require('/home/atnip/projects/pcm-issue-75/coverage/coverage-summary.json'); ↵ const files =...` |
+| 2026-04-24T16:48:34Z | `head -30 /home/atnip/projects/pcm-issue-75/docs/ARCHITECTURE.md`                                                          |
+| 2026-04-24T16:49:52Z | `head -50 /home/atnip/projects/pcm-issue-75/SESSIONS.md`                                                                   |
+| 2026-04-24T16:51:47Z | `head -30 /home/atnip/projects/pcm-issue-75/DECISIONS.md`                                                                  |
+| 2026-04-24T16:51:49Z | `grep -E "^## DEC-" /home/atnip/projects/pcm-issue-75/DECISIONS.md                                                         | head -5`                       |
+| 2026-04-24T16:52:10Z | `git -C /home/atnip/projects/pcm-issue-75 add docs/QUALITY.md .claude/commands/work-issue.md DECISIONS.md SESSIONS.md`     |
+| 2026-04-24T16:52:36Z | `git -C /home/atnip/projects/pcm-issue-75 commit -m "$(cat <<'EOF' ↵ docs: add QUALITY.md tracking coverage and known ...` |
+| 2026-04-24T16:53:15Z | `npm --prefix /home/atnip/projects/pcm-issue-75 run verify 2>&1                                                            | tail -60`                      |
+| 2026-04-24T16:54:36Z | `npm --prefix /home/atnip/projects/pcm-issue-75 run verify 2>&1                                                            | grep -E "^>                    | passed                                                                                                      | failed"                  | head -30`                     |
+| 2026-04-24T16:55:59Z | `ls -la /home/atnip/projects/pcm-issue-75/coverage/coverage-summary.json /home/atnip/projects/pcm-issue-75/playwright-...` |
+| 2026-04-24T16:56:07Z | `tail -60 /home/atnip/projects/probable-computing-machine/.claude/approval-log.md`                                         |
+| 2026-04-24T16:57:38Z | `git -C /home/atnip/projects/pcm-issue-75 push origin HEAD:main`                                                           |
+| 2026-04-27T13:21:26Z | `grep -E '"vite"                                                                                                           | "@vitejs                       | "react"                                                                                                     | "react-dom"              | "typescript"                  | "@types/react"' package.json` |
+| 2026-04-27T13:27:46Z | `ls .github/ 2>/dev/null && cat .github/dependabot.yml 2>/dev/null                                                         |                                | echo "no dependabot.yml"`                                                                                   |
+| 2026-04-27T13:27:55Z | `git branch --list 'chore/issue-81*'`                                                                                      |
+| 2026-04-27T13:28:20Z | `grep -rn "ReactDOM\|react-dom\|createRoot\|hydrateRoot" src/ --include="_.ts" --include="_.tsx" 2>/dev/null               | head -20`                      |
+| 2026-04-27T13:28:21Z | `grep -rn "defaultProps\|forwardRef\|propTypes" src/ --include="_.ts" --include="_.tsx" 2>/dev/null                        | head -20`                      |
+| 2026-04-27T13:29:22Z | `pwd && git -C "$PWD" status && git -C "$PWD" branch --show-current`                                                       |
+| 2026-04-27T13:33:59Z | `git -C "$PWD" branch -m chore/issue-81-react-19 && git -C "$PWD" branch --show-current`                                   |
+| 2026-04-27T13:40:26Z | `npm --prefix "$PWD" install 2>&1                                                                                          | tail -25`                      |
+| 2026-04-27T13:40:33Z | `npm --prefix "$PWD" install 2>&1                                                                                          | tail -30`                      |
+| 2026-04-27T13:40:56Z | `git -C "$PWD" add package.json package-lock.json && git -C "$PWD" commit -m "$(cat <<'EOF' ↵ chore(deps): bump typesc...` |
+| 2026-04-27T13:40:58Z | `npm --prefix "$PWD" ls react react-dom @types/react @types/react-dom 2>&1                                                 | head -20`                      |
+| 2026-04-27T13:41:47Z | `npm --prefix "$PWD" run tsc 2>&1                                                                                          | tail -50`                      |
+| 2026-04-27T13:42:08Z | `npm --prefix "$PWD" run format:check 2>&1                                                                                 | tail -10`                      |
+| 2026-04-27T13:45:49Z | `npm --prefix "$PWD" run tsc 2>&1                                                                                          | tail -30`                      |
+| 2026-04-27T13:45:54Z | `npm --prefix "$PWD" run format:check 2>&1                                                                                 | tail -8`                       |
+| 2026-04-27T13:46:13Z | `npm --prefix "$PWD" run test 2>&1                                                                                         | tail -60`                      |
+| 2026-04-27T13:46:14Z | `npm --prefix "$PWD" run verify 2>&1                                                                                       | tail -60`                      |
+| 2026-04-27T13:46:53Z | `npm --prefix "$PWD" run verify 2>&1                                                                                       | tail -100`                     |
+| 2026-04-27T13:48:39Z | `git -C "$PWD" add package.json package-lock.json src/components/MatchupViewer/MoveList.tsx && git -C "$PWD" commit -m...` |
+| 2026-04-27T13:52:15Z | `npm install 2>&1                                                                                                          | tail -10`                      |
+| 2026-04-27T13:55:04Z | `pwd && git -C "$PWD" status && git -C "$PWD" branch --show-current`                                                       |
+| 2026-04-27T14:31:33Z | `git -C "$PWD" show 1479a20 --stat                                                                                         | head -30`                      |
+| 2026-04-27T16:22:42Z | `ls -la "$PWD"/tsconfig* 2>/dev/null && echo "---" && find "$PWD" -maxdepth 2 -name "tsconfig*.json" -not -path "*/nod...` |
+| 2026-04-27T16:23:32Z | `npm --prefix "$PWD" install 2>&1                                                                                          | tail -30`                      |
+| 2026-04-27T16:23:41Z | `npm --prefix "$PWD" ls typescript 2>&1                                                                                    | head -5`                       |
+| 2026-04-27T16:23:47Z | `npm --prefix "$PWD" run tsc 2>&1                                                                                          | tail -40`                      |
+| 2026-04-27T16:25:08Z | `npm --prefix "$PWD" run verify 2>&1                                                                                       | tail -80`                      |
+| 2026-04-27T16:25:52Z | `npm --prefix "$PWD" run verify > /tmp/verify-out.log 2>&1; echo "EXIT=$?"; tail -5 /tmp/verify-out.log`                   |
+| 2026-04-27T16:26:55Z | `git -C "$PWD" add package.json package-lock.json && git -C "$PWD" commit -m "$(cat <<'EOF' ↵ chore(deps): bump typesc...` |
+| 2026-04-27T16:52:17Z | `npm install 2>&1                                                                                                          | tail -3 && npm run verify 2>&1 | tail -20`                                                                                                   |
+| 2026-04-27T17:04:55Z | `gh pr comment 76 --body "Absorbed in https://github.com/atniptw/probable-computing-machine/commit/1df91ac as part of ...` |
+| 2026-04-27T17:04:57Z | `gh pr comment 77 --body "Absorbed in https://github.com/atniptw/probable-computing-machine/commit/8390444 as part of ...` |
+| 2026-04-27T17:04:57Z | `gh pr comment 78 --body "Absorbed in https://github.com/atniptw/probable-computing-machine/commit/10e8955 as part of ...` |
+| 2026-04-27T17:04:58Z | `gh pr comment 80 --body "Absorbed in https://github.com/atniptw/probable-computing-machine/commit/10e8955 as part of ...` |
+| 2026-04-27T17:05:14Z | `gh pr close 79 --comment "$(cat <<'EOF' ↵ Closing without absorbing as part of #81. ↵  ↵ \`@vitejs/plugin-react@6\` r...` |
+| 2026-04-27T17:13:34Z | `ls .claude/skills/ .claude/commands/ 2>/dev/null`                                                                         |
+| 2026-04-27T17:22:32Z | `ls ~/.claude/projects/                                                                                                    | head -20`                      |
+| 2026-04-27T17:22:44Z | `find ~/.claude/projects/ -maxdepth 2 -name '\*.jsonl' -printf '%T@ %p\n'                                                  | sort -rn                       | head -50                                                                                                    | awk '{print $2}'`        |
+| 2026-04-27T17:22:55Z | `FILES=$(find ~/.claude/projects/ -maxdepth 2 -name '\*.jsonl' -printf '%T@ %p\n'                                          | sort -rn                       | head -50                                                                                                    | awk '{print $...`        |
+| 2026-04-27T17:23:04Z | `grep '^TOOL' /tmp/tool-calls.txt                                                                                          | sort                           | uniq -c                                                                                                     | sort -rn                 | head -30`                     |
+| 2026-04-27T17:23:11Z | `grep '^BASH' /tmp/tool-calls.txt                                                                                          | sed 's/^BASH\t//'              | awk '{ ↵ # strip leading env-var prefixes like FOO=bar ↵ w...`                                              |
+| 2026-04-27T17:23:29Z | `grep '^BASH' /tmp/tool-calls.txt                                                                                          | sed 's/^BASH\t//'              | awk '{ ↵ while ($1 ~ /=/) { for (i=1; i<NF; i++) $i=$(i+1); ...`                                            |
+| 2026-04-27T17:24:27Z | `grep '^BASH' /tmp/tool-calls.txt                                                                                          | sed 's/^BASH\t//'              | grep -E '^npm run [a-zA-Z:]+(                                                                               | $)'                      | awk '{print $1, $2, $3}' ...` |
+| 2026-04-27T17:24:38Z | `grep '^BASH' /tmp/tool-calls.txt                                                                                          | sed 's/^BASH\t//'              | grep -E '^gh '                                                                                              | awk '{print $1, $2, $3}' | sort                          | uniq -c                       | s...` |
+| 2026-04-27T17:24:50Z | `cat /home/atnip/projects/probable-computing-machine/.claude/settings.json 2>/dev/null                                     |                                | echo "not found" ↵ echo "---...`                                                                            |
+| 2026-04-27T17:25:06Z | `wc -l /home/atnip/projects/probable-computing-machine/.claude/approval-log.md && tail -200 /home/atnip/projects/proba...` |
+| 2026-04-27T17:25:59Z | `grep -oE '`[^`]+`' /home/atnip/projects/probable-computing-machine/.claude/approval-log.md                                | sed 's/^`//; s/`$//'           | a...`                                                                                                       |
+| 2026-04-27T17:27:37Z | `python3 -c "import json; json.load(open('/home/atnip/projects/probable-computing-machine/.claude/settings.json'))" &&...` |
+| 2026-04-27T17:31:10Z | `find /home/atnip/projects/probable-computing-machine -maxdepth 3 -name '*.md' -not -path '*/node_modules/*' -not -pat...` |
+| 2026-04-27T17:31:18Z | `wc -l /home/atnip/projects/probable-computing-machine/SESSIONS.md /home/atnip/projects/probable-computing-machine/DEC...` |
+| 2026-04-27T17:31:46Z | `grep -E '^## [0-9]{4}-[0-9]{2}-[0-9]{2}' /home/atnip/projects/probable-computing-machine/SESSIONS.md                      | wc -l ↵ echo "...`             |
+| 2026-04-27T17:34:38Z | `grep -oE '^## [0-9]{4}-[0-9]{2}-[0-9]{2}' /home/atnip/projects/probable-computing-machine/SESSIONS.md                     | awk '{print $...`              |
+| 2026-04-27T17:37:12Z | `awk '/^## 2026-04-09/,/^---$/' /home/atnip/projects/probable-computing-machine/SESSIONS.md                                | head -80`                      |
+| 2026-04-27T17:42:23Z | `python3 /tmp/condense_sessions.py`                                                                                        |
+| 2026-04-27T17:42:32Z | `awk '/^## 2026-04-09 - Fix #25/,/^## 2026-04-09 - a11y #29/' /tmp/SESSIONS-condensed.md`                                  |
+| 2026-04-27T17:43:11Z | `awk '/^## 2026-04-13/,/^## 2026-04-12/' /tmp/SESSIONS-condensed.md                                                        | head -60`                      |
+| 2026-04-27T17:43:14Z | `head -30 /tmp/SESSIONS-condensed.md`                                                                                      |
+| 2026-04-27T17:43:24Z | `cp /tmp/SESSIONS-condensed.md /home/atnip/projects/probable-computing-machine/SESSIONS.md && wc -l /home/atnip/projec...` |
+| 2026-04-27T17:43:29Z | `awk 'NR<=9                                                                                                                |                                | NR>=(NR-100)' /home/atnip/projects/probable-computing-machine/.claude/approval-log.md > /dev/null ↵ # A...` |
