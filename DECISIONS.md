@@ -2,6 +2,41 @@
 
 ---
 
+## DEC-0034
+
+### Date
+
+2026-06-24
+
+### Issue
+
+#97 — [B1] calcDamageRange in damageCalc.ts
+
+### Decision
+
+Completed the underspecified `calcDamageRange` signature from DESIGN-v2.md:
+
+- Added an **`effectiveness: number`** parameter (the formula multiplies by it and the AC requires 0×/4× cases, but the DESIGN signature omitted it).
+- Added a **`defenderName: string`** parameter so the Gen 1 Special override applies to the defender too (DESIGN says "same override pattern" but gave no defender name).
+- Return **null when either `attackerLevel` or `defenderLevel` is null** (matches downstream `damageCalcAvailable` gating and #98's defender-level behavior; the formula itself uses only attacker level, since stats are base stats with no level scaling per the PRD).
+- Defined **`DamageRange` (and later `MoveRecommendation`) in `damageCalc.ts`**, not `pokeapiClient.ts` — the DESIGN type section says they live in the calc service; the import-from-pokeapiClient in the DESIGN snippet was an error. Keeps the API layer free of damage-domain types.
+
+### Rationale
+
+These are mechanical completions of an underspecified pure-function contract, each with a single defensible resolution; none are product decisions. Implementing the formula faithfully and proving it with controlled, hand-computed inputs is verifiable in isolation.
+
+### Alternatives Considered
+
+- **Omit defender override (attacker-only).** Rejected — would silently mis-calc Gen 1 damage when the defender is an overridden species (e.g. Gengar).
+- **Bake type-chart lookup into damageCalc.** Rejected — violates the V3 purity constraint; effectiveness is passed in from `calcEffectiveness`.
+
+### Consequences
+
+- The named "match Pokémon Showdown to ±1 HP" matchup cases (Gengar/Thunderbolt vs Starmie, etc.) are **deferred to E1 (#107)** for reference reconciliation — they can't be verified autonomously without the external calculator. #97's tests instead prove the formula against controlled, hand-computed values per generation group.
+- `rankMoves` (#98) and `useMatchupMatrix` (#C2) must pass the new `defenderName`/`effectiveness` arguments.
+
+---
+
 ## DEC-0033
 
 ### Date

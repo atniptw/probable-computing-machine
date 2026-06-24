@@ -2,6 +2,34 @@
 
 ---
 
+## 2026-06-24 — feat/issue-97 [B1]: calcDamageRange (damageCalc.ts)
+
+### Objective
+
+Implement the pure per-generation damage-range calculator — the V3 engine core.
+
+### Completed Work
+
+- New `src/services/damageCalc.ts`: `getGenerationGroup`, `calcDamageRange`, `DamageRange`/`GenerationGroup` types. Per-gen formula (Gen 1 single Special + 2× crit + 217–255 roll; Gen 2–5 split + 2× crit; Gen 6+ split + 1.5× crit + 85–100 roll), Gen 1 Special overrides on both sides, div-by-zero guard. Pure (imports only types + gen1 overrides).
+- New `src/tests/damageCalc.test.ts` (11 tests): generation-group boundaries, null gates (status/null power/null levels), exact hand-computed ranges per gen group, 0×/2× effectiveness, physical-vs-special stat selection, Gen 1 override applied.
+
+### Validation
+
+- `npm run verify` — pass on first run (327/327 unit, 6/6 e2e). 100% statements on damageCalc.ts (one defensive branch uncovered).
+- Visual QA — skipped (pure logic).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Completed the underspecified signature — added `effectiveness` and `defenderName` params, return null if either level null, defined `DamageRange` in damageCalc.ts. See DEC-0034. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete but underspecified (signature gaps). Scope clarity: Clear.
+**Feedforward signals:** `[issue-template]` — DESIGN function signatures had real gaps (missing `effectiveness`, missing defender name, wrong type home); design specs for pure functions should be type-checked against their own formula before issue authoring.
+
+### Next Actions
+
+#98 (rankMoves) then #99 (analyzeTeamCoverage). Named ±1-vs-Showdown cases deferred to E1.
+
+---
+
 ## 2026-06-24 — feat/issue-93 [A3]: getPokemon extracts and caches stats
 
 ### Objective
