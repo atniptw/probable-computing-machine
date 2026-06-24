@@ -163,6 +163,8 @@ git diff origin/main..HEAD
 
 Resolve all blocking findings and re-run Step 4 before proceeding.
 
+As the reviewer, also determine the **scorecard inputs** for Step 9 (the reviewer owns this judgment, not the implementer): the `difficulty` band, the `review_rounds` count, and — applying `.claude/metrics/rubric.md` — classify each handoff in the Step 5 retro as avoidable vs necessary, and each wrong assumption as a wrong call. Counts must trace to the Step 5 retrospective.
+
 ## Step 7 — User sign-off
 
 Present to the user:
@@ -194,3 +196,35 @@ WORKTREE=$(pwd) && cd "$(git rev-parse --git-common-dir)/.." && git fetch origin
 ```
 
 > **Note:** GitHub auto-closes issues when a commit containing `Closes #N` is pushed to main. Do not run `gh issue close` manually — it is redundant and contradicts CLAUDE.md policy.
+
+## Step 9 — Scorecard
+
+After the push succeeds, append one structured performance row so the metrics loop can track whether the agent is improving — especially at autonomy. Use the inputs the **reviewer** determined in Step 6, applying `.claude/metrics/rubric.md`. The counts must trace to the Step 5 retrospective; see `.claude/metrics/README.md` for the full model.
+
+Field reminders (full definitions in `rubric.md`):
+
+- `difficulty` `S|M|L` — judge the task _as specified_, not how it went.
+- `review_rounds` — blocking `/review` send-backs in Step 6 (clean first review = `0`).
+- `verify-first-try` `yes|no` — did the **first** Step-4 `npm run verify` pass with no later fixes?
+- `corrections` — from Step 5 "Course corrections" (user redirected me unprompted).
+- `avoidable-handoffs` / `necessary-handoffs` — classify each question/block I raised. A permission prompt is **not** a handoff.
+- `wrong-calls` — assumptions or unasked decisions that proved wrong (cross-check Step 5 "Assumptions made").
+- `notes` — one line on what to distill (feeds the future `/retro` step).
+
+Capture the issue's sign-off commit (current `HEAD` on `main`), append the row, and regenerate the report:
+
+```bash
+python3 .claude/metrics/score-issue.py \
+  --issue [ARGUMENTS] --difficulty <S|M|L> --review-rounds <n> --verify-first-try <yes|no> \
+  --corrections <n> --avoidable-handoffs <n> --necessary-handoffs <n> --wrong-calls <n> \
+  --commit "$(git rev-parse HEAD)" --notes "<one line>"
+python3 .claude/metrics/render-report.py
+```
+
+Commit and push the updated ledger and report. **The commit message must not contain `#[ARGUMENTS]`** (a `#N` reference would be miscounted as a fixup when the report derives `fixups_after_push` from git history):
+
+```bash
+git add .claude/metrics/ledger.jsonl .claude/metrics/REPORT.md && \
+  git commit -m "chore(metrics): scorecard for issue [ARGUMENTS]" && \
+  git push origin HEAD:main
+```

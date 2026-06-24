@@ -2,6 +2,29 @@
 
 ---
 
+## 2026-06-24 — infra: agent performance metrics (quality + autonomy trend)
+
+### Objective
+
+Give the Product Owner a way to tell whether the coding agent is getting better — especially at working autonomously — instead of guessing.
+
+### Completed Work
+
+- Added `.claude/metrics/`: `README.md` (model + honesty guards), `rubric.md` (frozen v1 scoring bar), `ledger.jsonl` (append-only, one row per issue), `score-issue.py` (row writer), `render-report.py` (per-band last-N vs prior-N trend → `REPORT.md`).
+- Improvement is read as a trend **within a difficulty band**, on two coupled lines: quality (`review_rounds` ↓, `verify_first_try` ↑, `fixups_after_push` ↓) and autonomy burden (`corrections + avoidable_handoffs + wrong_calls` ↓). Necessary questions are tracked but never penalized; `fixups_after_push` is derived live from git history, not stored.
+- Wired a new **Step 9 — Scorecard** into `/work-issue`, with the reviewer (Step 6) owning difficulty/quality and the avoidable-vs-necessary handoff classification per the rubric.
+- Logged the design as DEC-0031.
+
+### Validation
+
+- Smoke-tested `score-issue.py` + `render-report.py` with 8 synthetic rows (window=3): Medium band correctly showed autonomy burden 3.7 → 0.3 and verify 33% → 100%; per-band headline avoids mixing difficulties; empty-ledger path renders the "no data yet" report. Ledger then reset to empty for real use.
+
+### Next Actions
+
+Build the `/retro` distillation step (reads `notes` + approval-log → proposes feedforward edits). Continue V2 backlog (#91+).
+
+---
+
 ## 2026-06-24 — backlog: import V2 design docs and create implementation issues
 
 ### Objective

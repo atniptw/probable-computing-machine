@@ -2,6 +2,39 @@
 
 ---
 
+## DEC-0031
+
+### Date
+
+2026-06-24
+
+### Issue
+
+Agent performance metrics infrastructure (conversation-driven, no issue number)
+
+### Decision
+
+Add a closed-loop metrics system under `.claude/metrics/`: an append-only `ledger.jsonl` (one structured row per worked issue), a frozen `rubric.md`, a `score-issue.py` writer, and a `render-report.py` that emits `REPORT.md`. A scorecard row is written at a new Step 9 of `/work-issue`. Improvement is read as a trend **within a difficulty band** (last-N vs prior-N), tracking a **quality** line and an **autonomy-burden** line (`corrections + avoidable_handoffs + wrong_calls`).
+
+### Rationale
+
+The Product Owner could not tell whether the agent was improving, especially at autonomy. The Step 5 retrospective already captured the right signals but only as prose, which can't be trended. Extracting them into a structured ledger makes the trend visible. Autonomy is measured _coupled with_ quality so it can't be gamed by guessing recklessly (that raises `wrong_calls`), and necessary questions are tracked but never penalized so the agent isn't trained to stop asking.
+
+### Alternatives Considered
+
+- **Single composite "score" number.** Rejected — hides the quality/autonomy trade-off and invites Goodharting; two coupled lines per band are more honest.
+- **Raw averages across all issues.** Rejected — a hard L issue always shows worse numbers than an S; without per-band normalization the trend is noise.
+- **Store `fixups_after_push` in the ledger.** Rejected — it's a lagging signal; deriving it live from `git log --grep "#N"` keeps the ledger append-only and the count always fresh.
+- **Implementer writes its own scorecard.** Rejected as the sole source — conflict of interest; the reviewer owns difficulty/quality and validates autonomy counts against the auditable prose retro, with periodic human spot-checks as the backstop.
+
+### Consequences
+
+- Every `/work-issue` run ends with a scorecard commit (the scorecard commit message must avoid `#N` so it isn't miscounted as a fixup).
+- The rubric is a frozen bar: changing it requires a version bump + dated changelog so metric shifts are attributable to deliberate bar changes, not capability changes.
+- `notes` rows feed a future `/retro` distillation step that turns recurring feedback into feedforward (CLAUDE.md rules, memories, skills).
+
+---
+
 ## DEC-0030
 
 ### Date
