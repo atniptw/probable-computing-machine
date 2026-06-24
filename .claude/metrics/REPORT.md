@@ -1,6 +1,6 @@
 # Agent Performance Report
 
-_Generated 2026-06-24T21:12:13+00:00 from `ledger.jsonl` (5 issues scored). Window = last 10 vs prior 10, per difficulty band._
+_Generated 2026-06-24T21:21:15+00:00 from `ledger.jsonl` (5 issues scored). Window = last 10 vs prior 10, per difficulty band._
 
 ## Headline — autonomy burden & verify, per band
 
@@ -12,14 +12,18 @@ _Generated 2026-06-24T21:12:13+00:00 from `ledger.jsonl` (5 issues scored). Wind
 
 ## Small (S) — 2 issues
 
-| quality                            | prior 0 | last 2 | trend            |
+**Quality**
+
+| metric            | prior 0 | last 2 | trend            |
+| ----------------- | ------- | ------ | ---------------- |
+| review rounds     | —       | 0.0    | (need more data) |
+| verify first try  | —       | 100%   | (need more data) |
+| fixups after push | —       | 0.0    | (need more data) |
+
+**Autonomy**
+
+| metric                             | prior 0 | last 2 | trend            |
 | ---------------------------------- | ------- | ------ | ---------------- |
-| review rounds                      | —       | 0.0    | (need more data) |
-| verify first try                   | —       | 100%   | (need more data) |
-| fixups after push                  | —       | 0.0    | (need more data) |
-|                                    |         |        |                  |
-| autonomy                           | prior 0 | last 2 | trend            |
-| ---                                | ---     | ---    | ---              |
 | corrections (user redirected me)   | —       | 0.0    | (need more data) |
 | avoidable handoffs                 | —       | 0.0    | (need more data) |
 | wrong autonomous calls             | —       | 0.0    | (need more data) |
@@ -28,30 +32,38 @@ _Generated 2026-06-24T21:12:13+00:00 from `ledger.jsonl` (5 issues scored). Wind
 
 ## Medium (M) — 2 issues
 
-| quality                            | prior 0 | last 2 | trend            |
+**Quality**
+
+| metric            | prior 0 | last 2 | trend            |
+| ----------------- | ------- | ------ | ---------------- |
+| review rounds     | —       | 0.0    | (need more data) |
+| verify first try  | —       | 100%   | (need more data) |
+| fixups after push | —       | 0.0    | (need more data) |
+
+**Autonomy**
+
+| metric                             | prior 0 | last 2 | trend            |
 | ---------------------------------- | ------- | ------ | ---------------- |
-| review rounds                      | —       | 0.0    | (need more data) |
-| verify first try                   | —       | 100%   | (need more data) |
-| fixups after push                  | —       | 0.0    | (need more data) |
-|                                    |         |        |                  |
-| autonomy                           | prior 0 | last 2 | trend            |
-| ---                                | ---     | ---    | ---              |
 | corrections (user redirected me)   | —       | 0.0    | (need more data) |
 | avoidable handoffs                 | —       | 0.0    | (need more data) |
 | wrong autonomous calls             | —       | 0.0    | (need more data) |
 | necessary handoffs                 | —       | 0.0    | (need more data) |
 | AUTONOMY BURDEN (corr+avoid+wrong) | —       | 0.0    | (need more data) |
 
-## Large (L) — 1 issues
+## Large (L) — 1 issue
 
-| quality                            | prior 0 | last 1 | trend            |
+**Quality**
+
+| metric            | prior 0 | last 1 | trend            |
+| ----------------- | ------- | ------ | ---------------- |
+| review rounds     | —       | 0.0    | (need more data) |
+| verify first try  | —       | 0%     | (need more data) |
+| fixups after push | —       | 0.0    | (need more data) |
+
+**Autonomy**
+
+| metric                             | prior 0 | last 1 | trend            |
 | ---------------------------------- | ------- | ------ | ---------------- |
-| review rounds                      | —       | 0.0    | (need more data) |
-| verify first try                   | —       | 0%     | (need more data) |
-| fixups after push                  | —       | 0.0    | (need more data) |
-|                                    |         |        |                  |
-| autonomy                           | prior 0 | last 1 | trend            |
-| ---                                | ---     | ---    | ---              |
 | corrections (user redirected me)   | —       | 0.0    | (need more data) |
 | avoidable handoffs                 | —       | 0.0    | (need more data) |
 | wrong autonomous calls             | —       | 0.0    | (need more data) |

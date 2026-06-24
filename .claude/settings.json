@@ -69,7 +69,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd /home/atnip/projects/probable-computing-machine && npm run lint && npm run tsc"
+            "command": "cd /home/atnip/projects/probable-computing-machine && npm run format && npm run lint && npm run tsc"
           }
         ]
       }

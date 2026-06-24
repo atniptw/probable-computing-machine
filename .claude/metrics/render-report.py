@@ -117,18 +117,20 @@ def render_band(rows, window):
     prior = rows[-2 * window:-window]
     lines = []
 
-    def section(title, metrics):
-        lines.append(f"| {title} | prior {len(prior)} | last {len(last)} | trend |")
-        lines.append("|---|---|---|---|")
+    def table(title, metrics):
+        lines.append(f"**{title}**")
+        lines.append("")
+        lines.append(f"| metric | prior {len(prior)} | last {len(last)} | trend |")
+        lines.append("| --- | --- | --- | --- |")
         for key, label, direction in metrics:
             pv = metric_value(prior, key) if prior else None
             lv = metric_value(last, key)
             lines.append(f"| {label} | {fmt(key, pv)} | {fmt(key, lv)} | {trend(key, direction, pv, lv)} |")
+        lines.append("")
 
-    section("quality", QUALITY)
-    lines.append("| | | | |")
-    section("autonomy", AUTONOMY)
-    return "\n".join(lines)
+    table("Quality", QUALITY)
+    table("Autonomy", AUTONOMY)
+    return "\n".join(lines).rstrip()
 
 
 def main():
@@ -179,7 +181,8 @@ def main():
 
     for code, name in BANDS:
         band_rows = [r for r in rows if r.get("difficulty") == code]
-        out.append(f"## {name} ({code}) — {len(band_rows)} issues")
+        noun = "issue" if len(band_rows) == 1 else "issues"
+        out.append(f"## {name} ({code}) — {len(band_rows)} {noun}")
         out.append("")
         if not band_rows:
             out += ["_No issues in this band yet._", ""]
