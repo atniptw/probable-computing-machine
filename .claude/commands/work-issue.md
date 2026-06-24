@@ -175,6 +175,8 @@ Present to the user:
 
 Wait for explicit user approval before proceeding to Step 8.
 
+> **Autonomous (`/work-backlog`) mode:** for non-visual issues, a clean reviewer-agent sign-off (Step 6) plus green `verify` (Step 4) substitutes for human approval — proceed to Step 8 without waiting. Visual issues always require human sign-off here.
+
 ## Step 8 — Merge, sync, and clean up
 
 After explicit user approval in Step 7, perform the full merge and clean-up from the feature worktree.

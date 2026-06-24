@@ -2,6 +2,29 @@
 
 ---
 
+## 2026-06-24 — infra: autonomous backlog driver (`/work-backlog`, Tier 1)
+
+### Objective
+
+Get to a point where the agent can be "let loose" to chew through the backlog, so the Product Owner can learn what happens and how to guide it.
+
+### Completed Work
+
+- Added `/work-backlog` driver (`.claude/commands/work-backlog.md`): user-initiated, runs issues in wave/dependency order (keystone #91/A1 solo first, then parallel worktree sub-agents), reviewer-gated, with explicit stop conditions (visual issue, genuine ambiguity, reviewer BLOCK after 2 attempts, verify fail after 2 attempts, non-SESSIONS merge conflict).
+- Adopted **Tier 1 autonomy** (DEC-0032): reviewer clean sign-off + green verify replaces human sign-off for non-visual issues; wave D (visual) always stops for human QA. Added a cross-reference note in work-issue Step 7.
+- Expanded `settings.json` allowlist so unattended runs don't stall: git push/fetch/merge/worktree/branch/rev-parse/show, `npm ci`, metrics scripts.
+
+### Validation
+
+- `settings.json` validated as parseable JSON after the edit.
+- Driver not yet exercised — first run is a deliberately bounded experiment (Wave A) the user will launch.
+
+### Next Actions
+
+User launches the first bounded loose run (Wave A, #91–96); study the resulting `REPORT.md` + SESSIONS retros together; then build the `/retro` distiller from real data.
+
+---
+
 ## 2026-06-24 — infra: agent performance metrics (quality + autonomy trend)
 
 ### Objective

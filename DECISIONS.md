@@ -2,6 +2,38 @@
 
 ---
 
+## DEC-0032
+
+### Date
+
+2026-06-24
+
+### Issue
+
+Autonomous backlog execution infrastructure (conversation-driven, no issue number)
+
+### Decision
+
+Adopt a **Tier 1 autonomy model** for chewing through the backlog: a new `/work-backlog` driver runs issues in wave/dependency order, and for **non-visual** issues a clean reviewer-agent sign-off (work-issue Step 6) plus green `npm run verify` (Step 4) **replaces human sign-off** — the driver pushes to `main` unattended. **Visual issues (wave D) always stop for human visual QA.** Expanded the `settings.json` allowlist (git push/fetch/merge/worktree/branch/rev-parse/show, `npm ci`, metrics scripts) so unattended runs don't stall on approval prompts.
+
+### Rationale
+
+This is a learning project: the Product Owner's goal is to observe what happens when the agent is let loose and learn how to guide it. Hedging with human pre-approval defeats that purpose. Unattended push is made safe by **reversibility** (everything is git; a bad push is one `git revert`) and **automated gates** (reviewer agent + `verify` keep `main` green), not by human gatekeeping. The metrics loop (DEC-0031) provides the after-the-fact observability to learn from each run.
+
+### Alternatives Considered
+
+- **Supervised batch (pause for human approval before each push).** Rejected for now — it preserves the bottleneck the experiment is meant to study, though it remains a fallback if loose runs prove unsafe.
+- **Full autonomy including visual issues (Tier 2).** Deferred — UI correctness genuinely needs human eyes; fold in later via screenshot artifacts once the autonomy-burden trend proves out.
+- **Extend `/work-wave` instead of a new driver.** Rejected — `work-wave` fans out to human-operated terminals; the loose driver dispatches worktree sub-agents itself.
+
+### Consequences
+
+- `main` can receive commits with no human in the loop (non-visual issues). Recovery is `git revert`; the reviewer + verify gates are the safety net.
+- Sub-agent live transcripts are not visible to the user, so the durable artifacts (SESSIONS retro, scorecard, DECISIONS) are the sole record — the driver enforces that sub-agents write them.
+- Known risk flagged for the first run: `PostToolUse`/`Stop` hooks `cd` into the main repo, so worktree edits may be linted/tested against main rather than the worktree.
+
+---
+
 ## DEC-0031
 
 ### Date
