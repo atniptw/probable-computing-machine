@@ -310,7 +310,13 @@ describe('Contract: GET /move/{name} → string', () => {
     // Fixture: minimal documented shape for move endpoint
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () => jsonResponse({ type: { name: 'electric' } })),
+      vi.fn(async () =>
+        jsonResponse({
+          type: { name: 'electric' },
+          power: 90,
+          damage_class: { name: 'special' },
+        }),
+      ),
     )
 
     const { getMoveType } = await import('../services/pokeapi')

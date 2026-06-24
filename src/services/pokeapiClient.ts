@@ -91,6 +91,8 @@ export interface PokeApiPokemonResponse {
 
 export interface PokeApiMoveResponse {
   type: { name: string }
+  power: number | null // null for status and variable-power moves
+  damage_class: { name: string } // 'physical' | 'special' | 'status'
 }
 
 export interface PokeApiMoveVersionDetail {

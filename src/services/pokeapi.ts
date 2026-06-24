@@ -30,9 +30,11 @@ import {
   generationNameMap,
   NetworkError,
   PokemonNotFoundError,
+  type DamageClass,
   type MatchupEntry,
   type MatchupResult,
   type MatchupSummary,
+  type MoveDetail,
   type PokeApiMoveResponse,
   type PokeApiPokemonMoveEntry,
   type PokeApiPokemonResponse,
@@ -52,8 +54,8 @@ import { calcEffectiveness, getTypeMap, modifierLabel } from './typechart'
 // --- Module-level caches for Pokemon and move-type requests ---
 
 const pokemonRequestCache = new Map<string, Promise<Pokemon>>()
-const moveTypeCache = new Map<string, string>()
-const moveTypePromise = new Map<string, Promise<string>>()
+const moveDetailCache = new Map<string, MoveDetail>()
+const moveDetailPromise = new Map<string, Promise<MoveDetail>>()
 
 // --- Internal cache type ---
 
@@ -148,21 +150,44 @@ export async function getPokemon(
   }
 }
 
-// --- getMoveType ---
+// --- getMoveDetail / getMoveType ---
+
+const MOVE_CACHE_PREFIX = 'move_v1_'
 
 function normalizeMoveName(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, '-')
 }
 
-export async function getMoveType(moveName: string): Promise<string> {
+function toDamageClass(name: string): DamageClass {
+  return name === 'physical' || name === 'special' ? name : 'status'
+}
+
+export async function getMoveDetail(moveName: string): Promise<MoveDetail> {
   const normalizedName = normalizeMoveName(moveName)
   if (!normalizedName) throw new NetworkError()
 
-  if (moveTypeCache.has(normalizedName)) {
-    return moveTypeCache.get(normalizedName) as string
+  const memoized = moveDetailCache.get(normalizedName)
+  if (memoized) return memoized
+
+  const cacheKey = `${MOVE_CACHE_PREFIX}${normalizedName}`
+  try {
+    const cached = localStorage.getItem(cacheKey)
+    if (cached) {
+      const { data, expires } = JSON.parse(cached) as {
+        data: MoveDetail
+        expires: number
+      }
+      if (Date.now() < expires) {
+        moveDetailCache.set(normalizedName, data)
+        return data
+      }
+      localStorage.removeItem(cacheKey)
+    }
+  } catch {
+    // Malformed or inaccessible cache entry — fall through to a network fetch.
   }
 
-  const inFlight = moveTypePromise.get(normalizedName)
+  const inFlight = moveDetailPromise.get(normalizedName)
   if (inFlight) return inFlight
 
   const request = (async () => {
@@ -173,17 +198,38 @@ export async function getMoveType(moveName: string): Promise<string> {
     if (!res.ok) throw new NetworkError()
 
     const json = (await res.json()) as PokeApiMoveResponse
-    const typeName = json.type.name
-    moveTypeCache.set(normalizedName, typeName)
-    return typeName
+    const detail: MoveDetail = {
+      name: normalizedName,
+      type: json.type.name,
+      basePower: json.power ?? null,
+      damageClass: toDamageClass(json.damage_class.name),
+    }
+    moveDetailCache.set(normalizedName, detail)
+    try {
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify({ data: detail, expires: Date.now() + CACHE_TTL_MS }),
+      )
+    } catch {
+      // Persistence is best-effort; the in-memory cache still serves this session.
+    }
+    return detail
   })()
 
-  moveTypePromise.set(normalizedName, request)
+  moveDetailPromise.set(normalizedName, request)
   try {
     return await request
   } finally {
-    moveTypePromise.delete(normalizedName)
+    moveDetailPromise.delete(normalizedName)
   }
+}
+
+/**
+ * @deprecated Use {@link getMoveDetail}. Thin wrapper retained until all callers
+ * migrate to the full move detail.
+ */
+export async function getMoveType(moveName: string): Promise<string> {
+  return (await getMoveDetail(moveName)).type
 }
 
 // --- getPokemonLearnset (internal) ---

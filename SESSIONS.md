@@ -2,6 +2,35 @@
 
 ---
 
+## 2026-06-24 — feat/issue-94 [A4]: getMoveDetail (replaces getMoveType)
+
+### Objective
+
+Fetch and persist full move detail (type, base power, damage class) so the damage calc and team editor can use it.
+
+### Completed Work
+
+- `pokeapiClient.ts`: added `power` and `damage_class` to `PokeApiMoveResponse`.
+- `pokeapi.ts`: added `getMoveDetail` (in-memory + `move_v1_` localStorage cache, 7-day TTL, in-flight dedup); replaced the move-type caches; `getMoveType` is now a thin deprecated wrapper returning `detail.type`.
+- Tests: new `getMoveDetail.test.ts` (physical/status/variable-power, persistence + cache hit, expiry); updated the move contract fixture with `power`/`damage_class`.
+
+### Validation
+
+- `npm run verify` — pass (313/313 unit, 6/6 e2e).
+- Visual QA — skipped (no user-visible change).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** localStorage persistence is best-effort (try/catch) consistent with the rest of the service; `getMoveType` retained as a wrapper rather than deleted, since `useMatchupMatrix` still calls it (migrated in #C2). **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** None.
+
+### Next Actions
+
+#93 (getPokemon stats; tightens Pokemon.stats to required).
+
+---
+
 ## 2026-06-24 — feat/issue-96 [A6]: gen1SpecialOverrides.ts
 
 ### Objective
