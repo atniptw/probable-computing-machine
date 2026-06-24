@@ -11,7 +11,9 @@ import {
   type PokeApiVersionResponse,
 } from './pokeapiClient'
 
-export const CACHE_PREFIX = 'pkm_v2_'
+// Bumped to v3 for the V2 feature: cached Pokémon shape gains `stats` (#93).
+// Old `pkm_v2_` entries are abandoned, not migrated — they expire in 7 days.
+export const CACHE_PREFIX = 'pkm_v3_'
 export const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000
 export const NAME_INDEX_CACHE_KEY = 'pkm_names_v2_all'
 export const MOVE_INDEX_CACHE_KEY = 'pkm_moves_v1_all'

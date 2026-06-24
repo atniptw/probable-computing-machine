@@ -95,9 +95,9 @@ describe('getPokemon error and cache paths', () => {
       types: ['grass', 'poison'],
       sprite: null,
     }
-    // Cache key format: `pkm_v2_${name}_g${generation}` — no generation option → g0
+    // Cache key format: `pkm_v3_${name}_g${generation}` — no generation option → g0
     storage.setItem(
-      'pkm_v2_bulbasaur_g0',
+      'pkm_v3_bulbasaur_g0',
       JSON.stringify({ data: cachedPokemon, expires: Date.now() + 600_000 }),
     )
     vi.stubGlobal('localStorage', storage)
@@ -117,7 +117,7 @@ describe('getPokemon error and cache paths', () => {
     // Stale cache has only ['grass'] — no 'poison'
     const stalePokemon = { name: 'bulbasaur', types: ['grass'], sprite: null }
     storage.setItem(
-      'pkm_v2_bulbasaur_g0',
+      'pkm_v3_bulbasaur_g0',
       JSON.stringify({ data: stalePokemon, expires: Date.now() - 60_000 }),
     )
     vi.stubGlobal('localStorage', storage)

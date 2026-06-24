@@ -2,6 +2,34 @@
 
 ---
 
+## 2026-06-24 — feat/issue-92 [A2]: cache bump pkm*v2* → pkm*v3*
+
+### Objective
+
+Force a clean cache read for the V2 Pokémon shape (gains `stats` in #93) by bumping the prefix.
+
+### Completed Work
+
+- `pokemonCache.ts`: `CACHE_PREFIX` `'pkm_v2_'` → `'pkm_v3_'` (with rationale comment).
+- `pokeapi.errors.test.ts`: updated the two `pkm_v2_bulbasaur_g0` cache-key literals + comment to `pkm_v3_`.
+
+### Validation
+
+- `npm run verify` — pass (306/306 unit, 6/6 e2e).
+- Visual QA — skipped (no user-visible change).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** None. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** None.
+
+### Next Actions
+
+#96 (gen1 overrides), then #94 (getMoveDetail), then #93 (getPokemon stats).
+
+---
+
 ## 2026-06-24 — feat/issue-91 [A1]: V2 foundation types (additive)
 
 ### Objective
