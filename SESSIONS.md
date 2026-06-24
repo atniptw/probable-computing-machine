@@ -2,6 +2,44 @@
 
 ---
 
+## 2026-06-24 — feat/issue-91 [A1]: V2 foundation types (additive)
+
+### Objective
+
+Add the V2 damage-calc domain types so downstream wave-A/B work has a shared contract.
+
+### Completed Work
+
+- `pokeapiClient.ts`: added `PokemonStats`, `MoveDetail`, `DamageClass`; added optional `stats?: PokemonStats` to `Pokemon`.
+- `useTeamConfiguration.ts`: added optional `level?: number` to `TeamMemberConfig`.
+- `GymPokemon.level` was already present (and populated across all gym files) — that part of the issue was already done.
+
+### Validation
+
+- `npm run lint` — pass
+- `npm run tsc` — pass
+- `npm run test:coverage` — pass (306/306)
+- `npx playwright test --project=chromium` — pass (6/6)
+- Visual QA — skipped (no user-visible change)
+
+### Retrospective
+
+**Permission requests:** None (autonomous Tier 1 run; push allowlisted).
+
+**Assumptions made:** Kept new fields **optional/additive** rather than the DESIGN's `stats: PokemonStats` (required), so #91 lands solo without breaking the ~6 `Pokemon` construction sites; #93 will populate and tighten to required. Deferred the raw PokéAPI response-type changes (`PokeApiStatEntry`, response `stats`/`power`/`damage_class`) to their consuming issues (#93/#94) to keep #91 green. See DEC-0033.
+
+**Course corrections:** None.
+
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Had to infer boundaries — the issue's GymPokemon.level item was already done, and the required-vs-optional sequencing was unspecified.
+
+**Feedforward signals:** `[issue-template]` — wave-A issues partly describe already-shipped work (GymPokemon.level / #95); backlog issues authored from a stale snapshot should be reconciled against HEAD at intake.
+
+### Next Actions
+
+Dispatch #92, #94, #96, #93 as parallel sub-agents; close #95 as already-satisfied.
+
+---
+
 ## 2026-06-24 — infra: autonomous backlog driver (`/work-backlog`, Tier 1)
 
 ### Objective

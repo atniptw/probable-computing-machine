@@ -1,9 +1,29 @@
 // --- Exported domain types ---
 
+export interface PokemonStats {
+  hp: number
+  attack: number
+  defense: number
+  specialAttack: number // PokéAPI stat name: 'special-attack'
+  specialDefense: number // PokéAPI stat name: 'special-defense'
+  speed: number
+}
+
 export interface Pokemon {
   name: string
   types: string[]
   sprite: string | null
+  // Optional until getPokemon populates it (#93); tightened to required there.
+  stats?: PokemonStats
+}
+
+export type DamageClass = 'physical' | 'special' | 'status'
+
+export interface MoveDetail {
+  name: string
+  type: string
+  basePower: number | null // null for status and variable-power moves
+  damageClass: DamageClass
 }
 
 export interface PokemonQueryOptions {

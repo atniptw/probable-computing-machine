@@ -9,6 +9,7 @@ function getTeamKey(version: string): string {
 
 export interface TeamMemberConfig {
   name: string
+  level?: number // 1–100; absent = damage calc disabled for the slot (wired in #C1)
   moves: string[]
 }
 

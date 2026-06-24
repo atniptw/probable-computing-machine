@@ -2,6 +2,36 @@
 
 ---
 
+## DEC-0033
+
+### Date
+
+2026-06-24
+
+### Issue
+
+#91 — [A1] Type changes for V2 damage calculator
+
+### Decision
+
+Land #91 as **additive-only** types: new `PokemonStats`/`MoveDetail`/`DamageClass`, and **optional** `Pokemon.stats?` / `TeamMemberConfig.level?`. Defer the raw PokéAPI response-type changes and the tightening of `stats` to **required** to the issues that actually populate those fields (#93 for stats, #94 for move detail).
+
+### Rationale
+
+DESIGN-v2.md specifies `stats: PokemonStats` as required and calls it "a breaking change to all consumers." Landing that in #91 alone would break ~6 `Pokemon` construction sites (getPokemon + 5 test files) and several response fixtures, so #91 could not pass the green-`verify` gate on its own. Making the field optional keeps #91 a true standalone keystone that compiles, while #93 — which adds the populating code and updates the construction sites — tightens it to required. This is the standard "add field optional → populate → tighten" migration and preserves the planned solo-keystone-then-parallel wave structure.
+
+### Alternatives Considered
+
+- **Bundle #91 + #93 (+ test updates) and ship `stats` required immediately.** Rejected — collapses two issues into one commit and reduces the per-issue granularity the metrics loop relies on.
+- **Follow DESIGN literally (required) in #91 alone.** Rejected — breaks the build; violates the Tier 1 green-verify gate.
+
+### Consequences
+
+- Until #93 lands, `Pokemon.stats` may be `undefined`; the damage calculator (#97/B1) must not assume it before #93 tightens the type.
+- The `GymPokemon.level` item in #91 and all of #95 (A5) were already implemented before this wave — #95 is closed as already-satisfied rather than reworked.
+
+---
+
 ## DEC-0032
 
 ### Date
