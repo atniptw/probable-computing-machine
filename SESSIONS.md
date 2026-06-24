@@ -2,6 +2,34 @@
 
 ---
 
+## 2026-06-24 — feat/issue-96 [A6]: gen1SpecialOverrides.ts
+
+### Objective
+
+Provide the Gen 1 Special-stat override table the damage calculator (#97) needs.
+
+### Completed Work
+
+- Added `src/data/gen1SpecialOverrides.ts` with `GEN1_SPECIAL_OVERRIDES` (gengar: 100).
+- Added `src/tests/gen1SpecialOverrides.test.ts` (gengar = 100; all values positive integers).
+
+### Validation
+
+- `npm run verify` — pass (308/308 unit, 6/6 e2e).
+- Visual QA — skipped (no user-visible change).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Started with Gengar only per DESIGN; more entries to be added/verified during #97 (B1) against Showdown's Gen 1 calc. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** None.
+
+### Next Actions
+
+#94 (getMoveDetail), then #93 (getPokemon stats).
+
+---
+
 ## 2026-06-24 — feat/issue-92 [A2]: cache bump pkm*v2* → pkm*v3*
 
 ### Objective
