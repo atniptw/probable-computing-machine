@@ -2,6 +2,26 @@
 
 ---
 
+## 2026-06-24 — backlog: import V2 design docs and create implementation issues
+
+### Objective
+
+Stand up the V2 (Team Synergy & Damage Calculator) backlog from the planning artifacts authored in the Cowork project folder, so work can be assigned wave by wave.
+
+### Completed Work
+
+- Imported four planning docs into the repo root so issue references resolve: `PRD-team-synergy-damage-calculator.md`, `DESIGN-v2.md`, `TEST-PLAN.md`, `CONCEPT-v3-engine.md`.
+- Created 7 GitHub labels: `wave-a`..`wave-e`, `data`, `v2`.
+- Created the V2 implementation issues (waves A–E) plus the V1 test-gap issues from TEST-PLAN.md. Each issue carries its `wave-*`/`v2`/`data` markers **and exactly one type label** (`feat`/`chore`/`test`/`docs`) per the CLAUDE.md label convention — replacing the original script's untyped `wave-*`-only labeling.
+- Skipped the GitHub Projects board: the `gh` token lacks the `project` scope, and wave labels provide the "what to work next" ordering without it. Filter with `gh issue list --state open --label wave-a` (then `wave-b`, etc.).
+
+### Validation
+
+- `gh label list` confirms the 7 new labels exist.
+- Issue creation output captured (each issue printed with its URL and label set).
+
+---
+
 ## 2026-04-27 — chore/issue-81: consolidate dependabot updates (TS-eslint, React 19, TS 6) and group dependabot config
 
 ### Objective
