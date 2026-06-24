@@ -38,9 +38,11 @@ import {
   type PokeApiMoveResponse,
   type PokeApiPokemonMoveEntry,
   type PokeApiPokemonResponse,
+  type PokeApiStatEntry,
   type PokeApiTypeEntry,
   type Pokemon,
   type PokemonQueryOptions,
+  type PokemonStats,
 } from './pokeapiClient'
 
 import {
@@ -102,6 +104,20 @@ function resolveTypesForGeneration(
 
 // --- getPokemon ---
 
+export function normalizeStats(statsArray: PokeApiStatEntry[]): PokemonStats {
+  const entries = statsArray ?? []
+  const get = (statName: string): number =>
+    entries.find((entry) => entry.stat.name === statName)?.base_stat ?? 0
+  return {
+    hp: get('hp'),
+    attack: get('attack'),
+    defense: get('defense'),
+    specialAttack: get('special-attack'),
+    specialDefense: get('special-defense'),
+    speed: get('speed'),
+  }
+}
+
 export async function getPokemon(
   name: string,
   options?: PokemonQueryOptions,
@@ -133,6 +149,7 @@ export async function getPokemon(
       name: json.name,
       types: resolveTypesForGeneration(json, options?.generation),
       sprite: json.sprites.front_default,
+      stats: normalizeStats(json.stats),
     }
 
     localStorage.setItem(

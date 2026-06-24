@@ -8,7 +8,7 @@ import {
   getTypeMap,
   RateLimitError,
 } from '../services/pokeapi'
-import { makeTeamMember } from './testUtils'
+import { makeTeamMember, TEST_STATS } from './testUtils'
 
 vi.mock('../services/pokeapi', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../services/pokeapi')>()
@@ -110,6 +110,7 @@ describe('useMatchupMatrix', () => {
           name: 'gyarados',
           types: ['water', 'flying'],
           sprite: null,
+          stats: TEST_STATS,
         }
       }
 
@@ -117,6 +118,7 @@ describe('useMatchupMatrix', () => {
         name: 'manectric',
         types: ['electric'],
         sprite: null,
+        stats: TEST_STATS,
       }
     })
   })

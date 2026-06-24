@@ -2,6 +2,35 @@
 
 ---
 
+## 2026-06-24 — feat/issue-93 [A3]: getPokemon extracts and caches stats
+
+### Objective
+
+Populate `Pokemon.stats` from the `/pokemon` response so the damage calc has base stats; tighten the type to required.
+
+### Completed Work
+
+- `pokeapiClient.ts`: added `PokeApiStatEntry`, added `stats` to `PokeApiPokemonResponse`, tightened `Pokemon.stats` from optional to required.
+- `pokeapi.ts`: added exported `normalizeStats` (maps PokéAPI stat names → `PokemonStats`, defaults missing to 0, defensively tolerates a missing array); `getPokemon` now stores `stats` in the `pkm_v3_` cache.
+- Tests: new `normalizeStats` + stats-extraction tests in `getPokemon.test.ts`, new `stats[]` contract test; updated 4 construction sites (`testUtils.ts` shared `TEST_STATS`/`makePokemon`, `matchupContainer`, `ranking`, `useMatchupMatrix`).
+
+### Validation
+
+- `npm run verify` — pass on **second** run (316/316 unit, 6/6 e2e). First run failed `format:check` (prettier) only; fixed with `prettier --write`.
+- Visual QA — skipped (no user-visible change).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Made `normalizeStats` defensive (`?? []`) so a malformed API response degrades to zero stats instead of throwing, and so existing `/pokemon` fetch mocks without a `stats` array don't crash. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Had to infer the required-field coupling (DEC-0033).
+**Feedforward signals:** `[tooling]` — the `PostToolUse` hook runs `lint`+`tsc` but not `prettier`, so formatting failures aren't caught until the full `verify` (caused this issue's first-verify miss). Consider adding `format:check`/`--write` to the hook. `[tooling]` — the hook `cd`s into the main repo, fine for in-repo branch work but would mis-target worktrees.
+
+### Next Actions
+
+Wave A complete — render report and summarize. Next wave: B (#97–99, damage calc service).
+
+---
+
 ## 2026-06-24 — feat/issue-94 [A4]: getMoveDetail (replaces getMoveType)
 
 ### Objective

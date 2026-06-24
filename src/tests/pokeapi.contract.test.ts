@@ -110,6 +110,40 @@ describe('Contract: GET /pokemon/{name} → Pokemon', () => {
 
     expect(genV.types).toEqual(['normal'])
   })
+
+  it('maps the stats[] array to the PokemonStats interface', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        jsonResponse({
+          name: 'bulbasaur',
+          types: [{ slot: 1, type: { name: 'grass' } }],
+          past_types: [],
+          sprites: { front_default: null },
+          stats: [
+            { base_stat: 45, stat: { name: 'hp' } },
+            { base_stat: 49, stat: { name: 'attack' } },
+            { base_stat: 49, stat: { name: 'defense' } },
+            { base_stat: 65, stat: { name: 'special-attack' } },
+            { base_stat: 65, stat: { name: 'special-defense' } },
+            { base_stat: 45, stat: { name: 'speed' } },
+          ],
+        }),
+      ),
+    )
+
+    const { getPokemon } = await import('../services/pokeapi')
+    const pokemon = await getPokemon('bulbasaur')
+
+    expect(pokemon.stats).toEqual({
+      hp: 45,
+      attack: 49,
+      defense: 49,
+      specialAttack: 65,
+      specialDefense: 65,
+      speed: 45,
+    })
+  })
 })
 
 // ─── GET /pokemon?limit=1 + GET /pokemon?limit={count} ───────────────────────

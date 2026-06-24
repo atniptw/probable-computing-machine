@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import MatchupContainer from '../components/MatchupViewer/MatchupContainer'
 import { useMatchupMatrix } from '../hooks/useMatchupMatrix'
 import type { MatchupViewModel } from '../hooks/useMatchupMatrix'
-import { makeMatchupViewModel, makeTeamMember } from './testUtils'
+import { makeMatchupViewModel, makeTeamMember, TEST_STATS } from './testUtils'
 
 // ─── Mock useMatchupMatrix ────────────────────────────────────────────────────
 // vi.mock is hoisted above all imports by Vitest, so the static import above
@@ -18,11 +18,13 @@ const PLAYER_POKEMON = {
   name: 'swampert',
   types: ['water', 'ground'],
   sprite: null,
+  stats: TEST_STATS,
 }
 const OPPONENT_POKEMON = {
   name: 'manectric',
   types: ['electric'],
   sprite: null,
+  stats: TEST_STATS,
 }
 const PLAYER_POKEMON_WITH_SPRITE = {
   ...PLAYER_POKEMON,

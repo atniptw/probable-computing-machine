@@ -13,8 +13,7 @@ export interface Pokemon {
   name: string
   types: string[]
   sprite: string | null
-  // Optional until getPokemon populates it (#93); tightened to required there.
-  stats?: PokemonStats
+  stats: PokemonStats // populated by getPokemon from the /pokemon response
 }
 
 export type DamageClass = 'physical' | 'special' | 'status'
@@ -76,9 +75,15 @@ export interface PokeApiTypeEntry {
   type: { name: string }
 }
 
+export interface PokeApiStatEntry {
+  base_stat: number
+  stat: { name: string }
+}
+
 export interface PokeApiPokemonResponse {
   name: string
   types: PokeApiTypeEntry[]
+  stats: PokeApiStatEntry[]
   past_types: {
     generation: { name: string }
     types: PokeApiTypeEntry[]

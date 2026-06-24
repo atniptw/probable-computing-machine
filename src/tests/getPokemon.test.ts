@@ -88,4 +88,60 @@ describe('getPokemon', () => {
     expect(genSix.types).toEqual(['fairy'])
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
+
+  it('extracts all six stats from the pokemon response', async () => {
+    const storage = new MockStorage()
+    vi.stubGlobal('localStorage', storage)
+
+    const fetchMock = vi.fn(async () => {
+      return new Response(
+        JSON.stringify({
+          name: 'gengar',
+          types: [{ slot: 1, type: { name: 'ghost' } }],
+          sprites: { front_default: 'sprite.png' },
+          stats: [
+            { base_stat: 60, stat: { name: 'hp' } },
+            { base_stat: 65, stat: { name: 'attack' } },
+            { base_stat: 60, stat: { name: 'defense' } },
+            { base_stat: 130, stat: { name: 'special-attack' } },
+            { base_stat: 75, stat: { name: 'special-defense' } },
+            { base_stat: 110, stat: { name: 'speed' } },
+          ],
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      )
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const { getPokemon } = await import('../services/pokeapi')
+    const gengar = await getPokemon('gengar')
+
+    expect(gengar.stats).toEqual({
+      hp: 60,
+      attack: 65,
+      defense: 60,
+      specialAttack: 130,
+      specialDefense: 75,
+      speed: 110,
+    })
+  })
+})
+
+describe('normalizeStats', () => {
+  it('maps PokéAPI stat names to camelCase and defaults missing stats to 0', async () => {
+    const { normalizeStats } = await import('../services/pokeapi')
+    expect(
+      normalizeStats([
+        { base_stat: 45, stat: { name: 'hp' } },
+        { base_stat: 50, stat: { name: 'special-attack' } },
+      ]),
+    ).toEqual({
+      hp: 45,
+      attack: 0,
+      defense: 0,
+      specialAttack: 50,
+      specialDefense: 0,
+      speed: 0,
+    })
+  })
 })
