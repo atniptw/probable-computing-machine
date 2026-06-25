@@ -2,6 +2,36 @@
 
 ---
 
+## 2026-06-25 — feat/issue-104 [D2]: move inline detail in team editor (PENDING VISUAL QA)
+
+### Objective
+
+After a move is added to a slot, show its type badge, damage-class chip, and base power inline.
+
+### Completed Work
+
+- New `useMoveDetail` hook (fetches `getMoveDetail`, reuses cache, loading state).
+- New `MoveDetailBadges` component: `TypeBadge` + damage-class chip (Physical/Special/Status, color-coded via `data-class`) + "NN BP"; skeleton while loading; status moves show no power. Wired into each move chip in `TeamEditorPanel`.
+- `App.module.css`: `.moveDetailBadges`, `.damageClassChip` (+ physical/special variants), `.movePower`, `.moveDetailSkeleton`.
+- Tests: new `moveDetailBadges.test.tsx` (3); mocked `getMoveDetail` in `teamEditorPanel.test.tsx` so chips don't fetch.
+
+### Validation
+
+- `npm run verify` — pass on **second** run (368/368 unit, 6/6 e2e). First run failed a lint rule (synchronous `setState` in effect); fixed by moving `setLoading(true)` into an async `run()` (matches `useTeamCoverage`).
+- **Visual QA — PENDING.** Implemented to verify, NOT merged. Awaiting human sign-off.
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Badges render inside the existing move chip pill (type badge + class chip + "NN BP"); kept the fetch in a small `useMoveDetail` hook rather than in the component, per the services/hooks architecture. Chip density/wrapping is a visual-QA candidate. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** `[instruction]` — new lint rule "no synchronous setState in effect": async-fetch hooks must put `setLoading(true)` inside the async `run()`, not the effect body. Worth a note in the hook-authoring guidance.
+
+### Next Actions
+
+Human visual QA → on Approved, `issue-finish.sh 104`, score, then #105.
+
+---
+
 ## 2026-06-25 — feat/issue-103 [D1]: level input in team editor (PENDING VISUAL QA)
 
 ### Objective

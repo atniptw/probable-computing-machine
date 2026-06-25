@@ -1,6 +1,7 @@
 import { useState, type KeyboardEvent } from 'react'
 
 import styles from '../../App.module.css'
+import MoveDetailBadges from './MoveDetailBadges'
 import SuggestionList from './SuggestionList'
 import { toTitleCase } from '../../utils/format'
 
@@ -159,6 +160,7 @@ export default function TeamEditorPanel({
                       key={`${move}-${moveIndex}`}
                     >
                       <span>{toTitleCase(move)}</span>
+                      <MoveDetailBadges moveName={move} />
                       <button
                         type="button"
                         className={styles.moveChipButton}

@@ -323,6 +323,48 @@
   padding: 0;
 }
 
+.moveDetailBadges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.damageClassChip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: #e2e8f0;
+  color: #344150;
+}
+
+.damageClassChip[data-class='physical'] {
+  background: #fed7d7;
+  color: #9b2c2c;
+}
+
+.damageClassChip[data-class='special'] {
+  background: #bee3f8;
+  color: #2c5282;
+}
+
+.movePower {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.moveDetailSkeleton {
+  display: inline-block;
+  width: 60px;
+  height: 18px;
+  border-radius: 999px;
+  background: #edf2f7;
+}
+
 .moveInputRow {
   display: grid;
   grid-template-columns: 1fr auto;

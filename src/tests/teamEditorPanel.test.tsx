@@ -3,6 +3,19 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 
 import TeamEditorPanel from '../components/AppView/TeamEditorPanel'
 
+vi.mock('../services/pokeapi', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../services/pokeapi')>()
+  return {
+    ...actual,
+    getMoveDetail: vi.fn().mockResolvedValue({
+      name: 'move',
+      type: 'normal',
+      basePower: 40,
+      damageClass: 'physical',
+    }),
+  }
+})
+
 // ─── Shared callbacks ─────────────────────────────────────────────────────────
 
 const getSuggestions = vi.fn(() => [] as string[])
