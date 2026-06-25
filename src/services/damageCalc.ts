@@ -1,5 +1,5 @@
 import { GEN1_SPECIAL_OVERRIDES } from '../data/gen1SpecialOverrides'
-import type { MoveDetail, PokemonStats } from './pokeapiClient'
+import type { DamageClass, MoveDetail, PokemonStats } from './pokeapiClient'
 
 // Pure TypeScript. No React, no DOM, no localStorage — this is the V3 engine core.
 
@@ -10,6 +10,15 @@ export interface DamageRange {
   max: number
   critMin: number
   critMax: number
+}
+
+export interface MoveRecommendation {
+  moveName: string
+  moveType: string
+  basePower: number | null
+  damageClass: DamageClass
+  effectiveness: number
+  damageRange: DamageRange | null
 }
 
 export function getGenerationGroup(generation: number): GenerationGroup {
@@ -101,4 +110,72 @@ export function calcDamageRange(
     critMin: Math.floor(min * critMultiplier),
     critMax: Math.floor(max * critMultiplier),
   }
+}
+
+// Lower tier sorts first. Known-damage moves beat variable/unknown-damage moves,
+// which beat status moves.
+function moveTier(rec: MoveRecommendation): number {
+  if (rec.damageClass === 'status') return 2
+  return rec.damageRange ? 0 : 1
+}
+
+/**
+ * Rank an attacker's moves against a defender.
+ *
+ * Order: known damage floor desc → effectiveness desc → move name asc. Moves with
+ * no computable damage (variable power, or levels missing) rank below known-damage
+ * moves but above status moves; when levels are missing every damaging move falls
+ * back to the effectiveness ordering.
+ *
+ * `typeMultipliers[i]` is the pre-computed effectiveness for `moves[i]`.
+ */
+export function rankMoves(
+  moves: MoveDetail[],
+  attackerStats: PokemonStats,
+  attackerName: string,
+  attackerLevel: number | null,
+  defenderStats: PokemonStats,
+  defenderName: string,
+  defenderLevel: number | null,
+  typeMultipliers: number[],
+  generation: number,
+): MoveRecommendation[] {
+  const recommendations: MoveRecommendation[] = moves.map((move, index) => {
+    const effectiveness = typeMultipliers[index] ?? 1
+    return {
+      moveName: move.name,
+      moveType: move.type,
+      basePower: move.basePower,
+      damageClass: move.damageClass,
+      effectiveness,
+      damageRange: calcDamageRange(
+        move,
+        attackerStats,
+        attackerName,
+        attackerLevel,
+        defenderStats,
+        defenderName,
+        defenderLevel,
+        effectiveness,
+        generation,
+      ),
+    }
+  })
+
+  return recommendations.sort((a, b) => {
+    const tierDiff = moveTier(a) - moveTier(b)
+    if (tierDiff !== 0) return tierDiff
+
+    if (
+      a.damageRange &&
+      b.damageRange &&
+      a.damageRange.min !== b.damageRange.min
+    ) {
+      return b.damageRange.min - a.damageRange.min
+    }
+    if (a.effectiveness !== b.effectiveness) {
+      return b.effectiveness - a.effectiveness
+    }
+    return a.moveName.localeCompare(b.moveName)
+  })
 }

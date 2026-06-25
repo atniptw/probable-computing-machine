@@ -2,6 +2,34 @@
 
 ---
 
+## 2026-06-24 — feat/issue-98 [B2]: rankMoves (damageCalc.ts)
+
+### Objective
+
+Rank an attacker's moves against a defender by expected damage.
+
+### Completed Work
+
+- `damageCalc.ts`: added `MoveRecommendation` type and `rankMoves`. Order: known damage floor desc → effectiveness desc → name asc; unknown-damage (variable power / missing levels) moves rank below known damage and above status; status last. Added `defenderName` param (consistent with #97/DEC-0034).
+- New `src/tests/rankMoves.test.ts` (10 tests): BP ordering, SE-over-neutral, status last, variable-power tier, alphabetical tie-break, null attacker/defender level → effectiveness ordering, empty array, full shape.
+
+### Validation
+
+- `npm run verify` — pass on first run (337/337 unit, 6/6 e2e). damageCalc.ts 100% statements.
+- Visual QA — skipped (pure logic).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Implemented the tier model (known > unknown-damage > status) to satisfy "variable-power above status, below known damage" and the level-null effectiveness fallback. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** None.
+
+### Next Actions
+
+#99 (analyzeTeamCoverage) closes wave B.
+
+---
+
 ## 2026-06-24 — feat/issue-97 [B1]: calcDamageRange (damageCalc.ts)
 
 ### Objective
