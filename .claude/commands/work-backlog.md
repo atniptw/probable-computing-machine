@@ -24,7 +24,7 @@ For a **parallel** set within a wave: dispatch one sub-agent per issue with `iso
 - Each sub-agent runs `/work-issue N`, uses `git -C` / `npm --prefix` / absolute paths (no `cd && cmd`), runs `npm run verify:unit` before committing, and **must** write its SESSIONS retro (Step 5) and scorecard inputs — those durable artifacts are the only record of a sub-agent's work.
 - The integrator (this driver) merges branches in dependency order via `auto-merge.sh`, runs the single full `npm run verify` on merged state, and owns all pushes.
 
-Apply the Tier 1 gate: reviewer clean + verify green → merge/push. Score every issue (Step 9) after it lands.
+Apply the Tier 1 gate: reviewer clean + verify green → merge/push. After landing, **confirm CI is green** (`issue-finish.sh` does this via `ci-check.sh`; otherwise run `bash .claude/ci-check.sh`) — local verify is not the CI gate. Only then score the issue (Step 9). If CI fails, fix forward before continuing the wave. Batch per-issue scorecards (commit them once at the end of the wave) so each issue's CI run isn't cancelled by an immediate metrics push.
 
 ## Step 3 — Stop conditions (hand back to the human)
 

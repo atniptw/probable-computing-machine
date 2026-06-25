@@ -25,3 +25,7 @@ git merge --ff-only "$BRANCH"
 git branch -d "$BRANCH"
 
 echo "Landed $BRANCH on main ($(git rev-parse --short HEAD))"
+
+# Don't assume local verify == CI green. Block until the push's CI run passes.
+echo "→ Confirming CI ..."
+bash "$REPO/.claude/ci-check.sh"

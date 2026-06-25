@@ -2,6 +2,29 @@
 
 ---
 
+## 2026-06-25 — chore: confirm CI green after push (close the assumed-green gap)
+
+### Objective
+
+Stop assuming "local verify passed" == "CI green"; actually read GitHub CI before calling an issue done.
+
+### Completed Work
+
+- Found CI was never being checked this session. The real gate is `deploy.yml`'s `build` job (npm ci → DECISIONS integrity → lint → format:check → tsc → test:coverage → build → e2e), which deploys only on pass.
+- Added `.claude/ci-check.sh`: finds the CI run for the current `main` HEAD and blocks until it finishes, non-zero if it didn't pass. Baked it into `issue-finish.sh` so landing an issue confirms CI automatically.
+- Documented in work-issue (new Step 8.3) and work-backlog: confirm CI before scoring; batch scorecards at wave end so `cancel-in-progress` doesn't cancel an issue's run. Allowlisted `gh run list/view/watch`.
+
+### Validation
+
+- Ran `ci-check.sh` against HEAD (33a49bb) → correctly located run 28176807252 and reported green.
+- Reviewed all session pushes: every run `success` except #99's, which was `cancelled` by the immediately-following scorecard push (superseded; the next run passed in full). Current `main` is CI-green.
+
+### Next Actions
+
+Resume wave C (#100–102) using `issue-finish.sh` (now CI-gated) + bare commands.
+
+---
+
 ## 2026-06-25 — chore: cut approval-prompt friction (no cd-prefix, lifecycle scripts)
 
 ### Objective

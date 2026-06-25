@@ -199,6 +199,18 @@ WORKTREE=$(pwd) && cd "$(git rev-parse --git-common-dir)/.." && git fetch origin
 
 > **Note:** GitHub auto-closes issues when a commit containing `Closes #N` is pushed to main. Do not run `gh issue close` manually — it is redundant and contradicts CLAUDE.md policy.
 
+### 8.3 — Confirm CI is green (required)
+
+Local `verify` passing is **not** the same as CI passing (CI does a clean `npm ci`, the `DECISIONS.md` integrity check, and runs on a pinned Node version). The `build` job in `.github/workflows/deploy.yml` is the real gate; deploy only happens if it passes.
+
+`issue-finish.sh` runs this automatically. If you push manually, confirm it yourself:
+
+```bash
+bash .claude/ci-check.sh   # blocks until the run for HEAD finishes; non-zero if it didn't pass
+```
+
+Do not mark the issue done (Step 9) until CI is green. If CI fails, fix forward (a new commit on main) and re-confirm. Avoid pushing again within ~seconds of the issue push — `deploy.yml` has `cancel-in-progress: true`, so a rapid follow-up push cancels the issue commit's run.
+
 ## Step 9 — Scorecard
 
 After the push succeeds, append one structured performance row so the metrics loop can track whether the agent is improving — especially at autonomy. Use the inputs the **reviewer** determined in Step 6, applying `.claude/metrics/rubric.md`. The counts must trace to the Step 5 retrospective; see `.claude/metrics/README.md` for the full model.
