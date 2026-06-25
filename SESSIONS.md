@@ -2,6 +2,34 @@
 
 ---
 
+## 2026-06-25 — feat/issue-99 [B3]: analyzeTeamCoverage (teamCoverage.ts)
+
+### Objective
+
+Compute a team's offensive coverage and defensive gaps — closing wave B.
+
+### Completed Work
+
+- New `src/services/teamCoverage.ts` (pure): `analyzeTeamCoverage` + `TeamCoverageResult`/`TeamCoverageMember`. Offensive = defending types some member hits ≥2× (falls back to the Pokémon's own types when no moves configured); defensive gaps = attacking types no member resists. Reuses `calcEffectiveness`; results deduped + sorted.
+- New `src/tests/teamCoverage.test.ts` (8 tests): grass coverage, moves→own-types fallback, dedup, Gen 1 (no fairy/steel in map), Gen 6+ steel→fairy, defensive gap detection, resisted type excluded, empty team.
+
+### Validation
+
+- `npm run verify` — pass on first run (345/345 unit, 6/6 e2e). 100% coverage on teamCoverage.ts; importBoundaries confirms purity.
+- Visual QA — skipped (pure logic).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Omitted DESIGN's `generation` param — the `typeMap` is already generation-scoped (`getTypeMap` applies gen rules), so `typeMap.keys()` is gen-correct and the param would be dead/lint-flagged. `useTeamCoverage` (#C3) will call the two-arg form. Also used the concrete `Map<string, TypeRelations>` type since typechart exports no `TypeMap` alias. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear (one redundant param dropped).
+**Feedforward signals:** `[issue-template]` — same as #97: DESIGN signatures carry params/aliases that don't survive contact with the real type layer; worth a type-check pass when authoring.
+
+### Next Actions
+
+Wave B complete. Next: wave C (#100–102, hook wiring) — note #C2/#C3 must call the updated damageCalc/teamCoverage signatures (DEC-0034, dropped `generation`).
+
+---
+
 ## 2026-06-24 — feat/issue-98 [B2]: rankMoves (damageCalc.ts)
 
 ### Objective
