@@ -53,6 +53,10 @@ export function makeMatchupViewModel(
     offense: { superEffective: [], neutral: [], notEffective: [] },
     defense: { dangerous: [], neutral: [], resisted: [] },
     summary: { offenseRating: 0, defenseRating: 0 },
+    moveRecommendations: [],
+    attackerLevel: null,
+    defenderLevel: null,
+    damageCalcAvailable: false,
     ...overrides,
   }
 }

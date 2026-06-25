@@ -3,18 +3,19 @@ import { renderHook, waitFor } from '@testing-library/react'
 
 import { useMatchupMatrix } from '../hooks/useMatchupMatrix'
 import {
-  getMoveType,
+  getMoveDetail,
   getPokemon,
   getTypeMap,
   RateLimitError,
 } from '../services/pokeapi'
+import type { MoveDetail } from '../services/pokeapiClient'
 import { makeTeamMember, TEST_STATS } from './testUtils'
 
 vi.mock('../services/pokeapi', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../services/pokeapi')>()
   return {
     ...actual,
-    getMoveType: vi.fn(),
+    getMoveDetail: vi.fn(),
     getPokemon: vi.fn(),
     getTypeMap: vi.fn(),
   }
@@ -37,6 +38,7 @@ function makeParams(
     typeof BASE_PARAMS & {
       onError: (m: string | null) => void
       opponentMoves: string[]
+      opponentLevel: number | null
     }
   > = {},
 ) {
@@ -47,9 +49,19 @@ function makeParams(
   }
 }
 
+function makeMoveDetail(
+  name: string,
+  type: string,
+  basePower: number | null = 90,
+): MoveDetail {
+  return { name, type, basePower, damageClass: 'special' }
+}
+
 describe('useMatchupMatrix', () => {
   beforeEach(() => {
-    vi.mocked(getMoveType).mockResolvedValue('electric')
+    vi.mocked(getMoveDetail).mockImplementation(async (moveName) =>
+      makeMoveDetail(moveName, 'electric'),
+    )
 
     vi.mocked(getTypeMap).mockResolvedValue(
       new Map([
@@ -160,10 +172,11 @@ describe('useMatchupMatrix', () => {
   })
 
   it('uses configured team moves when provided', async () => {
-    vi.mocked(getMoveType).mockImplementation(async (moveName) => {
-      if (moveName === 'ice beam') return 'ice'
-      if (moveName === 'thunderbolt') return 'electric'
-      return 'normal'
+    vi.mocked(getMoveDetail).mockImplementation(async (moveName) => {
+      if (moveName === 'ice beam') return makeMoveDetail(moveName, 'ice')
+      if (moveName === 'thunderbolt')
+        return makeMoveDetail(moveName, 'electric')
+      return makeMoveDetail(moveName, 'normal')
     })
 
     const onError = vi.fn()
@@ -211,10 +224,10 @@ describe('useMatchupMatrix', () => {
   })
 
   it('uses opponentMoves for defense when provided (gym mode)', async () => {
-    vi.mocked(getMoveType).mockImplementation(async (moveName) => {
-      if (moveName === 'rock-throw') return 'rock'
-      if (moveName === 'tackle') return 'normal'
-      return 'normal'
+    vi.mocked(getMoveDetail).mockImplementation(async (moveName) => {
+      if (moveName === 'rock-throw') return makeMoveDetail(moveName, 'rock')
+      if (moveName === 'tackle') return makeMoveDetail(moveName, 'normal')
+      return makeMoveDetail(moveName, 'normal')
     })
 
     const onError = vi.fn()
@@ -273,6 +286,76 @@ describe('useMatchupMatrix', () => {
       expect(onError).toHaveBeenCalledWith(
         'Rate limit reached. Please wait a moment and try again.',
       )
+    })
+  })
+
+  describe('damage calc fields', () => {
+    it('damageCalcAvailable is false when the attacker has no level', async () => {
+      const params = makeParams({
+        teamMembers: [
+          makeTeamMember({ name: 'manectric', moves: ['thunderbolt'] }),
+        ],
+        opponentLevel: 50,
+      })
+      const { result } = renderHook(() => useMatchupMatrix(params))
+      await waitFor(() => expect(result.current.matchup).not.toBe(null))
+
+      expect(result.current.matchup!.attackerLevel).toBeNull()
+      expect(result.current.matchup!.damageCalcAvailable).toBe(false)
+    })
+
+    it('damageCalcAvailable is false when the opponent has no level', async () => {
+      const params = makeParams({
+        teamMembers: [
+          makeTeamMember({
+            name: 'manectric',
+            level: 50,
+            moves: ['thunderbolt'],
+          }),
+        ],
+      })
+      const { result } = renderHook(() => useMatchupMatrix(params))
+      await waitFor(() => expect(result.current.matchup).not.toBe(null))
+
+      expect(result.current.matchup!.defenderLevel).toBeNull()
+      expect(result.current.matchup!.damageCalcAvailable).toBe(false)
+    })
+
+    it('is available and ranks moves with damage ranges when both levels are set', async () => {
+      const params = makeParams({
+        teamMembers: [
+          makeTeamMember({
+            name: 'manectric',
+            level: 50,
+            moves: ['thunderbolt', 'ice beam'],
+          }),
+        ],
+        opponentLevel: 50,
+      })
+      const { result } = renderHook(() => useMatchupMatrix(params))
+      await waitFor(() => expect(result.current.matchup).not.toBe(null))
+
+      const matchup = result.current.matchup!
+      expect(matchup.attackerLevel).toBe(50)
+      expect(matchup.defenderLevel).toBe(50)
+      expect(matchup.damageCalcAvailable).toBe(true)
+      expect(matchup.moveRecommendations).toHaveLength(2)
+      expect(matchup.moveRecommendations[0].damageRange).not.toBeNull()
+    })
+
+    it('moveRecommendations have null damage ranges when a level is missing', async () => {
+      const params = makeParams({
+        teamMembers: [
+          makeTeamMember({ name: 'manectric', moves: ['thunderbolt'] }),
+        ],
+        opponentLevel: 50,
+      })
+      const { result } = renderHook(() => useMatchupMatrix(params))
+      await waitFor(() => expect(result.current.matchup).not.toBe(null))
+
+      const matchup = result.current.matchup!
+      expect(matchup.moveRecommendations).toHaveLength(1)
+      expect(matchup.moveRecommendations[0].damageRange).toBeNull()
     })
   })
 })

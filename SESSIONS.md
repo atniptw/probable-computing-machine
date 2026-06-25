@@ -2,6 +2,35 @@
 
 ---
 
+## 2026-06-25 — feat/issue-101 [C2]: useMatchupMatrix damage-calc wiring
+
+### Objective
+
+Thread move detail, attacker/defender levels, and ranked recommendations into the matchup hook (data layer only; rendered in D3).
+
+### Completed Work
+
+- `useMatchupMatrix.ts`: swapped `getMoveType` → `getMoveDetail` (unified resolver returns `MoveDetail[]`; `toMoveTemplate` derives the existing offense/defense templates). Added `opponentLevel` param; attacker level from `selectedTeamMember.level`. Calls `rankMoves` with per-move effectiveness. Expanded `MatchupViewModel` with `moveRecommendations`, `attackerLevel`, `defenderLevel`, `damageCalcAvailable`. No damage rendering yet.
+- `testUtils.makeMatchupViewModel`: added the 4 new fields as defaults.
+- `useMatchupMatrix.test.ts`: rewired mocks from `getMoveType` to `getMoveDetail` (the configured-move path was silently untested otherwise), +4 tests for the damage-calc fields.
+
+### Validation
+
+- `npm run verify` — pass on first full run (360/360 unit, 6/6 e2e). Intermediate type/mocking fixups were caught by the PostToolUse hook + manual tsc before the verify.
+- Visual QA — skipped (data layer only).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Single `opponentLevel` param (App resolves gym level vs free-battle input into it) rather than two params. Until App threads it (Wave D / App.tsx), `damageCalcAvailable` is false at runtime — expected for C2. Kept `getMoveType` as the deprecated wrapper (still used by the contract test). **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** `[instruction]` — when a hook swaps a mocked dependency (getMoveType→getMoveDetail), existing tests can keep passing for the wrong reason (real impl fails silently); always re-mock the new dependency so the path stays covered.
+
+### Next Actions
+
+Wave C complete. Wave D (#103–106) is visual → Tier-1 STOP for human visual QA. Also pending: App.tsx must thread `opponentLevel` + the level input (#D1).
+
+---
+
 ## 2026-06-25 — feat/issue-102 [C3]: useTeamCoverage hook
 
 ### Objective

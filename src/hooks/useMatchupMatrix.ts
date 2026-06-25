@@ -3,12 +3,14 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   calcEffectiveness,
   getPokemon,
-  getMoveType,
+  getMoveDetail,
   getTypeMap,
   PokemonNotFoundError,
   RateLimitError,
   type Pokemon,
 } from '../services/pokeapi'
+import { rankMoves, type MoveRecommendation } from '../services/damageCalc'
+import type { MoveDetail } from '../services/pokeapiClient'
 import type { TeamMemberConfig } from './useTeamConfiguration'
 
 interface MatchupMove {
@@ -39,6 +41,11 @@ export interface MatchupViewModel {
   offense: OffenseGroup
   defense: DefenseGroup
   summary: MatchupSummary
+  // Damage calc (data layer only in C2; rendered in D3).
+  moveRecommendations: MoveRecommendation[]
+  attackerLevel: number | null
+  defenderLevel: number | null
+  damageCalcAvailable: boolean
 }
 
 interface UseMatchupMatrixParams {
@@ -48,6 +55,7 @@ interface UseMatchupMatrixParams {
   nameIndexReady: boolean
   normalizedOpponent: string
   onError: (message: string | null) => void
+  opponentLevel?: number | null
   opponentMoves?: string[]
   pokemonNameSet: Set<string>
   selectedTeamIndex: number
@@ -175,22 +183,23 @@ function formatMoveName(value: string): string {
     .join(' ')
 }
 
-async function resolveConfiguredMoves(
+async function resolveConfiguredMoveDetails(
   moveNames: string[],
-): Promise<MoveTemplate[]> {
+): Promise<MoveDetail[]> {
   const moveResults = await Promise.allSettled(
-    moveNames.map(async (moveName) => ({
-      name: formatMoveName(moveName),
-      type: await getMoveType(moveName),
-    })),
+    moveNames.map((moveName) => getMoveDetail(moveName)),
   )
 
   return moveResults
     .filter(
-      (result): result is PromiseFulfilledResult<MoveTemplate> =>
+      (result): result is PromiseFulfilledResult<MoveDetail> =>
         result.status === 'fulfilled',
     )
     .map((result) => result.value)
+}
+
+function toMoveTemplate(detail: MoveDetail): MoveTemplate {
+  return { name: formatMoveName(detail.name), type: detail.type }
 }
 
 function buildDefenseMoves(opponentTypes: string[]): MoveTemplate[] {
@@ -254,6 +263,7 @@ export function useMatchupMatrix({
   nameIndexReady,
   normalizedOpponent,
   onError,
+  opponentLevel,
   opponentMoves,
   pokemonNameSet,
   selectedTeamIndex,
@@ -316,20 +326,21 @@ export function useMatchupMatrix({
           getPokemon(selectedTeamName, { generation }),
         ])
 
-        const [configuredMoves, resolvedOpponentMoves] = await Promise.all([
+        const [configuredMoveDetails, opponentMoveDetails] = await Promise.all([
           selectedTeamMember
-            ? resolveConfiguredMoves(selectedTeamMember.moves)
-            : Promise.resolve([]),
+            ? resolveConfiguredMoveDetails(selectedTeamMember.moves)
+            : Promise.resolve<MoveDetail[]>([]),
           opponentMoves && opponentMoves.length > 0
-            ? resolveConfiguredMoves(opponentMoves)
-            : Promise.resolve([]),
+            ? resolveConfiguredMoveDetails(opponentMoves)
+            : Promise.resolve<MoveDetail[]>([]),
         ])
 
         if (cancelled) return
 
+        const configuredMoves = configuredMoveDetails.map(toMoveTemplate)
         const defenseSourceMoves =
-          resolvedOpponentMoves.length > 0
-            ? resolvedOpponentMoves
+          opponentMoveDetails.length > 0
+            ? opponentMoveDetails.map(toMoveTemplate)
             : buildDefenseMoves(opponentPokemon.types)
 
         const offenseMoves = sortMovesByMultiplier(
@@ -359,6 +370,25 @@ export function useMatchupMatrix({
         const offense = toGroupedOffense(offenseMoves)
         const defense = toGroupedDefense(defenseMoves)
 
+        const attackerLevel = selectedTeamMember?.level ?? null
+        const defenderLevel = opponentLevel ?? null
+        const moveTypeMultipliers = configuredMoveDetails.map((detail) =>
+          calcEffectiveness([detail.type], opponentPokemon.types, typeMap),
+        )
+        const moveRecommendations = rankMoves(
+          configuredMoveDetails,
+          playerPokemon.stats,
+          playerPokemon.name,
+          attackerLevel,
+          opponentPokemon.stats,
+          opponentPokemon.name,
+          defenderLevel,
+          moveTypeMultipliers,
+          generation,
+        )
+        const damageCalcAvailable =
+          attackerLevel !== null && defenderLevel !== null
+
         setMatchup({
           opponent: opponentPokemon,
           player: playerPokemon,
@@ -368,6 +398,10 @@ export function useMatchupMatrix({
             offenseRating: offenseRating(offense),
             defenseRating: defenseRating(defense),
           },
+          moveRecommendations,
+          attackerLevel,
+          defenderLevel,
+          damageCalcAvailable,
         })
       } catch (err) {
         if (cancelled) return
@@ -398,6 +432,7 @@ export function useMatchupMatrix({
     nameIndexReady,
     normalizedOpponent,
     onError,
+    opponentLevel,
     opponentMoves,
     pokemonNameSet,
     selectedTeamMember,
