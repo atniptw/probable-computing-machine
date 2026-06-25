@@ -2,6 +2,34 @@
 
 ---
 
+## 2026-06-25 — feat/issue-102 [C3]: useTeamCoverage hook
+
+### Objective
+
+Wire `analyzeTeamCoverage` into a React hook that fetches each member's Pokémon + move types.
+
+### Completed Work
+
+- New `src/hooks/useTeamCoverage.ts`: fetches `getPokemon` + `getMoveDetail` per named member (reuses the existing cache; `allSettled` so one bad move doesn't kill coverage), calls `analyzeTeamCoverage`, returns `{ coverage, loading }`. Mirrors the `useMatchupMatrix` async pattern (cancelled flag, loading, error mapping). Guards: runs only when the type map is ready and ≥1 member has a name.
+- New `src/tests/useTeamCoverage.test.ts` (5 tests): null until typeMap ready, no run without names, null while loading, resolved offensive coverage, one fetch per member.
+
+### Validation
+
+- `npm run verify` — pass on **second** run (356/356 unit, 6/6 e2e). First run failed one new test (unstable params caused effect re-runs); fixed by hoisting params.
+- Visual QA — skipped (hook only; panel UI is #D4).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Dropped DESIGN's `teamNames` param (redundant with `teamMembers`, would be a dead/lint-flagged arg) — same call as #99's `generation`. Hit a TS closure-narrowing error (typeMap widened back to `| null` inside the async closure) — captured the narrowed value in a const. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** `[instruction]` — hook tests must pass **stable** param objects (build once, not inside the render callback) or identity-keyed effects thrash; worth a note for React-hook test authoring.
+
+### Next Actions
+
+#101 (useMatchupMatrix damage-calc integration) — last of wave C.
+
+---
+
 ## 2026-06-25 — feat/issue-100 [C1]: level field in useTeamConfiguration
 
 ### Objective
