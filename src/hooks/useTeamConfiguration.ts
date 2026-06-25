@@ -57,11 +57,43 @@ function normalizeMoveList(values: string[]): string[] {
   )
 }
 
+function isValidLevel(value: unknown): value is number {
+  return (
+    typeof value === 'number' &&
+    Number.isInteger(value) &&
+    value >= 1 &&
+    value <= 100
+  )
+}
+
 function normalizeMember(member: TeamMemberConfig): TeamMemberConfig {
   return {
     name: member.name.trim().toLowerCase(),
+    ...(isValidLevel(member.level) ? { level: member.level } : {}),
     moves: normalizeMoveList(member.moves),
   }
+}
+
+function toLevelSlots(members: TeamMemberConfig[], teamSize: number): string[] {
+  const slots = Array.from({ length: teamSize }, () => '')
+  members.slice(0, teamSize).forEach((member, index) => {
+    slots[index] = isValidLevel(member.level) ? String(member.level) : ''
+  })
+  return slots
+}
+
+// Blank level is valid (damage calc disabled for the slot); out-of-range is an error.
+function parseLevelInput(value: string): {
+  level?: number
+  error: string | null
+} {
+  const trimmed = value.trim()
+  if (!trimmed) return { error: null }
+  const parsed = Number(trimmed)
+  if (!isValidLevel(parsed)) {
+    return { error: 'Level must be a whole number between 1 and 100.' }
+  }
+  return { level: parsed, error: null }
 }
 
 function toMembersFromNames(
@@ -134,6 +166,12 @@ export function useTeamConfiguration({
   const [teamMoveErrors, setTeamMoveErrors] = useState<(string | null)[]>(() =>
     Array.from({ length: teamSize }, () => null),
   )
+  const [teamLevelsDraft, setTeamLevelsDraft] = useState<string[]>(() =>
+    toLevelSlots(readConfiguredTeam(defaultTeam, teamSize, version), teamSize),
+  )
+  const [teamLevelErrors, setTeamLevelErrors] = useState<(string | null)[]>(
+    () => Array.from({ length: teamSize }, () => null),
+  )
   const [activeTeamSlot, setActiveTeamSlot] = useState<number | null>(null)
   const teamDraftRef = useRef(teamDraft)
   const teamMovesDraftRef = useRef(teamMovesDraft)
@@ -154,8 +192,10 @@ export function useTeamConfiguration({
     setTeamMembers(nextMembers)
     setTeamDraft(nextDraft)
     setTeamMovesDraft(nextMoveDraft)
+    setTeamLevelsDraft(toLevelSlots(nextMembers, teamSize))
     setTeamSlotErrors(Array.from({ length: teamSize }, () => null))
     setTeamMoveErrors(Array.from({ length: teamSize }, () => null))
+    setTeamLevelErrors(Array.from({ length: teamSize }, () => null))
     onError(null)
   }
 
@@ -167,8 +207,10 @@ export function useTeamConfiguration({
     teamMovesDraftRef.current = nextMoveDraft
     setTeamDraft(nextTeamDraft)
     setTeamMovesDraft(nextMoveDraft)
+    setTeamLevelsDraft(toLevelSlots(teamMembers, teamSize))
     setTeamSlotErrors(Array.from({ length: teamSize }, () => null))
     setTeamMoveErrors(Array.from({ length: teamSize }, () => null))
+    setTeamLevelErrors(Array.from({ length: teamSize }, () => null))
     onError(null)
   }
 
@@ -188,6 +230,21 @@ export function useTeamConfiguration({
     })
 
     setTeamSlotErrors((current) => {
+      if (!current[index]) return current
+      const next = [...current]
+      next[index] = null
+      return next
+    })
+  }
+
+  function updateTeamLevel(index: number, value: string): void {
+    setTeamLevelsDraft((current) => {
+      const next = [...current]
+      next[index] = value
+      return next
+    })
+
+    setTeamLevelErrors((current) => {
       if (!current[index]) return current
       const next = [...current]
       next[index] = null
@@ -298,19 +355,31 @@ export function useTeamConfiguration({
       return null
     })
 
+    const parsedLevels = teamLevelsDraft.map(parseLevelInput)
+    const nextLevelErrors = parsedLevels.map((parsed) => parsed.error)
+
     setTeamSlotErrors(nextErrors)
     setTeamMoveErrors(nextMoveErrors)
+    setTeamLevelErrors(nextLevelErrors)
 
-    if (nextErrors.some(Boolean) || nextMoveErrors.some(Boolean)) {
+    if (
+      nextErrors.some(Boolean) ||
+      nextMoveErrors.some(Boolean) ||
+      nextLevelErrors.some(Boolean)
+    ) {
       onError('Fix invalid team entries before continuing.')
       return false
     }
 
     const nextTeam = normalized
-      .map((name, index) => ({
-        name,
-        moves: parsedMoveDrafts[index],
-      }))
+      .map((name, index) => {
+        const level = parsedLevels[index].level
+        return {
+          name,
+          ...(level !== undefined ? { level } : {}),
+          moves: parsedMoveDrafts[index],
+        }
+      })
       .filter((member) => Boolean(member.name))
 
     if (!nextTeam.length) {
@@ -335,6 +404,8 @@ export function useTeamConfiguration({
     saveTeam,
     setActiveTeamSlot,
     teamDraft,
+    teamLevelErrors,
+    teamLevelsDraft,
     teamMembers,
     teamMoveErrors,
     teamMovesDraft,
@@ -342,6 +413,7 @@ export function useTeamConfiguration({
     teamSlotErrors,
     addTeamMove,
     removeTeamMove,
+    updateTeamLevel,
     updateTeamSlot,
   }
 }

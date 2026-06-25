@@ -2,6 +2,34 @@
 
 ---
 
+## 2026-06-25 — feat/issue-100 [C1]: level field in useTeamConfiguration
+
+### Objective
+
+Let the team editor capture a per-slot level (1–100), persisted and validated, with blank meaning "damage calc disabled".
+
+### Completed Work
+
+- `useTeamConfiguration.ts`: added `teamLevelsDraft`/`teamLevelErrors` state, `updateTeamLevel`, `parseLevelInput`/`toLevelSlots`/`isValidLevel` helpers. `normalizeMember` now preserves a valid `level` on load; `saveTeam` validates levels (out-of-range blocks save) and persists `level` to the existing `pmh_team_v1_*` key. Blank = no level (valid). Reset/prepare flows clear level state.
+- `useTeamConfiguration.test.ts`: +6 tests (init undefined, persist valid, reject 101, blank valid, load-without-level no throw, preserve saved level).
+
+### Validation
+
+- `npm run verify` — pass on first run (351/351 unit, 6/6 e2e).
+- Visual QA — skipped (hook only; the input UI is #D1).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Out-of-range level blocks the whole save (consistent with name/move validation); blank stays valid. **Course corrections:** None. **Process note:** started editing on `main` before running `issue-start.sh`; recovered via `git checkout -b` (changes carry over). Use issue-start first next time.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** `[skill]` — work-backlog should remind to run `issue-start.sh <N>` before touching files.
+
+### Next Actions
+
+#102 (useTeamCoverage), then #101 (useMatchupMatrix integration).
+
+---
+
 ## 2026-06-25 — chore: confirm CI green after push (close the assumed-green gap)
 
 ### Objective

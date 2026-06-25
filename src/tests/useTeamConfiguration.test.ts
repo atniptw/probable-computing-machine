@@ -389,4 +389,74 @@ describe('useTeamConfiguration', () => {
       expect(result.current.teamMovesDraft).toEqual([[], [], []])
     })
   })
+
+  describe('level field', () => {
+    it('initialises level as undefined and the draft empty for a slot with no saved level', () => {
+      const { result } = renderHook(() => useTeamConfiguration(makeParams()))
+      expect(result.current.teamMembers[0].level).toBeUndefined()
+      expect(result.current.teamLevelsDraft[0]).toBe('')
+    })
+
+    it('persists a valid level to localStorage and team state', () => {
+      const { result } = renderHook(() => useTeamConfiguration(makeParams()))
+      act(() => {
+        result.current.updateTeamLevel(0, '50')
+      })
+      let saved = false
+      act(() => {
+        saved = result.current.saveTeam()
+      })
+      expect(saved).toBe(true)
+      expect(result.current.teamMembers[0].level).toBe(50)
+      const stored = JSON.parse(storage.getItem(TEAM_KEY) ?? '{}')
+      expect(stored.members[0].level).toBe(50)
+    })
+
+    it('rejects an out-of-range level with an inline error and blocks save', () => {
+      const { result } = renderHook(() => useTeamConfiguration(makeParams()))
+      act(() => {
+        result.current.updateTeamLevel(0, '101')
+      })
+      let saved = true
+      act(() => {
+        saved = result.current.saveTeam()
+      })
+      expect(saved).toBe(false)
+      expect(result.current.teamLevelErrors[0]).not.toBeNull()
+    })
+
+    it('treats a blank level as valid (damage calc disabled for the slot)', () => {
+      const { result } = renderHook(() => useTeamConfiguration(makeParams()))
+      let saved = false
+      act(() => {
+        saved = result.current.saveTeam()
+      })
+      expect(saved).toBe(true)
+      expect(result.current.teamMembers[0].level).toBeUndefined()
+      const stored = JSON.parse(storage.getItem(TEAM_KEY) ?? '{}')
+      expect('level' in stored.members[0]).toBe(false)
+    })
+
+    it('loads a saved team with no level field without throwing', () => {
+      storage.setItem(
+        TEAM_KEY,
+        JSON.stringify({ members: [{ name: 'charmander', moves: [] }] }),
+      )
+      const { result } = renderHook(() => useTeamConfiguration(makeParams()))
+      expect(result.current.teamMembers[0].name).toBe('charmander')
+      expect(result.current.teamMembers[0].level).toBeUndefined()
+    })
+
+    it('preserves a saved level on load', () => {
+      storage.setItem(
+        TEAM_KEY,
+        JSON.stringify({
+          members: [{ name: 'charmander', level: 36, moves: [] }],
+        }),
+      )
+      const { result } = renderHook(() => useTeamConfiguration(makeParams()))
+      expect(result.current.teamMembers[0].level).toBe(36)
+      expect(result.current.teamLevelsDraft[0]).toBe('36')
+    })
+  })
 })
