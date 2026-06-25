@@ -2,6 +2,37 @@
 
 ---
 
+## 2026-06-25 — feat/issue-105 [D3]: damage range in battle view (PENDING VISUAL QA)
+
+### Objective
+
+Show per-move damage ranges in the matchup viewer, completing the runtime damage-calc path.
+
+### Completed Work
+
+- **App.tsx**: added `effectiveOpponentLevel` memo (gym Pokémon's static level in gym mode, `opponentLevel` state in free mode) and threaded it as `opponentLevel` to `MatchupContainer` → `useMatchupMatrix`. This is what makes `damageCalcAvailable` true at runtime (was always false before).
+- **MatchupContainer**: `opponentLevel` prop; passes `moveRecommendations`/`attackerLevel`/`defenderLevel` to `OffenseSection`.
+- **OffenseSection**: matches offense rows to recommendations by normalized name; enriches with `damageRange`, marks the top-damage move, and sets `damageUnknown` when attacker level is known but opponent level isn't.
+- **MoveList**: renders "XX–YY HP" (crit range on hover via `title`), "?–? HP" for unknown opponent level, top-move highlight (`data-top-move`), nothing when attacker level unknown.
+- CSS: `.moveDamage`, `.topMove`. Tests: +3 in `matchupContainer.test.tsx` (range + highlight, ?–? state, no-damage state).
+
+### Validation
+
+- `npm run verify` — pass on first full run (371/371 unit, 6/6 e2e).
+- **Visual QA — PENDING.** Implemented to verify, NOT merged.
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made (design call):** damage ranges attach to the offense effectiveness rows (matched by name) rather than a separate panel — offense moves and recommendations are the same configured moves. "?–? HP" shows only when attacker level is known but opponent level isn't. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Had to resolve how damage sits alongside the effectiveness list (defensible default; visual QA confirms).
+**Feedforward signals:** None.
+
+### Next Actions
+
+Visual QA (gym mode or free battle w/ opponent level). On Approved → `issue-finish.sh 105`, score, then #106 (TeamCoveragePanel) closes wave D.
+
+---
+
 ## 2026-06-25 — feat/issue-104 [D2]: move inline detail in team editor (PENDING VISUAL QA)
 
 ### Objective

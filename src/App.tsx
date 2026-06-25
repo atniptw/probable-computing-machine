@@ -108,6 +108,22 @@ export default function App() {
     exactMatchFound,
   ])
 
+  // Defender level: gym Pokémon's static level in gym mode, user input in free mode.
+  const effectiveOpponentLevel = useMemo<number | null>(() => {
+    if (battleMode === 'gym') {
+      if (!selectedGymId || !normalizedOpponent) return null
+      const gym = getGymById(selectedGameVersion, selectedGymId)
+      return gym?.team.find((p) => p.name === normalizedOpponent)?.level ?? null
+    }
+    return opponentLevel
+  }, [
+    battleMode,
+    selectedGymId,
+    normalizedOpponent,
+    selectedGameVersion,
+    opponentLevel,
+  ])
+
   const {
     activeTeamSlot,
     addTeamMove,
@@ -404,6 +420,7 @@ export default function App() {
               gameLabel={selectedGame.label}
               pokemonNameSet={pokemonNameSet}
               opponentMoves={opponentMoves}
+              opponentLevel={effectiveOpponentLevel}
               opponentSuggestions={opponentSuggestions}
               onError={setError}
             />

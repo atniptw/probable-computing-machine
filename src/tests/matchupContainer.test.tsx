@@ -245,3 +245,100 @@ describe('MatchupContainer — swipe gestures', () => {
     expect(calls[calls.length - 1][0].selectedTeamIndex).toBe(0)
   })
 })
+
+describe('MatchupContainer — damage display (D3)', () => {
+  afterEach(() => {
+    cleanup()
+    onError.mockReset()
+    vi.mocked(useMatchupMatrix).mockReset()
+  })
+
+  function matchupWithDamage(
+    over: Partial<MatchupViewModel> = {},
+  ): MatchupViewModel {
+    return makeMatchupViewModel({
+      player: PLAYER_POKEMON,
+      opponent: OPPONENT_POKEMON,
+      offense: {
+        superEffective: [{ name: 'Surf', multiplier: 2 }],
+        neutral: [],
+        notEffective: [],
+      },
+      defense: { dangerous: [], neutral: [], resisted: [] },
+      moveRecommendations: [
+        {
+          moveName: 'surf',
+          moveType: 'water',
+          basePower: 90,
+          damageClass: 'special',
+          effectiveness: 2,
+          damageRange: { min: 40, max: 48, critMin: 60, critMax: 72 },
+        },
+      ],
+      attackerLevel: 50,
+      defenderLevel: 50,
+      damageCalcAvailable: true,
+      ...over,
+    })
+  }
+
+  it('renders the damage range and highlights the top move when both levels are set', () => {
+    renderContainer({}, { loading: false, matchup: matchupWithDamage() })
+    expect(screen.getByText('40–48 HP')).toBeInTheDocument()
+    expect(screen.getByText('Surf').closest('li')).toHaveAttribute(
+      'data-top-move',
+      'true',
+    )
+  })
+
+  it('shows "?–? HP" when the attacker has a level but the opponent level is unknown', () => {
+    renderContainer(
+      {},
+      {
+        loading: false,
+        matchup: matchupWithDamage({
+          attackerLevel: 50,
+          defenderLevel: null,
+          damageCalcAvailable: false,
+          moveRecommendations: [
+            {
+              moveName: 'surf',
+              moveType: 'water',
+              basePower: 90,
+              damageClass: 'special',
+              effectiveness: 2,
+              damageRange: null,
+            },
+          ],
+        }),
+      },
+    )
+    expect(screen.getByText('?–? HP')).toBeInTheDocument()
+  })
+
+  it('shows no damage column when the attacker level is unknown', () => {
+    renderContainer(
+      {},
+      {
+        loading: false,
+        matchup: matchupWithDamage({
+          attackerLevel: null,
+          defenderLevel: null,
+          damageCalcAvailable: false,
+          moveRecommendations: [
+            {
+              moveName: 'surf',
+              moveType: 'water',
+              basePower: 90,
+              damageClass: 'special',
+              effectiveness: 2,
+              damageRange: null,
+            },
+          ],
+        }),
+      },
+    )
+    expect(screen.queryByText(/HP/)).toBeNull()
+    expect(screen.getByText('Surf')).toBeInTheDocument()
+  })
+})

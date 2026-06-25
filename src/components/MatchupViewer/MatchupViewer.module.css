@@ -204,6 +204,22 @@
 
 .moveName {
   text-transform: none;
+  flex: 1;
+}
+
+.moveDamage {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2c5282;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.topMove {
+  background: #ebf8ff;
+  border-radius: 8px;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .moveIndicator {

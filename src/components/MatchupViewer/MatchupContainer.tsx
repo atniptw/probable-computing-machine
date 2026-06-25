@@ -15,6 +15,7 @@ interface MatchupContainerProps {
   nameIndexReady: boolean
   normalizedOpponent: string
   onError: (message: string | null) => void
+  opponentLevel?: number | null
   opponentMoves?: string[]
   opponentSuggestions: string[]
   pokemonNameSet: Set<string>
@@ -36,6 +37,7 @@ export default function MatchupContainer({
   nameIndexReady,
   normalizedOpponent,
   onError,
+  opponentLevel,
   opponentMoves,
   opponentSuggestions,
   pokemonNameSet,
@@ -54,6 +56,7 @@ export default function MatchupContainer({
     nameIndexReady,
     normalizedOpponent,
     onError,
+    opponentLevel,
     opponentMoves,
     pokemonNameSet,
     selectedTeamIndex,
@@ -190,6 +193,9 @@ export default function MatchupContainer({
               opponentName={opponentName}
               superEffective={matchup.offense.superEffective}
               notEffective={matchup.offense.notEffective}
+              moveRecommendations={matchup.moveRecommendations}
+              attackerLevel={matchup.attackerLevel}
+              defenderLevel={matchup.defenderLevel}
             />
           </article>
         </div>

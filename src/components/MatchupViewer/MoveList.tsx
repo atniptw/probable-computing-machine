@@ -1,10 +1,16 @@
 import type { JSX } from 'react'
 
+import type { DamageRange } from '../../services/damageCalc'
 import styles from './MatchupViewer.module.css'
 
 export interface MoveRow {
   name: string
   multiplier: number
+  // Damage calc (D3). Present only for the attacker's own configured moves.
+  damageRange?: DamageRange | null
+  // Attacker level known but opponent level unknown → show "?–? HP".
+  damageUnknown?: boolean
+  isTopMove?: boolean
 }
 
 interface MoveListProps {
@@ -45,8 +51,27 @@ export function MoveList({
   return (
     <ul className={styles.moveList}>
       {visibleMoves.map((move) => (
-        <li className={styles.moveRow} key={move.name}>
+        <li
+          className={`${styles.moveRow} ${move.isTopMove ? styles.topMove : ''}`}
+          key={move.name}
+          data-top-move={move.isTopMove ? 'true' : undefined}
+        >
           <span className={styles.moveName}>{move.name}</span>
+          {move.damageRange ? (
+            <span
+              className={styles.moveDamage}
+              title={`crit: ${move.damageRange.critMin}–${move.damageRange.critMax} HP`}
+            >
+              {move.damageRange.min}–{move.damageRange.max} HP
+            </span>
+          ) : move.damageUnknown ? (
+            <span
+              className={styles.moveDamage}
+              title="Enter the opponent's level for a damage estimate"
+            >
+              ?–? HP
+            </span>
+          ) : null}
           <span
             className={`${styles.moveIndicator} ${indicatorClass(move.multiplier)}`}
             aria-label={indicatorLabel(move.multiplier, indicator)}
