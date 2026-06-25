@@ -13,6 +13,7 @@ const onRemoveMove = vi.fn()
 const onSlotFocus = vi.fn()
 const onSlotBlur = vi.fn()
 const onSuggestionSelect = vi.fn()
+const onLevelChange = vi.fn()
 
 function resetMocks() {
   getSuggestions.mockReset().mockReturnValue([])
@@ -23,6 +24,7 @@ function resetMocks() {
   onSlotFocus.mockReset()
   onSlotBlur.mockReset()
   onSuggestionSelect.mockReset()
+  onLevelChange.mockReset()
 }
 
 function renderPanel(
@@ -31,9 +33,12 @@ function renderPanel(
   const defaults = {
     teamDraft: ['swampert', 'manectric'],
     teamMovesDraft: [[], []],
+    teamLevelsDraft: ['', ''],
     teamSlotErrors: [null, null],
     teamMoveErrors: [null, null],
+    teamLevelErrors: [null, null],
     activeTeamSlot: null,
+    onLevelChange,
     getSuggestions,
     getMoveSuggestions,
     onSlotChange,
@@ -97,5 +102,41 @@ describe('TeamEditorPanel', () => {
     })
     expect(onSlotChange).toHaveBeenCalledOnce()
     expect(onSlotChange).toHaveBeenCalledWith(0, 'flygon')
+  })
+
+  it('renders a level input for each team slot', () => {
+    renderPanel()
+    expect(screen.getByLabelText('Level for team slot 1')).toBeInTheDocument()
+    expect(screen.getByLabelText('Level for team slot 2')).toBeInTheDocument()
+  })
+
+  it('calls onLevelChange when a level input value changes', () => {
+    renderPanel()
+    fireEvent.change(screen.getByLabelText('Level for team slot 1'), {
+      target: { value: '50' },
+    })
+    expect(onLevelChange).toHaveBeenCalledWith(0, '50')
+  })
+
+  it('shows a level error when teamLevelErrors has a value', () => {
+    renderPanel({
+      teamLevelErrors: [
+        'Level must be a whole number between 1 and 100.',
+        null,
+      ],
+    })
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Level must be a whole number between 1 and 100.',
+    )
+  })
+
+  it('shows a "set level" hint for a named slot with no level', () => {
+    renderPanel()
+    expect(screen.getAllByText(/Set level for damage calc/)).toHaveLength(2)
+  })
+
+  it('hides the hint once a level is entered', () => {
+    renderPanel({ teamLevelsDraft: ['50', ''] })
+    expect(screen.getAllByText(/Set level for damage calc/)).toHaveLength(1)
   })
 })

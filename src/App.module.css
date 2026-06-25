@@ -166,6 +166,22 @@
   border-color: #4299e1;
 }
 
+.teamLevelInput {
+  max-width: 96px;
+  -moz-appearance: textfield;
+}
+
+.teamLevelInput::-webkit-outer-spin-button,
+.teamLevelInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.levelHint {
+  font-size: 0.8rem;
+  color: #b7791f;
+}
+
 .suggestionList {
   margin-top: 8px;
   border: 1px solid #d7dce0;

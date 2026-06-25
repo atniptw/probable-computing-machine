@@ -2,6 +2,36 @@
 
 ---
 
+## 2026-06-25 — feat/issue-103 [D1]: level input in team editor (PENDING VISUAL QA)
+
+### Objective
+
+Add a per-slot level number input to the team editor, wired to the #100 hook state.
+
+### Completed Work
+
+- `TeamEditorPanel.tsx`: added a `type="number"` (1–100, placeholder "Level") input per slot, wired to `teamLevelsDraft`/`onLevelChange`, with inline `teamLevelErrors` display and a subtle "⚠ Set level for damage calc" hint when a named slot has no level.
+- `App.tsx`: threaded `teamLevelsDraft`/`teamLevelErrors`/`updateTeamLevel` into `TeamEditorPanel`.
+- `App.module.css`: `.teamLevelInput` (96px, no spinners) + `.levelHint`.
+- `teamEditorPanel.test.tsx`: +5 tests (renders, onLevelChange, error display, hint shown/hidden).
+
+### Validation
+
+- `npm run verify` — pass on first run (365/365 unit, 6/6 e2e).
+- **Visual QA — PENDING.** Tier-1 visual issue: implemented to verify, NOT merged. Awaiting human sign-off before `issue-finish.sh 103`.
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Reused the existing `.levelInput` look via a new `.teamLevelInput`; placed the level input between name and moves; out-of-range error reuses the hook's save-time validation (no separate inline-on-type validation). Width/placement are visual-QA candidates. **Course corrections:** None.
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** None.
+
+### Next Actions
+
+Human visual QA → on Approved, `bash .claude/issue-finish.sh 103`, score, then #104.
+
+---
+
 ## 2026-06-25 — feat/issue-101 [C2]: useMatchupMatrix damage-calc wiring
 
 ### Objective

@@ -7,9 +7,12 @@ import { toTitleCase } from '../../utils/format'
 interface TeamEditorPanelProps {
   teamDraft: string[]
   teamMovesDraft: string[][]
+  teamLevelsDraft: string[]
   teamSlotErrors: (string | null)[]
   teamMoveErrors: (string | null)[]
+  teamLevelErrors: (string | null)[]
   activeTeamSlot: number | null
+  onLevelChange: (index: number, value: string) => void
   getSuggestions: (query: string) => string[]
   getMoveSuggestions: (query: string) => string[]
   onSlotChange: (index: number, value: string) => void
@@ -23,9 +26,12 @@ interface TeamEditorPanelProps {
 export default function TeamEditorPanel({
   teamDraft,
   teamMovesDraft,
+  teamLevelsDraft,
   teamSlotErrors,
   teamMoveErrors,
+  teamLevelErrors,
   activeTeamSlot,
+  onLevelChange,
   getSuggestions,
   getMoveSuggestions,
   onSlotChange,
@@ -110,6 +116,36 @@ export default function TeamEditorPanel({
                   {teamSlotErrors[index]}
                 </span>
               )}
+
+              <label htmlFor={`team-slot-level-${index}`}>Level</label>
+              <input
+                id={`team-slot-level-${index}`}
+                className={`${styles.teamInput} ${styles.teamLevelInput} ${
+                  teamLevelErrors[index] ? styles.teamInputError : ''
+                }`}
+                type="number"
+                min={1}
+                max={100}
+                inputMode="numeric"
+                value={teamLevelsDraft[index] ?? ''}
+                onChange={(event) => onLevelChange(index, event.target.value)}
+                placeholder="Level"
+                aria-label={`Level for team slot ${index + 1}`}
+              />
+
+              {teamLevelErrors[index] && (
+                <span className={styles.fieldError} role="alert">
+                  {teamLevelErrors[index]}
+                </span>
+              )}
+
+              {!!slot.trim() &&
+                !(teamLevelsDraft[index] ?? '').trim() &&
+                !teamLevelErrors[index] && (
+                  <span className={styles.levelHint}>
+                    ⚠ Set level for damage calc
+                  </span>
+                )}
 
               <label htmlFor={`team-slot-moves-${index}`}>
                 Moves (optional)

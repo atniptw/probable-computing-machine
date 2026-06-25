@@ -117,11 +117,14 @@ export default function App() {
     saveTeam,
     setActiveTeamSlot,
     teamDraft,
+    teamLevelErrors,
+    teamLevelsDraft,
     teamMembers,
     teamMoveErrors,
     teamMovesDraft,
     teamNames,
     teamSlotErrors,
+    updateTeamLevel,
     updateTeamSlot,
   } = useTeamConfiguration({
     defaultTeam: selectedGame.defaultTeam,
@@ -366,9 +369,12 @@ export default function App() {
             <TeamEditorPanel
               teamDraft={teamDraft}
               teamMovesDraft={teamMovesDraft}
+              teamLevelsDraft={teamLevelsDraft}
               teamSlotErrors={teamSlotErrors}
               teamMoveErrors={teamMoveErrors}
+              teamLevelErrors={teamLevelErrors}
               activeTeamSlot={activeTeamSlot}
+              onLevelChange={updateTeamLevel}
               getSuggestions={getSuggestions}
               getMoveSuggestions={getMoveSuggestions}
               onSlotChange={updateTeamSlot}
