@@ -24,9 +24,14 @@ App
     │   │   └── MoveList × N
     │   └── DefenseSection
     │       └── MoveList × N
-    └── TeamEditorPanel (team screen, main pane)
-        └── SuggestionList × 2 (slot + move autocomplete)
+    ├── TeamEditorPanel (team screen, main pane)
+    │   ├── SuggestionList × 2 (slot + move autocomplete)
+    │   └── MoveDetailBadges × N (per configured move — type badge, damage-class chip, base power)
+    └── TeamCoveragePanel (team screen, below the editor — collapsible)
+        └── TypeBadge × N (offensive coverage pills)
 ```
+
+> `MoveList` rows now also render a per-move damage range ("XX–YY HP", crit on hover, top-move highlight) when the attacker/opponent levels are known.
 
 ## App Contract
 
@@ -54,9 +59,11 @@ hooks: {
   },
   useTeamConfiguration: {
     inputs: { defaultTeam, gameLabel, nameIndexReady, onError, pokemonNameSet, teamSize, version },
-    outputs: { teamNames, teamDraft, teamMembers, teamMovesDraft, teamSlotErrors, teamMoveErrors,
-               activeTeamSlot, saveTeam, updateTeamSlot, addTeamMove, removeTeamMove,
+    outputs: { teamNames, teamDraft, teamMembers, teamMovesDraft, teamLevelsDraft,
+               teamSlotErrors, teamMoveErrors, teamLevelErrors, activeTeamSlot,
+               saveTeam, updateTeamSlot, updateTeamLevel, addTeamMove, removeTeamMove,
                setActiveTeamSlot, prepareTeamEditor, resetTeam }
+    // TeamMemberConfig now carries optional `level?: number` (1–100; blank disables damage calc)
   },
   usePokemonSuggestions: {
     inputs: { pokemonNameIndex: string[], maxSuggestions: number },
@@ -65,10 +72,30 @@ hooks: {
   useMatchupMatrix: {
     // consumed internally by MatchupContainer, not App directly
     inputs: { teamMembers, teamNames, normalizedOpponent, exactMatchFound, generation, gameLabel,
-              nameIndexReady, opponentMoves, pokemonNameSet, selectedTeamIndex, onError },
+              nameIndexReady, opponentMoves, opponentLevel, pokemonNameSet, selectedTeamIndex, onError },
     outputs: { loading, matchup }
+    // MatchupViewModel now also includes: moveRecommendations: MoveRecommendation[],
+    //   attackerLevel: number | null, defenderLevel: number | null, damageCalcAvailable: boolean
+  },
+  useTeamCoverage: {
+    // consumed by TeamCoveragePanel
+    inputs: { teamMembers, generation, typeMap, onError },
+    outputs: { coverage: TeamCoverageResult | null, loading }
+  },
+  useMoveDetail: {
+    // consumed by MoveDetailBadges
+    inputs: { moveName: string },
+    outputs: { detail: MoveDetail | null, loading }
+  },
+  useTypeMap: {
+    // consumed by App to feed TeamCoveragePanel
+    inputs: { generation },
+    outputs: { typeMap: Map<string, TypeRelations> | null }
   }
 }
+
+// App also derives `effectiveOpponentLevel` (gym Pokémon's static level in gym mode,
+// `opponentLevel` state in free mode) and threads it to useMatchupMatrix.
 ```
 
 ## Primary Behaviors
@@ -76,7 +103,9 @@ hooks: {
 - App opens directly on the battle screen for in-fight speed.
 - `BattleSelectorSection` toggles between free-battle (typeahead opponent search) and gym-leader mode (`GymLeaderSelector` → `GymTeamPanel`).
 - `MatchupContainer` handles team-member cycling (desktop prev/next buttons + mobile swipe).
-- `TeamEditorPanel` supports up to 4 moves per slot with add/remove chip interface; slot and move autocomplete provided by `SuggestionList`.
+- `TeamEditorPanel` supports up to 4 moves per slot with add/remove chip interface; slot and move autocomplete provided by `SuggestionList`. It also captures a per-slot **level** (1–100; blank disables damage calc) and shows inline **move detail** (type badge, damage-class chip, base power) for each configured move.
+- `MatchupContainer` shows per-move **damage ranges** ("XX–YY HP", crit on hover, top-move highlight) when both the attacker level and opponent level are known; otherwise it shows type effectiveness only. Opponent level comes from gym data (gym mode) or user input (free mode).
+- `TeamCoveragePanel` (team screen, collapsible) reports the team's **offensive coverage** (types hit ≥2×) and **defensive gaps** (types no member resists) via `useTeamCoverage`.
 - Game selector controls all autocomplete, validation, and matchup rules.
 - Type effectiveness map is generation-aware for key historical chart differences.
 - Ranking uses `best`, `good`, `neutral`, `risky` buckets.

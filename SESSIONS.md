@@ -2,6 +2,31 @@
 
 ---
 
+## 2026-06-26 — docs/issue-108 [E2]: update COMPONENT_DESIGN.md for V2
+
+### Objective
+
+Bring the architecture doc in line with the V2 codebase.
+
+### Completed Work
+
+- `docs/COMPONENT_DESIGN.md`: added `MoveDetailBadges` + `TeamCoveragePanel` to the component tree; documented the expanded `useTeamConfiguration` (level fields/`updateTeamLevel`) and `useMatchupMatrix` (`opponentLevel` input; `MatchupViewModel` damage fields) contracts; added the new `useTeamCoverage`, `useMoveDetail`, `useTypeMap` hooks and the `effectiveOpponentLevel` derivation; added Primary Behaviors for level capture, move detail, damage ranges, and the coverage panel.
+
+### Validation
+
+- Doc-only change; pre-commit hook (lint/tsc/tests) + CI gate confirm no code impact.
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Documented all four new components/hooks shipped across waves C/D (not just the two named in the issue) for accuracy. **Course corrections:** None.
+**Feedforward signals:** None.
+
+### Next Actions
+
+#109 (DECISIONS), #110 (ROADMAP), #107 (E1 acceptance).
+
+---
+
 ## 2026-06-26 — fix/issue-111: filter Stellar pseudo-type from getTypeMap
 
 ### Objective
