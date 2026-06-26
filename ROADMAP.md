@@ -16,6 +16,34 @@ Structured around the harness engineering model: **Guides** (feedforward control
 
 ---
 
+## V2 — Team Synergy & Damage Calculator (✅ shipped 2026-06)
+
+Delivered as five waves (#91–110) via the autonomous `/work-backlog` driver. All merged to `main`, CI-green. See `PRD-team-synergy-damage-calculator.md` and `DESIGN-v2.md`.
+
+### Wave A — Foundation
+
+`PokemonStats`/`MoveDetail`/`DamageClass` types, `pkm_v3_` cache bump, `getPokemon` stats extraction, persistent `getMoveDetail`, gym levels, `gen1SpecialOverrides`. (#91–96; #95 was already shipped.)
+
+### Wave B — Damage calculator service
+
+Pure `damageCalc.ts` (`calcDamageRange`, `rankMoves`) and `teamCoverage.ts` (`analyzeTeamCoverage`). Per-generation formula; V3-ready (zero React/DOM/storage imports — enforced by `importBoundaries.test.ts`). (#97–99)
+
+### Wave C — Hook wiring
+
+Level field in `useTeamConfiguration`; damage-calc support in `useMatchupMatrix`; new `useTeamCoverage`. (#100–102)
+
+### Wave D — UI
+
+Per-slot level input, inline move detail badges, damage ranges in the battle view, collapsible `TeamCoveragePanel`. All visual → human visual-QA gate before merge. (#103–106)
+
+### Wave E — Validation & docs
+
+Manual acceptance (#107), `COMPONENT_DESIGN.md` (#108), `DECISIONS.md` DEC-0035 (#109), this entry (#110).
+
+**Harness note:** V2 doubled as the proving run for the autonomous delivery harness — metrics ledger, reviewer-gated Tier-1 autonomy, CI confirmation, per-issue scorecards. Follow-up #111 (Stellar type-filter) was surfaced by the coverage panel during visual QA.
+
+---
+
 ## Wave 1 — Close Immediate Gaps
 
 _Low effort. Closes known holes without changing architecture._

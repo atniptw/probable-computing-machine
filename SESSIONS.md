@@ -2,6 +2,30 @@
 
 ---
 
+## 2026-06-26 — docs/issue-110 [E4]: add V2 waves to ROADMAP.md
+
+### Objective
+
+Record the V2 feature delivery in the roadmap.
+
+### Completed Work
+
+- `ROADMAP.md`: added a "V2 — Team Synergy & Damage Calculator (✅ shipped)" section summarizing waves A–E (#91–110) in the existing wave style, plus a harness note that V2 was the proving run for the autonomous delivery harness.
+
+### Validation
+
+- Doc-only.
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Recorded V2 as a shipped feature-delivery section parallel to the existing quality-harness waves (which keep their own numbering). **Course corrections:** None. **Feedforward signals:** None.
+
+### Next Actions
+
+#107 (E1 manual acceptance) — last V2 issue; Showdown-dependent damage checks flagged for human.
+
+---
+
 ## 2026-06-26 — docs/issue-109 [E3]: record V2 decisions in DECISIONS.md
 
 ### Objective
