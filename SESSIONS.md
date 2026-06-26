@@ -2,6 +2,36 @@
 
 ---
 
+## 2026-06-26 — feat/issue-106 [D4]: TeamCoveragePanel (PENDING VISUAL QA)
+
+### Objective
+
+Add a collapsible team coverage panel (offensive coverage + defensive gaps) to the team editor.
+
+### Completed Work
+
+- New `useTypeMap` hook (loads the gen-scoped type chart for use outside the battle view; shares the cached map).
+- New `TeamCoveragePanel`: collapsible ("Show team coverage ▾"), powered by `useTeamCoverage`. Offensive grid = all gen types as pills (colored `TypeBadge` if hit ≥2×, dashed/hollow if not); defensive-gaps grid = types no member resists (warning pills, `data-gap="true"`). Renders only when the type map is ready.
+- `App.tsx`: `useTypeMap(generation)`; renders `TeamCoveragePanel` below `TeamEditorPanel` on the team screen (not the battle view).
+- CSS: coverage panel/toggle/grid/pill styles. Tests: new `teamCoveragePanel.test.tsx` (4) — collapsed default, reveal on toggle, gap `data-gap`, null until typeMap ready.
+
+### Validation
+
+- `npm run verify` — pass on first full run (375/375 unit, 6/6 e2e).
+- **Visual QA — PENDING.** Implemented to verify, NOT merged.
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made (design call):** rendered `TeamCoveragePanel` as a sibling below `TeamEditorPanel` in App (not nested inside it) — self-contained, avoids drilling typeMap/teamMembers through the editor; functionally the "collapsible section at the bottom" the DESIGN asks for. `useTeamCoverage` already existed (#102). **Course corrections:** None (one self-caught JSX fragment slip during the App edit).
+**Issue quality signal:** AC completeness: Complete. Scope clarity: Clear.
+**Feedforward signals:** None.
+
+### Next Actions
+
+Visual QA → on Approved, `issue-finish.sh 106` closes Wave D. Then Wave E (#107–110, non-visual, autonomous).
+
+---
+
 ## 2026-06-25 — feat/issue-105 [D3]: damage range in battle view (PENDING VISUAL QA)
 
 ### Objective

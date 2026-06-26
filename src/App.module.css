@@ -182,6 +182,89 @@
   color: #b7791f;
 }
 
+.coveragePanel {
+  margin-top: 16px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 12px;
+}
+
+.coverageToggle {
+  border: none;
+  background: transparent;
+  color: #2c5282;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.coverageBody {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.coverageGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.coverageLabel {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5f6b77;
+}
+
+.coverageGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.coveragePill {
+  border-radius: 999px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.coveragePillHollow {
+  border-radius: 999px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #a0aec0;
+  border: 1px dashed #cbd5e0;
+  background: #f7fafc;
+}
+
+.coverageGapPill {
+  border-radius: 999px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9b2c2c;
+  background: #fed7d7;
+}
+
+.coverageHint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #5f6b77;
+}
+
 .suggestionList {
   margin-top: 8px;
   border: 1px solid #d7dce0;

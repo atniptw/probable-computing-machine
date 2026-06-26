@@ -7,12 +7,14 @@ import ErrorBoundary from './components/ErrorBoundary'
 
 export type BattleMode = 'free' | 'gym'
 import TeamConfigurationSection from './components/AppView/TeamConfigurationSection'
+import TeamCoveragePanel from './components/AppView/TeamCoveragePanel'
 import TeamEditorPanel from './components/AppView/TeamEditorPanel'
 import MatchupContainer from './components/MatchupViewer/MatchupContainer'
 import { useMoveNameIndex } from './hooks/useMoveNameIndex'
 import { usePokemonNameIndex } from './hooks/usePokemonNameIndex'
 import { usePokemonSuggestions } from './hooks/usePokemonSuggestions'
 import { useTeamConfiguration } from './hooks/useTeamConfiguration'
+import { useTypeMap } from './hooks/useTypeMap'
 import styles from './App.module.css'
 
 const TEAM_SIZE = 6
@@ -53,6 +55,7 @@ export default function App() {
     onError: setError,
   })
   const { moveNameIndex } = useMoveNameIndex({ onError: setError })
+  const typeMap = useTypeMap(selectedGame.generation)
 
   useEffect(() => {
     localStorage.setItem('pmh_game_v1', selectedGame.version)
@@ -382,33 +385,41 @@ export default function App() {
       <main className={styles.resultsPane}>
         <ErrorBoundary>
           {screen === 'team' ? (
-            <TeamEditorPanel
-              teamDraft={teamDraft}
-              teamMovesDraft={teamMovesDraft}
-              teamLevelsDraft={teamLevelsDraft}
-              teamSlotErrors={teamSlotErrors}
-              teamMoveErrors={teamMoveErrors}
-              teamLevelErrors={teamLevelErrors}
-              activeTeamSlot={activeTeamSlot}
-              onLevelChange={updateTeamLevel}
-              getSuggestions={getSuggestions}
-              getMoveSuggestions={getMoveSuggestions}
-              onSlotChange={updateTeamSlot}
-              onAddMove={addTeamMove}
-              onRemoveMove={removeTeamMove}
-              onSlotFocus={setActiveTeamSlot}
-              onSlotBlur={(index) => {
-                window.setTimeout(() => {
-                  setActiveTeamSlot((current) =>
-                    current === index ? null : current,
-                  )
-                }, 120)
-              }}
-              onSuggestionSelect={(index, name) => {
-                updateTeamSlot(index, name)
-                setActiveTeamSlot(null)
-              }}
-            />
+            <>
+              <TeamEditorPanel
+                teamDraft={teamDraft}
+                teamMovesDraft={teamMovesDraft}
+                teamLevelsDraft={teamLevelsDraft}
+                teamSlotErrors={teamSlotErrors}
+                teamMoveErrors={teamMoveErrors}
+                teamLevelErrors={teamLevelErrors}
+                activeTeamSlot={activeTeamSlot}
+                onLevelChange={updateTeamLevel}
+                getSuggestions={getSuggestions}
+                getMoveSuggestions={getMoveSuggestions}
+                onSlotChange={updateTeamSlot}
+                onAddMove={addTeamMove}
+                onRemoveMove={removeTeamMove}
+                onSlotFocus={setActiveTeamSlot}
+                onSlotBlur={(index) => {
+                  window.setTimeout(() => {
+                    setActiveTeamSlot((current) =>
+                      current === index ? null : current,
+                    )
+                  }, 120)
+                }}
+                onSuggestionSelect={(index, name) => {
+                  updateTeamSlot(index, name)
+                  setActiveTeamSlot(null)
+                }}
+              />
+              <TeamCoveragePanel
+                teamMembers={teamMembers}
+                generation={selectedGame.generation}
+                typeMap={typeMap}
+                onError={setError}
+              />
+            </>
           ) : (
             <MatchupContainer
               teamMembers={teamMembers}
