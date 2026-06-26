@@ -2,6 +2,37 @@
 
 ---
 
+## DEC-0035
+
+### Date
+
+2026-06-26
+
+### Issue
+
+#109 — [E3] V2 implementation decisions / open-question resolutions
+
+### Decision
+
+Resolve the three open questions from DESIGN-v2.md §Open Questions:
+
+1. **Gen 1 Special overrides** — only `gengar` (100) is confirmed and shipped in `gen1SpecialOverrides.ts`. No other species were added. The reference-calculator (Showdown) verification that would catch further discrepancies is part of E1 (#107); any additional overrides are added there.
+2. **Variable base-power moves** (null base power, non-status — Hidden Power, Return, etc.) — show **no** damage range (`calcDamageRange` returns null). In `rankMoves` they sort below known-damage moves and above status moves, with type effectiveness only. This deviates from the DESIGN's "show ?" proposal: the "?–? HP" placeholder is reserved for moves that _do_ have a base power but whose opponent level is unknown.
+3. **Gym Pokémon levels** — use **standard (first-encounter)** levels, as already present in the gym data files. #95 was closed as already-shipped; the existing data is treated as the standard set.
+
+### Rationale
+
+Each is the lowest-surprise resolution that matches what shipped. Distinguishing "variable power" (no number to show) from "unknown opponent level" (a number is computable once the level is entered) keeps the UI honest about _why_ a range is missing. Deferring further Gen 1 overrides to E1 avoids guessing without the reference calculator.
+
+### Consequences
+
+- A team running mostly variable-power moves will show effectiveness but no HP ranges — expected, and called out in E1.
+- If E1 finds Gen 1 SpAtk discrepancies beyond Gengar, they are added to `gen1SpecialOverrides.ts` (each with a Showdown-verified value).
+
+Note: DEC-0033 (#91 additive types) and DEC-0034 (#97 calcDamageRange signature) already recorded the other V2 trade-offs during implementation.
+
+---
+
 ## DEC-0034
 
 ### Date

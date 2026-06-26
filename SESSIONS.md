@@ -2,6 +2,30 @@
 
 ---
 
+## 2026-06-26 — docs/issue-109 [E3]: record V2 decisions in DECISIONS.md
+
+### Objective
+
+Capture the resolutions to DESIGN-v2.md's open questions.
+
+### Completed Work
+
+- `DECISIONS.md`: added DEC-0035 resolving (1) Gen 1 overrides = Gengar only (more deferred to E1), (2) variable base-power moves show no range (not "?"), (3) gym levels = standard first-encounter. Noted DEC-0033/0034 already cover the type + signature trade-offs.
+
+### Validation
+
+- Doc-only; DECISIONS IDs remain unique and descending (CI integrity check).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** None. **Course corrections:** None. **Feedforward signals:** None.
+
+### Next Actions
+
+#110 (ROADMAP), then #107 (E1 acceptance).
+
+---
+
 ## 2026-06-26 — docs/issue-108 [E2]: update COMPONENT_DESIGN.md for V2
 
 ### Objective
