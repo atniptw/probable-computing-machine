@@ -112,7 +112,9 @@ async function buildBaseTypeMap(): Promise<Map<string, TypeRelations>> {
 
   const typeNames = listJson.results
     .map((t) => t.name)
-    .filter((n) => n !== 'unknown' && n !== 'shadow')
+    // Exclude pseudo-types: 'unknown'/'shadow' (placeholders) and 'stellar'
+    // (a Gen 9 Terastal battle mechanic with no type-chart relations).
+    .filter((n) => n !== 'unknown' && n !== 'shadow' && n !== 'stellar')
 
   const baseMap = new Map<string, TypeRelations>()
 

@@ -236,8 +236,8 @@ describe('Contract: GET /type → TypeRelations', () => {
     expect(electric!.noDamageTo).toEqual(['ground'])
   })
 
-  it('excludes unknown and shadow pseudo-types from the type map', async () => {
-    // API includes internal pseudo-types that must be filtered out
+  it('excludes unknown, shadow, and stellar pseudo-types from the type map', async () => {
+    // API includes internal/battle-mechanic pseudo-types that must be filtered out
     vi.stubGlobal(
       'fetch',
       vi.fn(async (url: string) => {
@@ -247,6 +247,7 @@ describe('Contract: GET /type → TypeRelations', () => {
               { name: 'normal', url: '' },
               { name: 'unknown', url: '' },
               { name: 'shadow', url: '' },
+              { name: 'stellar', url: '' },
             ],
           })
         }
@@ -266,6 +267,7 @@ describe('Contract: GET /type → TypeRelations', () => {
 
     expect(typeMap.has('unknown')).toBe(false)
     expect(typeMap.has('shadow')).toBe(false)
+    expect(typeMap.has('stellar')).toBe(false)
     expect(typeMap.has('normal')).toBe(true)
   })
 })

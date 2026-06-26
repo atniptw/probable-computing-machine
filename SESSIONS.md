@@ -2,6 +2,32 @@
 
 ---
 
+## 2026-06-26 — fix/issue-111: filter Stellar pseudo-type from getTypeMap
+
+### Objective
+
+Stop the Gen 9 Stellar type from appearing in older-generation type charts (surfaced by #106's coverage panel).
+
+### Completed Work
+
+- `typechart.ts`: `buildBaseTypeMap` now filters `stellar` alongside `unknown`/`shadow` (Stellar is a Terastal battle mechanic with no type-chart relations; excluded for all gens).
+- `pokeapi.contract.test.ts`: extended the pseudo-type exclusion test to include `stellar`.
+
+### Validation
+
+- `npm run verify` — pass on first run (375/375 unit, 6/6 e2e).
+
+### Retrospective
+
+**Permission requests:** None. **Assumptions made:** Exclude Stellar entirely (not just older gens) — it has no defensive/offensive matchups. Fairy/Dark/Steel gen-gating was already handled in `applyGenerationTypeRules`. **Course corrections:** None.
+**Feedforward signals:** None. (Bug was found by the new coverage panel rendering all type pills — a nice case of UI surfacing latent data issues.)
+
+### Next Actions
+
+Wave E: #108 (COMPONENT_DESIGN), #109 (DECISIONS), #110 (ROADMAP), #107 (E1 acceptance — Showdown parts flagged for human).
+
+---
+
 ## 2026-06-26 — feat/issue-106 [D4]: TeamCoveragePanel (PENDING VISUAL QA)
 
 ### Objective
